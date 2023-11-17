@@ -1,0 +1,362 @@
+﻿<UserControl x:Class="IMTE_dotnetframework.Views.ModifyMeasuringDevice"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:IMTE_dotnetframework.Views"
+             xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+             xmlns:inputLayout="clr-namespace:Syncfusion.UI.Xaml.TextInputLayout;assembly=Syncfusion.SfTextInputLayout.WPF"
+             mc:Ignorable="d" 
+             d:DesignHeight="550" d:DesignWidth="1100">
+    <Border Background="White" Margin="10 15" Padding="8">
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0" Margin="0 0 10 0">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" >
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        Margin="8 0 0 0"
+                        Text="Modify Measuring Device" 
+                        FontSize="24"
+                        TextWrapping="Wrap"
+                        FontWeight="DemiBold"
+                        VerticalAlignment="Center"
+                        />
+
+                    <inputLayout:SfTextInputLayout
+                        Grid.Column="1"
+                        Hint="Version"
+                        Width="250"
+                        HorizontalAlignment="Left"
+                        HelperText="Enter version"
+                        ContainerType="Filled"
+                        Margin="8 10 0 0">
+                        <TextBox Text="{Binding MeasuringDevice.Version}" />
+                    </inputLayout:SfTextInputLayout>
+                </Grid>
+
+                <Grid Grid.Row="1" Margin="8 0 0 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <inputLayout:SfTextInputLayout
+                Grid.Column="0"
+                Hint="Type"
+                Width="250"
+                HorizontalAlignment="Left"
+                HelperText="Enter type"
+                ContainerType="Filled"
+                Margin="0 10 0 0">
+                        <TextBox Text="{Binding MeasuringDevice.Type}" />
+
+                    </inputLayout:SfTextInputLayout>
+
+                    <inputLayout:SfTextInputLayout
+                Grid.Column="1"
+                Hint="Frequency of Calibration"
+                Width="250"
+                HorizontalAlignment="Left"
+                HelperText="Enter frequency of calibration"
+                ContainerType="Filled"
+                Margin="8 10 0 0">
+                        <TextBox Text="{Binding MeasuringDevice.FrequencyOfCalibration}" />
+
+                    </inputLayout:SfTextInputLayout>
+
+                </Grid>
+
+                <Grid Grid.Row="2" Margin="8 0 0 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock  Grid.Row="0" Foreground="Gray" VerticalAlignment="Bottom" Text="Last Calibration Date" />
+                        <DatePicker SelectedDate="{Binding MeasuringDevice.LastCalibrationDate}" VerticalAlignment="Top" Grid.Row="1" />
+                    </Grid>
+
+                    <inputLayout:SfTextInputLayout
+                        Grid.Column="1"
+                        Hint="Result of Calibration"
+                        Width="250"
+                        HorizontalAlignment="Left"
+                        ContainerType="Filled"
+                        HelperText="Enter result of calibration"
+                        Margin="8 10 0 0"
+                        VerticalAlignment="Center">
+                        <TextBox Text="{Binding MeasuringDevice.ResultOfCalibration}" />
+                    </inputLayout:SfTextInputLayout>
+
+                </Grid>
+
+                <Grid Grid.Row="3" Margin="8 0 0 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock  Grid.Row="0" Foreground="Gray" VerticalAlignment="Bottom" Text="Next Calibration Date" />
+                        <DatePicker SelectedDate="{Binding MeasuringDevice.NextCalibrationDate}" VerticalAlignment="Top" Grid.Row="1" />
+
+                    </Grid>
+
+                    <inputLayout:SfTextInputLayout
+                        Grid.Column="1"
+                        Hint="Status"
+                        Width="250"
+                        HorizontalAlignment="Left"
+                        ContainerType="Filled"
+                        HelperText="Enter status"
+                        Margin="8 10 0 0"
+                        VerticalAlignment="Center">
+                        <TextBox Text="{Binding MeasuringDevice.Status, UpdateSourceTrigger=PropertyChanged}" />
+                    </inputLayout:SfTextInputLayout>
+
+                </Grid>
+
+                <Grid Grid.Row="4" Margin="8 0 0 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <inputLayout:SfTextInputLayout
+                Grid.Column="0"
+                Hint="Calibration Remarks"
+                Width="250"
+                HorizontalAlignment="Left"
+                HelperText="Enter calibration remarks"
+                ContainerType="Filled"
+                Margin="0 10 0 0">
+                        <TextBox Text="{Binding MeasuringDevice.CalibrationRemarks}" />
+
+                    </inputLayout:SfTextInputLayout>
+
+                    <inputLayout:SfTextInputLayout
+                Grid.Column="1"
+                Hint="TrgTpg And Settings Remarks"
+                Width="250"
+                HorizontalAlignment="Left"
+                HelperText="Enter TrgTpg and settings remarks"
+                ContainerType="Filled"
+                Margin="8 10 0 0">
+                        <TextBox Text="{Binding MeasuringDevice.TrgTpgAndSettingsRemarks}" />
+
+                    </inputLayout:SfTextInputLayout>
+                </Grid>
+
+                <Grid Grid.Row="5" Margin="8 0 0 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <inputLayout:SfTextInputLayout
+                Grid.Column="0"
+                Hint="Remarks"
+                Width="250"
+                HorizontalAlignment="Left"
+                HelperText="Enter remarks"
+                ContainerType="Filled"
+                Margin="0 10 0 0">
+                        <TextBox Text="{Binding MeasuringDevice.Remarks}" />
+
+                    </inputLayout:SfTextInputLayout>
+
+                    <inputLayout:SfTextInputLayout
+                Grid.Column="1"
+                Hint="Date"
+                Width="250"
+                HorizontalAlignment="Left"
+                HelperText="Enter date"
+                ContainerType="Filled"
+                Margin="8 10 0 0">
+                        <TextBox Text="{Binding MeasuringDevice.Date}" />
+
+                    </inputLayout:SfTextInputLayout>
+                </Grid>
+            </Grid>
+
+            <Grid Grid.Column="1" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="29*"/>
+                    <ColumnDefinition Width="11*"/>
+                    <ColumnDefinition Width="226*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="1" Margin="8 0 0 0" Grid.ColumnSpan="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <inputLayout:SfTextInputLayout
+                Grid.Column="0"
+                Hint="Maker"
+                Width="250"
+                HorizontalAlignment="Left"
+                HelperText="Enter Maker"
+                ContainerType="Filled"
+                Margin="0 10 0 0">
+                        <TextBox Text="{Binding MeasuringDevice.Maker}" />
+
+                    </inputLayout:SfTextInputLayout>
+
+                    <inputLayout:SfTextInputLayout
+                Grid.Column="1"
+                Hint="Resolution"
+                Width="250"
+                HorizontalAlignment="Left"
+                HelperText="Enter Resolution"
+                ContainerType="Filled"
+                Margin="8 10 0 0">
+                        <TextBox Text="{Binding MeasuringDevice.Resolution}" />
+
+                    </inputLayout:SfTextInputLayout>
+
+                </Grid>
+
+                <Grid Grid.Row="2" Margin="8 0 0 0" Grid.ColumnSpan="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <inputLayout:SfTextInputLayout
+                        Grid.Column="0"
+                        Hint="Device Range"
+                        Width="250"
+                        HorizontalAlignment="Left"
+                        HelperText="Enter Device Range"
+                        ContainerType="Filled"
+                        Margin="0 10 0 0">
+                        <TextBox Text="{Binding MeasuringDevice.DeviceRange}" />
+
+                    </inputLayout:SfTextInputLayout>
+
+                    <inputLayout:SfTextInputLayout
+                        Grid.Column="1"
+                        Hint="Accuracy"
+                        Width="250"
+                        HorizontalAlignment="Left"
+                        HelperText="Enter accuracy"
+                        ContainerType="Filled"
+                        Margin="8 10 0 0">
+                        <TextBox Text="{Binding MeasuringDevice.Accuracy}" />
+
+                    </inputLayout:SfTextInputLayout>
+
+                    <inputLayout:SfTextInputLayout
+                        Grid.Column="2"
+                        Hint="Unit of Measurement"
+                        Width="250"
+                        HorizontalAlignment="Left"
+                        HelperText="Enter Unit of measurement"
+                        ContainerType="Filled"
+                        Margin="8 10 0 0">
+                        <TextBox Text="{Binding MeasuringDevice.UnitOfMeasurement}" />
+
+                    </inputLayout:SfTextInputLayout>
+
+                </Grid>
+
+                <Grid Grid.Row="3" Margin="8 0 0 0" Grid.ColumnSpan="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <inputLayout:SfTextInputLayout
+                        Grid.Column="0"
+                        Hint="Calibration Certificate"
+                        Width="250"
+                        HorizontalAlignment="Left"
+                        HelperText="Enter Calibration Certificate"
+                        ContainerType="Filled"
+                        Margin="0 10 0 0">
+                        <TextBox Text="{}" />
+
+                    </inputLayout:SfTextInputLayout>
+
+                    <inputLayout:SfTextInputLayout
+                        Grid.Column="1"
+                        Hint="Barcode"
+                        Width="250"
+                        HorizontalAlignment="Left"
+                        HelperText="Enter barcode"
+                        ContainerType="Filled"
+                        Margin="8 10 0 0">
+                        <TextBox Text="{Binding MeasuringDevice.Barcode}" />
+
+                    </inputLayout:SfTextInputLayout>
+
+                    <inputLayout:SfTextInputLayout
+                        Grid.Column="2"
+                        Hint="Calibration Method"
+                        Width="250"
+                        HorizontalAlignment="Left"
+                        HelperText="Enter calibration method"
+                        ContainerType="Filled"
+                        Margin="8 10 0 0">
+                        <TextBox Text="{Binding MeasuringDevice.CalibrationMethod}" />
+
+                    </inputLayout:SfTextInputLayout>
+
+                </Grid>
+
+                <Grid Grid.Row="4" Margin="8 0 0 0" Grid.ColumnSpan="3">
+                    <Button Content="Save Changes" 
+                            Width="200" 
+                            Height="40" 
+                            Background="#000"
+                            Foreground="#fff"
+                            Command="{Binding UpdateMeasuringDeviceCommand}"
+                            />
+                </Grid>
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

@@ -1,0 +1,62 @@
+﻿<UserControl x:Class="IMTE_dotnetframework.Views.MeasuringDevicesList"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:IMTE_dotnetframework.Views"
+             xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+             xmlns:i = "http://schemas.microsoft.com/expression/2010/interactivity"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <Style TargetType="Button" x:Key="btnStyle">
+            <Setter Property="Padding" Value="8" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Width" Value="200" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="Margin" Value="10 0 0 0" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="40" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <syncfusion:SfDataGrid Margin="10" x:Name="dgMDList"
+                                   AutoGenerateColumns="False"
+                                   ShowGroupDropArea="True"
+                                   ColumnSizer="Star"
+                                   ShowRowHeader="True"
+                                   ItemsSource="{Binding MeasuringDevicesLists}"
+                                   SelectedItem="{Binding SelectedMeasuringDevice}">
+                <syncfusion:SfDataGrid.Columns>
+                    <syncfusion:GridTextColumn MappingName="Version" />
+                    <syncfusion:GridTextColumn MappingName="Type" />
+                    <syncfusion:GridTextColumn MappingName="FrequencyOfCalibration" />
+                    <syncfusion:GridTextColumn MappingName="LastCalibrationDate" />
+                    <syncfusion:GridTextColumn MappingName="ResultOfCalibration" />
+                    <syncfusion:GridTextColumn MappingName="NextCalibrationDate" />
+                    <syncfusion:GridTextColumn MappingName="Status" />
+                </syncfusion:SfDataGrid.Columns>
+            </syncfusion:SfDataGrid>
+
+        </Grid>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="1">
+            <Button x:Name="btnEdit" Content="Edit Selected Item" 
+                Style="{StaticResource btnStyle}" VerticalAlignment="Top"
+                Command="{Binding PassExistingData}"
+                CommandParameter="{Binding SelectedMeasuringDevice}"/>
+
+            <Button x:Name="btnDelete" Content="Delete Selected Item" 
+                Style="{StaticResource btnStyle}" VerticalAlignment="Top"
+                Command="{Binding DeleteSelectedData}"
+                CommandParameter="{Binding SelectedMeasuringDevice}"/>
+        </StackPanel>
+
+    </Grid>
+</UserControl>

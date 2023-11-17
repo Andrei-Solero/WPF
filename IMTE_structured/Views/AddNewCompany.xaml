@@ -1,0 +1,48 @@
+﻿<UserControl x:Class="IMTE_structured.Views.AddNewCompany"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:IMTE_structured.Views"
+             xmlns:sfInputLayout="clr-namespace:Syncfusion.UI.Xaml.TextInputLayout;assembly=Syncfusion.SfTextInputLayout.WPF"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <Style TargetType="sfInputLayout:SfTextInputLayout">
+            <Setter Property="Width" Value="300" />
+            <Setter Property="ContainerType" Value="Filled" />
+            <Setter Property="Margin" Value="0 10 0 0" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+
+        <StackPanel 
+            VerticalAlignment="Center" 
+            HorizontalAlignment="Center">
+            <TextBlock Text="Create New Company" FontSize="28" />
+            <sfInputLayout:SfTextInputLayout
+                Hint="Company Name">
+                
+                <TextBox Text="" />
+            </sfInputLayout:SfTextInputLayout>
+
+            <sfInputLayout:SfTextInputLayout
+                Hint="Legal Name">
+                
+                <TextBox Text="" />
+            </sfInputLayout:SfTextInputLayout>
+
+            <Button Content="Save Measuring Device" 
+                            Width="200" 
+                            Height="40" 
+                            Background="#000"
+                            Foreground="#fff"
+                            Command=""
+                            />
+            
+        </StackPanel>
+    </Grid>
+</UserControl>

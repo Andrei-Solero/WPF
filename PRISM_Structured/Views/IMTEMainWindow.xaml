@@ -1,0 +1,40 @@
+﻿<Window x:Class="PRISM_Structured.Views.IMTEMainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PRISM_Structured.Views"
+        xmlns:prism="http://prismlibrary.com/"
+        prism:ViewModelLocator.AutoWireViewModel="True"
+        mc:Ignorable="d"
+        Title="IMTEMainView" Height="450" Width="800"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0"
+                    Margin="4"
+                    Orientation="Horizontal">
+
+            <StackPanel.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="Width" Value="200" />
+                    <Setter Property="Margin" Value="5 0" />
+                </Style>
+            </StackPanel.Resources>
+
+            <Button Content="Add new measuring device" 
+                    Command="{Binding NavigateCommand}" 
+                    CommandParameter="Create" />
+            <Button Content="Measuring devices"
+                    Command="{Binding NavigateCommand}"
+                    CommandParameter="Read"/>
+        </StackPanel>
+
+        <ContentControl Grid.Row="1" prism:RegionManager.RegionName="MeasuringDevicesRegion" />
+
+    </Grid>
+</Window>
