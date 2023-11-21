@@ -1,11 +1,14 @@
 ﻿using IMTE.DataAccess;
+using IMTE.EventAggregator.Core;
 using IMTE.IMTEEntity.Models;
 using IMTE.Models.Definition;
 using IMTE.Models.General;
 using IMTE.Models.HumanResources;
 using IMTE.Models.Inventory;
+using IMTE.Models.Production;
 using IMTE.Views;
 using Prism.Commands;
+using Prism.Events;
 using Prism.Mvvm;
 using Prism.Regions;
 using Prism.Services.Dialogs;
@@ -21,6 +24,7 @@ using Unity;
 
 namespace IMTE.ViewModels
 {
+    [RegionMemberLifetime(KeepAlive = false)]
     public class MeasuringDeviceFormViewModel : BindableBase, INavigationAware
     {
         private readonly MeasuringDeviceDA measuringDeviceDA;
@@ -32,8 +36,8 @@ namespace IMTE.ViewModels
         private readonly EquipmentTypeDA equipmentTypeDA;
         private readonly IRegionManager regionManager;
         private readonly IDialogService _dialogService;
-        private readonly IUnityContainer unityContainer;
-        private DelegateCommand<MeasuringDevice> _saveChangesCommand;
+		private readonly IEventAggregator ea;
+		private DelegateCommand<MeasuringDevice> _saveChangesCommand;
 
         public DelegateCommand<MeasuringDevice> SaveChangesCommand
         {
@@ -48,6 +52,10 @@ namespace IMTE.ViewModels
         public DelegateCommand CreateNewMeasuringDevice { get; }
         public DelegateCommand<string> NavigateBackToList { get; }
         public DelegateCommand EmployeeConfigLookupCommand { get; }
+		public DelegateCommand DepartmentConfigLookupCommand { get; set; }
+		public DelegateCommand EquipmentSelectionCommand { get; }
+        public DelegateCommand MachineToolSelectionCommand { get; }
+
 
         private MeasuringDevice _currentMeasuringDevice = new MeasuringDevice();
         public MeasuringDevice CurrentMeasuringDevice
@@ -139,6 +147,15 @@ namespace IMTE.ViewModels
         #endregion
 
         #region Seperate complex objects for binding
+
+        private MachineTool _machineTool;
+
+        public MachineTool MachineTool
+        {
+            get { return _machineTool; }
+            set { _machineTool = value; }
+        }
+
 
         private Equipment _equipment = new Equipment();
         public Equipment Equipment
@@ -320,7 +337,7 @@ namespace IMTE.ViewModels
 
         #endregion
 
-        public MeasuringDeviceFormViewModel(IRegionManager regionManager, IDialogService dialogService, IUnityContainer unityContainer)
+        public MeasuringDeviceFormViewModel(IRegionManager regionManager, IDialogService dialogService, IEventAggregator ea)
         {
             CalibrationMethods = new ObservableCollection<string>(new List<string> { "Calibration Method 1", "Calibration Method 2", "Calibration Method 3", "Calibration Method 4", "Calibration Method 5"});
             CalibrationResults = new ObservableCollection<string>(new List<string> { "Calibration Result 1", "Calibration Result 2", "Calibration Result 3", "Calibration Result 4", "Calibration Result 5" });
@@ -349,6 +366,9 @@ namespace IMTE.ViewModels
             CreateNewMeasuringDevice = new DelegateCommand(ExecuteCreateNew);
             ToUpdateMeasringDeviceCommand = new DelegateCommand(ExecuteToUpdate);
             EmployeeConfigLookupCommand = new DelegateCommand(ExecuteOpenEmployeeConfigLookup);
+            DepartmentConfigLookupCommand = new DelegateCommand(ExecuteOpenDepartmentConfigLookup);
+			EquipmentSelectionCommand = new DelegateCommand(SelectEquipment);
+            MachineToolSelectionCommand = new DelegateCommand(SelectMachineTool);
 
             measuringDeviceDA = new MeasuringDeviceDA();
             employeeDA = new EmployeeDA();
@@ -358,12 +378,12 @@ namespace IMTE.ViewModels
             plantDA = new PlantDA();
             equipmentTypeDA = new EquipmentTypeDA();
 
-            Employees = new ObservableCollection<Employee>(employeeDA.GetAllEmployees());
-            Departments = new ObservableCollection<Department>(departmentDA.GetAllDepartments());
-            Locations = new ObservableCollection<Location>(locationDA.GetAllLocations());
-            Units = new ObservableCollection<UnitEntity>(unitDA.GetAllUnit());
-            Plants = new ObservableCollection<Plant>(plantDA.GetAllPlant());
-            EquipmentTypes = new ObservableCollection<EquipmentType>(equipmentTypeDA.GetAllEquipmentType());
+            //Employees = new ObservableCollection<Employee>(employeeDA.GetAllEmployees());
+            //Departments = new ObservableCollection<Department>(departmentDA.GetAllDepartments());
+            //Locations = new ObservableCollection<Location>(locationDA.GetAllLocations());
+            //Units = new ObservableCollection<UnitEntity>(unitDA.GetAllUnit());
+            //Plants = new ObservableCollection<Plant>(plantDA.GetAllPlant());
+            //EquipmentTypes = new ObservableCollection<EquipmentType>(equipmentTypeDA.GetAllEquipmentType());
 
             CurrentMeasuringDevice.IssuedToEmployee = new Employee();
             CurrentMeasuringDevice.CalibratedByEmployee = new Employee();
@@ -372,17 +392,31 @@ namespace IMTE.ViewModels
             CurrentMeasuringDevice.Unit = UnitOfMeasurement;
             CurrentMeasuringDevice.Equipment.Item.Description = Description;
             CurrentMeasuringDevice.Equipment.EquipmentTypeObj = EquipmentType;
-
+            CurrentMeasuringDevice.MachineTool = MachineTool;
             
             this.regionManager = regionManager;
 
             this.regionManager.CreateRegionManager();
             _dialogService = dialogService;
-            this.unityContainer = unityContainer;
-            NavigateBackToList = new DelegateCommand<string>(Navigate);
-        }
+			this.ea = ea;
+			NavigateBackToList = new DelegateCommand<string>(Navigate);
 
-        public MeasuringDeviceFormViewModel()
+			ea.GetEvent<EquipmentToMeasuringDevice>().Subscribe(GetEquipmentDetails);
+			ea.GetEvent<MachineToolToMeasuringDevice>().Subscribe(GetMachineToolDetails);
+		}
+
+		private void GetMachineToolDetails(MachineTool tool)
+		{
+			
+		}
+
+
+		private void GetEquipmentDetails(Equipment equipment)
+		{
+			Equipment = equipment;
+		}
+
+		public MeasuringDeviceFormViewModel()
         {
 
         }        
@@ -430,23 +464,41 @@ namespace IMTE.ViewModels
 
         public void ExecuteSave(MeasuringDevice measuringDeviceObj)
         {
-            measuringDeviceDA.CreateMeasuringDevice(measuringDeviceObj);
+            measuringDeviceObj.Equipment = Equipment;
+            //measuringDeviceDA.CreateMeasuringDevice(measuringDeviceObj);
         }
 
-        #endregion
+		private void ExecuteOpenDepartmentConfigLookup()
+		{
+            _dialogService.ShowDialog("DeptConfig");
+		}
 
-        private void ExecuteOpenEmployeeConfigLookup()
-        {
-            _dialogService.ShowDialog("EmpConfig");
-        }
+		private void SelectMachineTool()
+		{
+			regionManager.RequestNavigate("EquipmentMachineToolRegion", "MachineToolForMeasuringDevice");
+		}
 
-        private void ExecuteToUpdate()
-        {
-            IsDataEdit = true;
-            SetProperty(ref _isDataEdit, IsDataEdit);
-        }
+		private void SelectEquipment()
+		{
+			regionManager.RequestNavigate("EquipmentMachineToolRegion", "EquipmentFormForMeasuringDevice");
+		}
 
-        private void Navigate(string uri)
+		private void ExecuteOpenEmployeeConfigLookup()
+		{
+			_dialogService.ShowDialog("EmpConfig");
+		}
+
+		private void ExecuteToUpdate()
+		{
+			IsDataEdit = true;
+			SetProperty(ref _isDataEdit, IsDataEdit);
+		}
+
+		#endregion
+
+
+
+		private void Navigate(string uri)
         {
             regionManager.RequestNavigate("MainRegion", uri);
         }

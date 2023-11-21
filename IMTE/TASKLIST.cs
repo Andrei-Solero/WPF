@@ -12,9 +12,6 @@ namespace IMTE
         //TODO: CREATE TABLE FOR CALIBRATION RESULT
         //TODO: CREATE TABLE FOR CALIBRATION METHOD
         //TODO: CREATE TABLE FOR FREQUENCY OF CALIBRATION
-        //TODO: CREATE LOOKUP FOR THE COMBOBOXES EXCEPT LOCATION AND SPECIFICATION
-        //TODO: Find where schemas is PlantCompanyId from plant table
-        // CURRENCYID(Item table from company, company settings and its currency id)
-        // TODO: PRIO!!! - CHECK ABOUT THE CreateRegionManager() when initializing a regionManager in constructor
+        //TODO: Make the default view is Equipment and for every lookup, make the default to the list
     }
 }

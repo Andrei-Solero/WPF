@@ -1,4 +1,6 @@
-﻿using System;
+﻿using IMTE.ViewModels;
+using Prism.Regions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,13 +18,18 @@ using System.Windows.Shapes;
 namespace IMTE.Views
 {
     /// <summary>
-    /// Interaction logic for EmployeeConfigLookupCreate.xaml
+    /// Interaction logic for EmployeeConfigLookup.xaml
     /// </summary>
-    public partial class EmployeeConfigLookupCreate : UserControl
+    public partial class MDLookup_EmployeeConfig : UserControl
     {
-        public EmployeeConfigLookupCreate()
+        public MDLookup_EmployeeConfig()
         {
             InitializeComponent();
+
+            var regionManager = new RegionManager();
+            RegionManager.SetRegionManager(this, regionManager);
+
+			DataContext = new MDLookup_EmployeeConfigViewModel(regionManager);
         }
     }
 }

@@ -3,6 +3,7 @@ using IMTE.Models.Definition;
 using IMTE.Models.General;
 using IMTE.Models.HumanResources;
 using IMTE.Models.Inventory;
+using IMTE.Models.Production;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace IMTE.IMTEEntity.Models
         public int ModifiedByEmployeeId { get; set; }
         public Employee ModifiedByEmployee { get; set; }
         public Equipment Equipment { get; set; }
+        public MachineTool MachineTool { get; set; }
         public Plant Plant { get; set; }
         public Employee IssuedToEmployee { get; set; }
         public Employee CalibratedByEmployee { get; set; }

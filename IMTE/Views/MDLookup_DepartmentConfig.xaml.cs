@@ -17,19 +17,19 @@ using System.Windows.Shapes;
 
 namespace IMTE.Views
 {
-    /// <summary>
-    /// Interaction logic for EmployeeConfigLookup.xaml
-    /// </summary>
-    public partial class EmployeeConfigLookup : UserControl
-    {
-        public EmployeeConfigLookup()
-        {
-            InitializeComponent();
+	/// <summary>
+	/// Interaction logic for MDLookup_DepartmentConfig.xaml
+	/// </summary>
+	public partial class MDLookup_DepartmentConfig : UserControl
+	{
+		public MDLookup_DepartmentConfig()
+		{
+			InitializeComponent();
 
-            var regionManager = new RegionManager();
-            RegionManager.SetRegionManager(this, regionManager);
+			var regionManager = new RegionManager();
 
-            DataContext = new EmployeeConfigLookupViewModel(regionManager);
-        }
-    }
+			RegionManager.SetRegionManager(this, regionManager);
+			DataContext = new MDLookup_DepartmentConfigViewModel(regionManager);
+		}
+	}
 }

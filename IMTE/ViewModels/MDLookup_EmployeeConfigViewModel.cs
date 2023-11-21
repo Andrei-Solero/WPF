@@ -9,19 +9,26 @@ using System.Threading.Tasks;
 
 namespace IMTE.ViewModels
 {
-    public class EmployeeConfigLookupViewModel : IDialogAware
+    public class MDLookup_EmployeeConfigViewModel : IDialogAware
     {
         private readonly IRegionManager regionManager;
         public DelegateCommand EmployeeListCommand { get; set; }
+        public DelegateCommand CreateNewEmployeeCommand { get; set; }
 
-        public EmployeeConfigLookupViewModel(IRegionManager regionManager)
+        public MDLookup_EmployeeConfigViewModel(IRegionManager regionManager)
         {
             this.regionManager = regionManager;
 
             EmployeeListCommand = new DelegateCommand(OpenEmployeeList);
-        }
+			CreateNewEmployeeCommand = new DelegateCommand(OpenCreateForm);
+		}
 
-        private void OpenEmployeeList()
+		private void OpenCreateForm()
+		{
+            regionManager.RequestNavigate("EmpConfigRegion", "EmpConfigCreate");
+		}
+
+		private void OpenEmployeeList()
         {
             regionManager.RequestNavigate("EmpConfigRegion", "EmpConfigList");
         }

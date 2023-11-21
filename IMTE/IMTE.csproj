@@ -285,42 +285,41 @@
     <Compile Include="DataAccess\SpecificationDA.cs" />
     <Compile Include="DataAccess\UnitDA.cs" />
     <Compile Include="IMTEModule.cs" />
-    <Compile Include="Models\Definition\Currency.cs" />
-    <Compile Include="Models\Definition\UnitEntity.cs" />
-    <Compile Include="Models\General\Company.cs" />
-    <Compile Include="Models\General\CompanySettings.cs" />
-    <Compile Include="Models\General\Currency.cs" />
-    <Compile Include="Models\General\CurrencyExchange.cs" />
-    <Compile Include="Models\General\Department.cs" />
-    <Compile Include="Models\General\Description.cs" />
-    <Compile Include="Models\General\Item.cs" />
-    <Compile Include="Models\General\Specification.cs" />
-    <Compile Include="Models\General\SpecificationCategory.cs" />
-    <Compile Include="Models\General\SpecificationCategoryDetails.cs" />
-    <Compile Include="Models\General\SpecificationDetails.cs" />
-    <Compile Include="Models\HumanResources\Employee.cs" />
-    <Compile Include="Models\General\Location.cs" />
-    <Compile Include="Models\General\Person.cs" />
-    <Compile Include="Models\General\Plant.cs" />
-    <Compile Include="Models\HumanResources\EmployeeType.cs" />
-    <Compile Include="Models\HumanResources\Position.cs" />
-    <Compile Include="Models\Inventory\Equipment.cs" />
-    <Compile Include="Models\Inventory\EquipmentType.cs" />
     <Compile Include="Statics.cs" />
     <Compile Include="TASKLIST.cs" />
-    <Compile Include="ViewModels\EmployeeConfigLookupListViewModel.cs" />
-    <Compile Include="ViewModels\EmployeeConfigLookupViewModel.cs" />
+    <Compile Include="ViewModels\MDLookup_DepartmentConfigListViewModel.cs" />
+    <Compile Include="ViewModels\MDLookup_DepartmentConfigViewModel.cs" />
+    <Compile Include="ViewModels\MDLookup_EmployeeConfigCreateViewModel.cs" />
+    <Compile Include="ViewModels\MDLookup_EmployeeConfigListViewModel.cs" />
+    <Compile Include="ViewModels\MDLookup_EmployeeConfigViewModel.cs" />
+    <Compile Include="ViewModels\MD_EquipmentFormViewModel.cs" />
+    <Compile Include="ViewModels\MD_MachineToolFormViewModel.cs" />
     <Compile Include="ViewModels\MeasuringDeviceFormViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MeasuringDeviceListViewModel.cs" />
-    <Compile Include="Views\EmployeeConfigLookup.xaml.cs">
-      <DependentUpon>EmployeeConfigLookup.xaml</DependentUpon>
+    <Compile Include="Views\MDLookup_DepartmentConfig.xaml.cs">
+      <DependentUpon>MDLookup_DepartmentConfig.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\EmployeeConfigLookupCreate.xaml.cs">
-      <DependentUpon>EmployeeConfigLookupCreate.xaml</DependentUpon>
+    <Compile Include="Views\MDLookup_DepartmentConfigCreate.xaml.cs">
+      <DependentUpon>MDLookup_DepartmentConfigCreate.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\EmployeeConfigLookupList.xaml.cs">
-      <DependentUpon>EmployeeConfigLookupList.xaml</DependentUpon>
+    <Compile Include="Views\MDLookup_DepartmentConfigList.xaml.cs">
+      <DependentUpon>MDLookup_DepartmentConfigList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MDLookup_EmployeeConfig.xaml.cs">
+      <DependentUpon>MDLookup_EmployeeConfig.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MDLookup_EmployeeConfigCreate.xaml.cs">
+      <DependentUpon>MDLookup_EmployeeConfigCreate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MDLookup_EmployeeConfigList.xaml.cs">
+      <DependentUpon>MDLookup_EmployeeConfigList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MD_EquipmentForm.xaml.cs">
+      <DependentUpon>MD_EquipmentForm.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MD_MachineToolForm.xaml.cs">
+      <DependentUpon>MD_MachineToolForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MeasuringDeviceForm.xaml.cs">
       <DependentUpon>MeasuringDeviceForm.xaml</DependentUpon>
@@ -336,7 +335,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\IMTEEntity\MeasuringDevice.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -363,7 +361,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
       <Visible>False</Visible>
@@ -377,15 +374,35 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Views\EmployeeConfigLookup.xaml">
+    <Page Include="Views\MDLookup_DepartmentConfig.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\EmployeeConfigLookupCreate.xaml">
+    <Page Include="Views\MDLookup_DepartmentConfigCreate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\EmployeeConfigLookupList.xaml">
+    <Page Include="Views\MDLookup_DepartmentConfigList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MDLookup_EmployeeConfig.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MDLookup_EmployeeConfigCreate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MDLookup_EmployeeConfigList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MD_EquipmentForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MD_MachineToolForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -405,6 +422,16 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IMTE.EventAggregator.Core\IMTE.EventAggregator.Core.csproj">
+      <Project>{1d908551-e8d1-4d4d-af9b-650b30c8321f}</Project>
+      <Name>IMTE.EventAggregator.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IMTE.Models\IMTE.Models.csproj">
+      <Project>{4bf9dd0d-ee0b-4329-adbe-fd00a9f9d26e}</Project>
+      <Name>IMTE.Models</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Extensions.Logging.Abstractions.6.0.0\build\Microsoft.Extensions.Logging.Abstractions.targets" Condition="Exists('..\packages\Microsoft.Extensions.Logging.Abstractions.6.0.0\build\Microsoft.Extensions.Logging.Abstractions.targets')" />

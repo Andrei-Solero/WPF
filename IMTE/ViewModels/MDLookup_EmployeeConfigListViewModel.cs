@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace IMTE.ViewModels
 {
-    public class EmployeeConfigLookupListViewModel : BindableBase
+    public class MDLookup_EmployeeConfigListViewModel : BindableBase
     {
         private readonly EmployeeDA employeeDA;
 
@@ -22,11 +22,11 @@ namespace IMTE.ViewModels
             set { SetProperty(ref _employeeList, value); }
         }
 
-        public EmployeeConfigLookupListViewModel()
+        public MDLookup_EmployeeConfigListViewModel()
         {
             employeeDA = new EmployeeDA();
 
-            EmployeeList = new ObservableCollection<Employee>(employeeDA.GetAllEmployees());
+            //EmployeeList = new ObservableCollection<Employee>(employeeDA.GetAllEmployees());
         }
 
     }

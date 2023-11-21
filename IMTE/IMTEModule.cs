@@ -24,9 +24,17 @@ namespace IMTE
             containerRegistry.RegisterForNavigation<MeasuringDeviceList>("List");
             containerRegistry.RegisterForNavigation<MeasuringDeviceForm>("Create");
 
-            containerRegistry.RegisterForNavigation<EmployeeConfigLookupList>("EmpConfigList");
+            containerRegistry.RegisterForNavigation<MDLookup_EmployeeConfigList>("EmpConfigList");
+            containerRegistry.RegisterForNavigation<MDLookup_EmployeeConfigCreate>("EmpConfigCreate");
 
-            containerRegistry.RegisterDialog<EmployeeConfigLookup, EmployeeConfigLookupViewModel>("EmpConfig");
+            containerRegistry.RegisterForNavigation<MDLookup_DepartmentConfigList>("DeptConfigList");
+            containerRegistry.RegisterForNavigation<MDLookup_DepartmentConfigCreate>("DeptConfigCreate");
+
+            containerRegistry.RegisterForNavigation<MD_EquipmentForm>("EquipmentFormForMeasuringDevice");
+            containerRegistry.RegisterForNavigation<MD_MachineToolForm>("MachineToolForMeasuringDevice");
+
+            containerRegistry.RegisterDialog<MDLookup_EmployeeConfig, MDLookup_EmployeeConfigViewModel>("EmpConfig");
+            containerRegistry.RegisterDialog<MDLookup_DepartmentConfig, MDLookup_DepartmentConfigViewModel>("DeptConfig");
         }
     }
 }
