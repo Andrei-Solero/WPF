@@ -24,7 +24,7 @@ namespace IMTE.Models.General
 
         public override string ToString()
         {
-            return $"{DepartmentName} - {Company.CompanyName}";
+            return this == null ? "" : $"{DepartmentName}";
         }
 
     }

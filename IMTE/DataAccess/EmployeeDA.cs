@@ -1,6 +1,7 @@
 ﻿using IMTE.General.Models;
 using IMTE.Models.HumanResources;
 using Npgsql;
+using System;
 using System.Collections.Generic;
 
 namespace IMTE.DataAccess
@@ -36,7 +37,7 @@ namespace IMTE.DataAccess
                 {
                     Employee employee = new Employee
                     {
-                        Id = CheckDbNullInt(data,"Id"),
+                        Id = CheckDbNullInt(data, "Id"),
                         EmployeeType = new EmployeeType
                         {
                             Id = CheckDbNullInt(data, "EmployeeTypeId"),
@@ -136,5 +137,80 @@ namespace IMTE.DataAccess
 
             return output;
         }
+        
+        public Person CreatePersonForEmployee(Person personObj, NpgsqlTransaction transaction, NpgsqlConnection connection)
+        {
+            Person output = personObj;
+            using (NpgsqlCommand command = new NpgsqlCommand())
+            {
+                try
+                {
+                    string query = @"INSERT INTO ""General"".""Person""(""First"", ""Last"", ""Middle"",
+                                    ""Birthdate"") VALUES (@First, @Last, @Middle, @Birthdate)
+                                    RETURNING ""Id""";
+
+                    command.Connection = connection;
+                    command.Transaction = transaction;
+                    command.CommandText = query;
+
+                    command.Parameters.AddWithValue("@First", personObj.First);
+                    command.Parameters.AddWithValue("@Last", personObj.Last);
+                    command.Parameters.AddWithValue("@Middle", personObj.Middle);
+                    command.Parameters.AddWithValue("@Birthdate", personObj.Birthdate);
+
+                    personObj.Id = Convert.ToInt32(command.ExecuteScalar());
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+
+            return output;
+        }
+
+
+        public Employee CreateEmployee(Employee empObj)
+        {
+            Employee output = empObj;
+
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                using (NpgsqlCommand command = new NpgsqlCommand())
+                {
+                    try
+                    {
+                        string query = @"INSERT INTO ""HumanResources"".""Employee"" (""CompanyId"", ""EmployeeNo"", ""EmployeeTypeId"", ""PositionId"",
+                                    ""PrimaryDepartmentId"", ""PersonId"") VALUES (2, @EmployeeNo, @EmployeeTypeId, @PositionId,
+                                    @PrimaryDepartmentId, @PersonId)";
+
+                        command.Connection = connection;
+                        command.CommandText = query;
+
+                        Person person = CreatePersonForEmployee(empObj.Person, transaction, connection);
+
+                        command.Parameters.AddWithValue("@EmployeeNo", empObj.EmployeeNo);
+                        command.Parameters.AddWithValue("@EmployeeTypeId", empObj.EmployeeType.Id);
+                        command.Parameters.AddWithValue("@PositionId", empObj.Position.Id);
+                        command.Parameters.AddWithValue("@PrimaryDepartmentId", empObj.PrimaryDepartment.Id);
+                        command.Parameters.AddWithValue("@PersonId", empObj.Person.Id);
+
+                        command.ExecuteNonQuery();
+
+                        transaction.Commit();
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
+
+            return output;
+        }
     }
 }
+

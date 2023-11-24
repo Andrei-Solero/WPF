@@ -1,4 +1,5 @@
 ﻿using IMTE.ViewModels;
+using Prism.Events;
 using Prism.Regions;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Unity;
 
 namespace IMTE.Views
 {
@@ -29,7 +31,7 @@ namespace IMTE.Views
             var regionManager = new RegionManager();
             RegionManager.SetRegionManager(this, regionManager);
 
-			DataContext = new MDLookup_EmployeeConfigViewModel(regionManager);
+            DataContext = new MDLookup_EmployeeConfigViewModel(regionManager);
         }
     }
 }

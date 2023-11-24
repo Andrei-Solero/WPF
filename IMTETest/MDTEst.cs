@@ -1,4 +1,7 @@
-﻿using IMTE.IMTEEntity.Models;
+﻿using IMTE.DataAccess;
+using IMTE.IMTEEntity.Models;
+using IMTE.Models.General;
+using IMTE.Models.HumanResources;
 using IMTE.ViewModels;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -9,112 +12,157 @@ namespace IMTETest
     public class MDTEst
     {
         [TestMethod]
-        public void CanSaveMeauringToIMTEDatabase()
+        public void SaveMeasuringDeviceWithEquipment()
         {
-            MeasuringDevice measuringDeviceObj = null;
-            //MeasuringDevice measuringDeviceObj = new MeasuringDevice
-            //{
-            //    Version = 1,
-            //    IssuedToEmployeeId = 101,
-            //    Type = "Sample Type",
-            //    DepartmentId = 1,
-            //    LocationId = 13,
-            //    CalibrateByEmployeeId = 23,
-            //    ResultOfCalibration = "Passed",
-            //    CalibrationMethod = "Sample",
-            //    AcceptanceCriteria = "Okay",
-            //    FrequencyOfCalibration = "Sample",
-            //    LastCalibrationDate = DateTime.Today,
-            //    NextCalibrationDate = DateTime.Today.AddMonths(1),
-            //    CalibrationRemarks = "Sample",
-            //    ThreadGaugeRingGaugeUsageNo = 23,
-            //    TrgTpgAndSettingsRemarks = "23",
-            //    Status = "sample",
-            //    Remarks = "Passed",
-            //    Date = "Date",
-            //    Barcode = "91273hkashdioashdisad",
-            //    Maker = "Sample maker",
-            //    Resolution = "Sample resolution",
-            //    DeviceRange = "Far",
-            //    Accuracy = "100",
-            //    UnitOfMeasurement = "US"
-            //};
-
-            MeasuringDeviceFormViewModel addNewMDVM = new MeasuringDeviceFormViewModel();
-            addNewMDVM.ExecuteSave(measuringDeviceObj);
-        }
-
-        [TestMethod]
-        public void CanUpdateMeasuringDevice()
-        {
-            //MeasuringDevice measuringDeviceObj = null;
-            MeasuringDevice measuringDeviceObj = new MeasuringDevice
+            MeasuringDevice md = new MeasuringDevice
             {
-                Id = 9,
-                Version = 1,
-                Type = "Sample Type",
-                ResultOfCalibration = "Passed",
-                CalibrationMethod = "Sample",
-                AcceptanceCriteria = "Okay",
-                FrequencyOfCalibration = "Sample",
-                LastCalibrationDate = DateTime.Today,
-                NextCalibrationDate = DateTime.Today.AddMonths(1),
-                CalibrationRemarks = "Sample",
-                ThreadGaugeRingGaugeUsageNo = 23,
-                TrgTpgAndSettingsRemarks = "23",
-                Status = "sample",
-                Remarks = "Passed",
-                Date = "Date",
-                Barcode = "91273hkashdioashdisad",
-                Maker = "Sample maker",
-                Resolution = "Sample resolution",
-                DeviceRange = "Far",
-                Accuracy = "100",
+                SerialNo = "1110",
+                IssuedToEmployee = new Employee
+                {
+                    Id = 1
+                },
+                Department = new Department
+                {
+                    Id = 1
+                },
+                Location = new Location
+                {
+                    Id = 1
+                },
+                Plant = new Plant
+                {
+                    Id = 4
+                },
+                CalibratedByEmployee = new Employee
+                {
+                    Id = 4
+                },
+                ResultOfCalibration = "Calibration Result 1",
+                CalibrationMethod = "Calibration Method 1",
+                AcceptanceCriteria = "Acceptance 1",
+                FrequencyOfCalibration = "Frequency of Calibration 1",
+                LastCalibrationDate = DateTime.Now,
+                NextCalibrationDate = DateTime.Now.AddMonths(1),
+                CalibrationRemarks = "TestTestTestTestTestTestTest",
+                ThreadGaugeRingGaugeUsageNo = 4,
+                Status = "Status 1",
+                Barcode = "0000022",
+                Remarks = "SAMPLESAMPLESAMPLESAMPLESAMPLESAMPLE",
+                Date = DateTime.Now.ToString(),
+                Maker = "Maker 1",
+                Resolution = "Resolution 1",
+                DeviceRange = "1",
+                Accuracy = "1",
+                Unit = new IMTE.Models.Definition.UnitEntity
+                {
+                    Id = 3,
+                },
+                Equipment = new IMTE.Models.Inventory.Equipment
+                {
+                    Item = new Item
+                    {
+                        ItemCode = "samplesamplesamplesample",
+                        ShortDescription = "samplesamplesample",
+                        Description = new Description
+                        {
+                            Text = "samplesamplesamplesample"
+                        }
+                    },
+                    Manufacturer = "samplesamplesamplesample",
+                    Model = "samplesamplesamplesample",
+                    HasAccessory = true,
+                    ApprovalCode = "samplesamplesample",
+                    IsPrinted = true,
+                    IsForeignCurrency = true,
+                    IsSent = true,
+                    EquipmentTypeObj = new IMTE.Models.Inventory.EquipmentType
+                    {
+                        Id = 2
+                    }
+                }
             };
 
-            MeasuringDeviceFormViewModel addNewMDVM = new MeasuringDeviceFormViewModel();
-            addNewMDVM.ExecuteUpdate(measuringDeviceObj);
+            MeasuringDeviceDA da = new MeasuringDeviceDA();
+            da.CreateMeasuringDevice(md);
         }
 
         [TestMethod]
-        public void CanUDeleteMeasuringDevice()
+        public void SaveMeasuringDeviceWithMachineTool()
         {
-            //MeasuringDevice measuringDeviceObj = null;
-            MeasuringDevice measuringDeviceObj = new MeasuringDevice
+            MeasuringDevice md = new MeasuringDevice
             {
-                Id = 9,
-                Version = 1,
-                Type = "Sample Type",
-                ResultOfCalibration = "Passed",
-                CalibrationMethod = "Sample",
-                AcceptanceCriteria = "Okay",
-                FrequencyOfCalibration = "Sample",
-                LastCalibrationDate = DateTime.Today,
-                NextCalibrationDate = DateTime.Today.AddMonths(1),
-                CalibrationRemarks = "Sample",
-                ThreadGaugeRingGaugeUsageNo = 23,
-                TrgTpgAndSettingsRemarks = "23",
-                Status = "sample",
-                Remarks = "Passed",
-                Date = "Date",
-                Barcode = "91273hkashdioashdisad",
-                Maker = "Sample maker",
-                Resolution = "Sample resolution",
-                DeviceRange = "Far",
-                Accuracy = "100",
+                SerialNo = "1110",
+                IssuedToEmployee = new Employee
+                {
+                    Id = 1
+                },
+                Department = new Department
+                {
+                    Id = 1
+                },
+                Location = new Location
+                {
+                    Id = 1
+                },
+                Plant = new Plant
+                {
+                    Id = 4
+                },
+                CalibratedByEmployee = new Employee
+                {
+                    Id = 4
+                },
+                ResultOfCalibration = "Calibration Result 1",
+                CalibrationMethod = "Calibration Method 1",
+                AcceptanceCriteria = "Acceptance 1",
+                FrequencyOfCalibration = "Frequency of Calibration 1",
+                LastCalibrationDate = DateTime.Now,
+                NextCalibrationDate = DateTime.Now.AddMonths(1),
+                CalibrationRemarks = "TestTestTestTestTestTestTest",
+                ThreadGaugeRingGaugeUsageNo = 4,
+                Status = "Status 1",
+                Barcode = "0000022",
+                Remarks = "SAMPLESAMPLESAMPLESAMPLESAMPLESAMPLE",
+                Date = DateTime.Now.ToString(),
+                Maker = "Maker 1",
+                Resolution = "Resolution 1",
+                DeviceRange = "1",
+                Accuracy = "1",
+                Unit = new IMTE.Models.Definition.UnitEntity
+                {
+                    Id = 3,
+                },
+                MachineTool = new IMTE.Models.Production.MachineTool
+                {
+                    Item = new Item
+                    {
+                        ItemCode = "AA222",
+                        ShortDescription = "SAMPLESAMPLESAMPLESAMPLE",
+                        Description = new Description
+                        {
+                            Text = "SAMPLESAMPLESAMPLESAMPLE"
+                        }
+                    },
+                    Note = "SAMPLESAMPLESAMPLESAMPLE",
+                    ToolName = "SAMPLESAMPLESAMPLESAMPLE",
+                    UnitCost = 2333,
+                    ToolLifeUsagePcs = 4,
+                    MachineToolType = new IMTE.Models.Production.MachineToolType
+                    {
+                        Id = 1
+                    }
+                }
             };
 
-            MeasuringDeviceFormViewModel addNewMDVM = new MeasuringDeviceFormViewModel();
-            //addNewMDVM.ExecuteDelete(measuringDeviceObj);
+            MeasuringDeviceDA da = new MeasuringDeviceDA();
+            da.CreateMeasuringDevice(md);
         }
-
 
         [TestMethod]
-        public void GetAll()
+        public void GetAllMD()
         {
-            MeasuringDeviceListViewModel mdList = new MeasuringDeviceListViewModel();
-            var a = mdList.MeasuringDeviceList;
+            MeasuringDeviceDA da = new MeasuringDeviceDA();
+            var a = da.GetAllMeasuringDevices();
         }
-
     }
 }

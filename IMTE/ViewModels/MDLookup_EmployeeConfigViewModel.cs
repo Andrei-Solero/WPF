@@ -1,36 +1,45 @@
-﻿using Prism.Commands;
+﻿using IMTE.DataAccess;
+using IMTE.EventAggregator.Core;
+using IMTE.Models.HumanResources;
+using Prism.Commands;
+using Prism.Events;
+using Prism.Mvvm;
 using Prism.Regions;
 using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace IMTE.ViewModels
 {
-    public class MDLookup_EmployeeConfigViewModel : IDialogAware
+    public class MDLookup_EmployeeConfigViewModel : BindableBase, IDialogAware
     {
         private readonly IRegionManager regionManager;
-        public DelegateCommand EmployeeListCommand { get; set; }
-        public DelegateCommand CreateNewEmployeeCommand { get; set; }
+
+        public DelegateCommand OpenEmployeeListCommand { get; private set; }
+        public DelegateCommand OpenCreateCommand { get; private set; }
 
         public MDLookup_EmployeeConfigViewModel(IRegionManager regionManager)
         {
             this.regionManager = regionManager;
 
-            EmployeeListCommand = new DelegateCommand(OpenEmployeeList);
-			CreateNewEmployeeCommand = new DelegateCommand(OpenCreateForm);
-		}
+            regionManager.RequestNavigate("EmpConfigMainRegion", "EmpConfigList");
 
-		private void OpenCreateForm()
-		{
-            regionManager.RequestNavigate("EmpConfigRegion", "EmpConfigCreate");
-		}
+            OpenEmployeeListCommand = new DelegateCommand(OpenEmployeeList);
+            OpenCreateCommand = new DelegateCommand(OpenCreateForm);
+        }
 
-		private void OpenEmployeeList()
+        private void OpenCreateForm()
         {
-            regionManager.RequestNavigate("EmpConfigRegion", "EmpConfigList");
+            regionManager.RequestNavigate("EmpConfigMainRegion", "EmpConfigCreate");
+        }
+
+        private void OpenEmployeeList()
+        {
+            regionManager.RequestNavigate("EmpConfigMainRegion", "EmpConfigList");
         }
 
         public string Title => "";
@@ -41,12 +50,12 @@ namespace IMTE.ViewModels
 
         public void OnDialogClosed()
         {
-            
+
         }
 
         public void OnDialogOpened(IDialogParameters parameters)
         {
-            
+
         }
     }
 }

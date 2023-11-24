@@ -36,7 +36,6 @@ namespace IMTE.ViewModels
         private readonly EquipmentTypeDA equipmentTypeDA;
         private readonly IRegionManager regionManager;
         private readonly IDialogService _dialogService;
-		private readonly IEventAggregator ea;
 		private DelegateCommand<MeasuringDevice> _saveChangesCommand;
 
         public DelegateCommand<MeasuringDevice> SaveChangesCommand
@@ -51,11 +50,13 @@ namespace IMTE.ViewModels
         public DelegateCommand DeleteMeasuringDeviceCommand { get; }
         public DelegateCommand CreateNewMeasuringDevice { get; }
         public DelegateCommand<string> NavigateBackToList { get; }
-        public DelegateCommand EmployeeConfigLookupCommand { get; }
-		public DelegateCommand DepartmentConfigLookupCommand { get; set; }
+        public DelegateCommand IssuedToEmployeeLookupCommand { get; }
+        public DelegateCommand CalibratedByEmployeeLookupCommand { get; set; }
+        public DelegateCommand DepartmentConfigLookupCommand { get; set; }
+        public DelegateCommand PlantConfigLookupCommand { get; set; }
 		public DelegateCommand EquipmentSelectionCommand { get; }
         public DelegateCommand MachineToolSelectionCommand { get; }
-
+        
 
         private MeasuringDevice _currentMeasuringDevice = new MeasuringDevice();
         public MeasuringDevice CurrentMeasuringDevice
@@ -73,87 +74,50 @@ namespace IMTE.ViewModels
             set { SetProperty(ref _isDataEdit, value); }
         }
 
-
-        private bool _isControlsEnabled;
-        public bool IsControlsEnabled
+        private bool _isForIssuedEmployee;
+        public bool IsForIssuedEmployee
         {
-            get { return _isControlsEnabled; }
-            set { SetProperty(ref _isControlsEnabled, value); }
+            get { return _isForIssuedEmployee; }
+            set { SetProperty(ref _isForIssuedEmployee, value); }
         }
 
-        private Brush _addButtonColor;
-
-        public Brush AddButtonColor
+        private bool _isForCalibratedEmployee;
+        public bool IsForCalibratedByEmployee
         {
-            get { return _addButtonColor; }
-            set { SetProperty(ref _addButtonColor, value); }
+            get { return _isForCalibratedEmployee; }
+            set { SetProperty(ref _isForCalibratedEmployee, value); }
         }
 
-        private bool _isAddEnabled;
-        public bool IsAddEnabled
+        private bool _isEquipment = true;
+        public bool IsEquipment
         {
-            get { return _isAddEnabled; }
+            get { return _isEquipment; }
             set 
             { 
-                if (IsDataEdit)
-                {
-                    value = true;
-                    AddButtonColor = Brushes.Green;
-                }
-                else
-                {
-                    AddButtonColor = Brushes.DarkTurquoise;
-                }
-
-                SetProperty(ref _isAddEnabled, value);
+                SetProperty(ref _isEquipment, value);
             }
         }
 
-
-        private bool _isEditEnabled;
-        public bool IsEditEnabled
+        private bool _isMachineTool;
+        public bool IsMachineTool
         {
-            get { return _isEditEnabled; }
+            get { return _isMachineTool; }
             set 
-            { 
-                if (IsDataEdit)
-                {
-                    value = true;
-                }
-
-                SetProperty(ref _isEditEnabled, value); 
+            {
+                SetProperty(ref _isMachineTool, value); 
             }
         }
-
-        private bool _isSaveEnabled;
-        public bool IsSaveEnabled
-        {
-            get { return _isSaveEnabled; }
-            set 
-            { 
-                SetProperty(ref _isSaveEnabled, value); 
-            }
-        }
-
-        private bool _isDeleteEnabled;
-        public bool IsDeleteEnabled
-        {
-            get { return _isDeleteEnabled; }
-            set { SetProperty(ref _isDeleteEnabled, value); }
-        }
-
 
 
         #endregion
 
         #region Seperate complex objects for binding
 
-        private MachineTool _machineTool;
-
+        private MachineTool _machineTool = new MachineTool();
         public MachineTool MachineTool
         {
             get { return _machineTool; }
-            set { _machineTool = value; }
+            set { SetProperty(ref _machineTool, value); }
         }
 
 
@@ -192,6 +156,27 @@ namespace IMTE.ViewModels
         {
             get { return _description; }
             set { SetProperty(ref _description, value); }
+        }
+
+        private Employee _issuedToEmployee = new Employee();
+        public Employee IssuedToEmployee
+        {
+            get { return _issuedToEmployee; }
+            set { SetProperty(ref _issuedToEmployee, value); }
+        }
+
+        private Employee _calibratedByEmployee = new Employee();
+        public Employee CalibratedByEmployee
+        {
+            get { return _calibratedByEmployee; }
+            set { SetProperty(ref _calibratedByEmployee, value); }
+        }
+
+        private Department _department = new Department();
+        public Department Department
+        {
+            get { return _department; }
+            set { SetProperty(ref _department, value); }
         }
 
         #endregion
@@ -361,14 +346,20 @@ namespace IMTE.ViewModels
                 Range.Add(i.ToString());
             }
 
+            this.regionManager = regionManager;
+            _dialogService = dialogService;
+
             UpdateMeasuringDeviceCommand = new DelegateCommand<MeasuringDevice>(ExecuteUpdate);
             DeleteMeasuringDeviceCommand = new DelegateCommand(ExecuteDelete);
             CreateNewMeasuringDevice = new DelegateCommand(ExecuteCreateNew);
             ToUpdateMeasringDeviceCommand = new DelegateCommand(ExecuteToUpdate);
-            EmployeeConfigLookupCommand = new DelegateCommand(ExecuteOpenEmployeeConfigLookup);
+            IssuedToEmployeeLookupCommand = new DelegateCommand(ExecuteOpenLookupForIssuedToEmployee);
+            CalibratedByEmployeeLookupCommand = new DelegateCommand(ExecuteOpenLookupForCalibratedByEmployee);
             DepartmentConfigLookupCommand = new DelegateCommand(ExecuteOpenDepartmentConfigLookup);
+            PlantConfigLookupCommand = new DelegateCommand(ExecuteOpenPlantConfig);
 			EquipmentSelectionCommand = new DelegateCommand(SelectEquipment);
             MachineToolSelectionCommand = new DelegateCommand(SelectMachineTool);
+            NavigateBackToList = new DelegateCommand<string>(Navigate);
 
             measuringDeviceDA = new MeasuringDeviceDA();
             employeeDA = new EmployeeDA();
@@ -378,36 +369,48 @@ namespace IMTE.ViewModels
             plantDA = new PlantDA();
             equipmentTypeDA = new EquipmentTypeDA();
 
-            //Employees = new ObservableCollection<Employee>(employeeDA.GetAllEmployees());
-            //Departments = new ObservableCollection<Department>(departmentDA.GetAllDepartments());
-            //Locations = new ObservableCollection<Location>(locationDA.GetAllLocations());
-            //Units = new ObservableCollection<UnitEntity>(unitDA.GetAllUnit());
-            //Plants = new ObservableCollection<Plant>(plantDA.GetAllPlant());
-            //EquipmentTypes = new ObservableCollection<EquipmentType>(equipmentTypeDA.GetAllEquipmentType());
+            Employees = new ObservableCollection<Employee>(employeeDA.GetAllEmployees());
+            Departments = new ObservableCollection<Department>(departmentDA.GetAllDepartments());
+            Locations = new ObservableCollection<Location>(locationDA.GetAllLocations());
+            Units = new ObservableCollection<UnitEntity>(unitDA.GetAllUnit());
+            Plants = new ObservableCollection<Plant>(plantDA.GetAllPlant());
+            EquipmentTypes = new ObservableCollection<EquipmentType>(equipmentTypeDA.GetAllEquipmentType());
 
-            CurrentMeasuringDevice.IssuedToEmployee = new Employee();
-            CurrentMeasuringDevice.CalibratedByEmployee = new Employee();
+            CurrentMeasuringDevice.IssuedToEmployee = IssuedToEmployee;
+            CurrentMeasuringDevice.CalibratedByEmployee = CalibratedByEmployee;
             CurrentMeasuringDevice.Equipment = Equipment;
-            CurrentMeasuringDevice.Equipment.Item = Item;
-            CurrentMeasuringDevice.Unit = UnitOfMeasurement;
-            CurrentMeasuringDevice.Equipment.Item.Description = Description;
-            CurrentMeasuringDevice.Equipment.EquipmentTypeObj = EquipmentType;
             CurrentMeasuringDevice.MachineTool = MachineTool;
-            
-            this.regionManager = regionManager;
-
-            this.regionManager.CreateRegionManager();
-            _dialogService = dialogService;
-			this.ea = ea;
-			NavigateBackToList = new DelegateCommand<string>(Navigate);
+            CurrentMeasuringDevice.Department = Department;
 
 			ea.GetEvent<EquipmentToMeasuringDevice>().Subscribe(GetEquipmentDetails);
 			ea.GetEvent<MachineToolToMeasuringDevice>().Subscribe(GetMachineToolDetails);
-		}
 
-		private void GetMachineToolDetails(MachineTool tool)
+            ea.GetEvent<EmployeeLookupToMDForm>().Subscribe(SetIssuedToEmployeeFromLookup);
+            ea.GetEvent<DepartmentLookupToMDForm>().Subscribe(SetDepartmentFromLookup);
+        }
+
+        private void SetDepartmentFromLookup(Department obj)
+        {
+            Department = obj;
+        }
+
+        private void SetIssuedToEmployeeFromLookup(Employee empObj)
+        {
+            if (IsForIssuedEmployee)
+            {
+                IssuedToEmployee = empObj;
+                SetProperty(ref _issuedToEmployee, empObj);
+            }
+            else if (IsForCalibratedByEmployee)
+            {
+                CalibratedByEmployee = empObj;
+                SetProperty(ref _calibratedByEmployee, empObj);
+            }
+        }
+
+        private void GetMachineToolDetails(MachineTool tool)
 		{
-			
+            MachineTool = tool;
 		}
 
 
@@ -449,22 +452,44 @@ namespace IMTE.ViewModels
 
         public void ExecuteDelete()
         {
-            var delete = MessageBox.Show("Are you sure you want to delete this measuring device?", "Delete", MessageBoxButton.YesNo);
-            if (delete == MessageBoxResult.Yes)
+            if (CurrentMeasuringDevice.Id != 0 && CurrentMeasuringDevice != null)
             {
-                measuringDeviceDA.DeleteMeasuringDevice(CurrentMeasuringDevice);
-                regionManager.RequestNavigate("MainRegion", "List");
+                var delete = MessageBox.Show("Are you sure you want to delete this measuring device?", "Delete", MessageBoxButton.YesNo);
+                if (delete == MessageBoxResult.Yes)
+                {
+                    measuringDeviceDA.DeleteMeasuringDevice(CurrentMeasuringDevice);
+                    regionManager.RequestNavigate("MainRegion", "List");
+                }
+            }
+            else
+            {
+                MessageBox.Show("No measuring device selected", "Invalid", MessageBoxButton.OK);
             }
         }
 
         public void ExecuteUpdate(MeasuringDevice measuringDeviceObj)
         {
-            measuringDeviceDA.UpdateMeasuringDevice(measuringDeviceObj);
+            measuringDeviceObj.IssuedToEmployee = IssuedToEmployee;
+            measuringDeviceObj.CalibratedByEmployee = CalibratedByEmployee;
+
+            if (IsMachineTool)
+                measuringDeviceObj.MachineTool = MachineTool;
+            else if (IsEquipment)
+                measuringDeviceObj.Equipment = Equipment;
+
+            //measuringDeviceDA.UpdateMeasuringDevice(measuringDeviceObj);
         }
 
         public void ExecuteSave(MeasuringDevice measuringDeviceObj)
         {
-            measuringDeviceObj.Equipment = Equipment;
+            measuringDeviceObj.IssuedToEmployee = IssuedToEmployee;
+            measuringDeviceObj.CalibratedByEmployee = CalibratedByEmployee;
+
+            if (IsMachineTool)
+                measuringDeviceObj.MachineTool = MachineTool;
+            else if (IsEquipment)
+                measuringDeviceObj.Equipment = Equipment;
+
             //measuringDeviceDA.CreateMeasuringDevice(measuringDeviceObj);
         }
 
@@ -475,55 +500,110 @@ namespace IMTE.ViewModels
 
 		private void SelectMachineTool()
 		{
-			regionManager.RequestNavigate("EquipmentMachineToolRegion", "MachineToolForMeasuringDevice");
+            IsMachineTool = true;
+            SetProperty(ref _isMachineTool, true);
+
+            IsEquipment = false;
+            SetProperty(ref _isEquipment, false);
+            regionManager.RequestNavigate("EquipmentMachineToolRegion", "MachineToolForMeasuringDevice");
 		}
 
 		private void SelectEquipment()
 		{
-			regionManager.RequestNavigate("EquipmentMachineToolRegion", "EquipmentFormForMeasuringDevice");
-		}
+            IsEquipment = true;
+            SetProperty(ref _isEquipment, true);
 
-		private void ExecuteOpenEmployeeConfigLookup()
+            IsMachineTool = false;
+            SetProperty(ref _isMachineTool, false);
+            regionManager.RequestNavigate("EquipmentMachineToolRegion", "EquipmentFormForMeasuringDevice");
+
+        }
+
+        private void ExecuteOpenLookupForIssuedToEmployee()
 		{
-			_dialogService.ShowDialog("EmpConfig");
+            IsForIssuedEmployee = true;
+            IsForCalibratedByEmployee = false;
+            SetProperty(ref _isForIssuedEmployee, true);
+            SetProperty(ref _isForCalibratedEmployee, false);
+
+            _dialogService.ShowDialog("EmpConfig");
 		}
 
-		private void ExecuteToUpdate()
+        private void ExecuteOpenLookupForCalibratedByEmployee()
+        {
+            IsForIssuedEmployee = false;
+            IsForCalibratedByEmployee = true;
+            SetProperty(ref _isForIssuedEmployee, false);
+            SetProperty(ref _isForCalibratedEmployee, true);
+
+            _dialogService.ShowDialog("EmpConfig");
+        }
+
+        private void ExecuteToUpdate()
 		{
 			IsDataEdit = true;
 			SetProperty(ref _isDataEdit, IsDataEdit);
 		}
 
-		#endregion
+        private void ExecuteOpenPlantConfig()
+        {
+            _dialogService.ShowDialog("PlantConfig");
+        }
+
+        #endregion
 
 
-
-		private void Navigate(string uri)
+        private void Navigate(string uri)
         {
             regionManager.RequestNavigate("MainRegion", uri);
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
+            // Set default command as Save data first
             SaveChangesCommand = new DelegateCommand<MeasuringDevice>(ExecuteSave);
 
-            if (navigationContext.Parameters.Count >= 1)
+            // check first what view will be injected to the region
+            if (navigationContext.Parameters.Count != 0)
             {
-                this.CurrentMeasuringDevice = navigationContext.Parameters["measuringDeviceObj"] as MeasuringDevice;
+                // set the default command now as Update data
+                SaveChangesCommand = new DelegateCommand<MeasuringDevice>(ExecuteUpdate);
+                CurrentMeasuringDevice = navigationContext.Parameters["measuringDeviceObj"] as MeasuringDevice;
 
-                if (CurrentMeasuringDevice.Id != 0)
+                IssuedToEmployee = CurrentMeasuringDevice.IssuedToEmployee;
+                CalibratedByEmployee = CurrentMeasuringDevice.CalibratedByEmployee;
+                Department = CurrentMeasuringDevice.Department;
+
+                if (CurrentMeasuringDevice.Equipment != null)
                 {
-                    Description = CurrentMeasuringDevice.Equipment.Item.Description;
-                    Item = CurrentMeasuringDevice.Equipment.Item;
-                    Equipment = CurrentMeasuringDevice.Equipment;
-                    EquipmentType = CurrentMeasuringDevice.Equipment.EquipmentTypeObj;
+                    var navParameter = new NavigationParameters();
+                    navParameter.Add("equipmentObj", CurrentMeasuringDevice.Equipment);
 
-                    IsDataEdit = true;
+                    IsMachineTool = false;
+                    IsEquipment = true;
 
-                    // override the SaveMeasuringDeviceCommand when there's a data to edit
-                    SaveChangesCommand = new DelegateCommand<MeasuringDevice>(ExecuteUpdate);
+                    regionManager.RequestNavigate("EquipmentMachineToolRegion", "EquipmentFormForMeasuringDevice", navParameter);
+                }
+                else if (CurrentMeasuringDevice.MachineTool != null)
+                {
+                    var navParameter = new NavigationParameters();
+                    navParameter.Add("equipmentObj", CurrentMeasuringDevice.MachineTool);
+
+                    IsMachineTool = true;
+                    IsEquipment = false;
+
+                    regionManager.RequestNavigate("EquipmentMachineToolRegion", "MachineToolForMeasuringDevice", navParameter);
+                }
+                else
+                {
+                    // no view will be injected to the region
                 }
             }
+            else
+            {
+                // Set default region as Equipment
+                regionManager.RequestNavigate("EquipmentMachineToolRegion", "EquipmentFormForMeasuringDevice");
+            }            
         }
 
         public bool IsNavigationTarget(NavigationContext navigationContext)

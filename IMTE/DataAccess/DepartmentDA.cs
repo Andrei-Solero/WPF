@@ -29,17 +29,57 @@ namespace IMTE.DataAccess
                 {
                     output.Add(new Department 
                     {
-                        Id = data.GetInt32(data.GetOrdinal("Id")),
-                        DepartmentName = data.GetString(data.GetOrdinal("DepartmentName")),
+                        Id = CheckDbNullInt(data, "Id"),
+                        DepartmentName = CheckDbNullString(data, "DepartmentName"),
                         Company = new Company
                         {
-                            CompanyName = data.GetString(data.GetOrdinal("CompanyName"))
-                        }
+                            CompanyName = CheckDbNullString(data, "CompanyName")
+                        },
+                        Description = CheckDbNullString(data, "Description")
                     });
                 }
             }
 
             return output;
         }
+
+        public Department CreateDepartment(Department departmentObj)
+        {
+            Department output = departmentObj;
+
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                using (NpgsqlCommand command = new NpgsqlCommand())
+                {
+                    try
+                    {
+                        string query = @"INSERT INTO ""General"".""Department""(""CompanyId"", ""DepartmentName"", ""Description"")
+                                    VALUES(2, @DepartmentName, @Description)
+                                    RETURNING ""Id""";
+
+
+                        command.Connection = connection;
+                        command.CommandText = query;
+
+                        command.Parameters.AddWithValue("@DepartmentName", departmentObj.DepartmentName);
+                        command.Parameters.AddWithValue("@Description", departmentObj.Description);
+
+                        output.Id = Convert.ToInt32(command.ExecuteScalar());
+
+                        transaction.Commit();
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
+
+            return output;
+        }
+
     }
 }

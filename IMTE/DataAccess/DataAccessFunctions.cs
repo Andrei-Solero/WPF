@@ -19,7 +19,7 @@ namespace IMTE.DataAccess
             }
         }
 
-        public int CheckDbNullInt(NpgsqlDataReader data, string columnName)
+        protected int CheckDbNullInt(NpgsqlDataReader data, string columnName)
         {
             int columnIndex = data.GetOrdinal(columnName);
             if (data.IsDBNull(columnIndex))
@@ -32,7 +32,7 @@ namespace IMTE.DataAccess
             }
         }
 
-        public string CheckDbNullString(NpgsqlDataReader data, string columnName)
+        protected string CheckDbNullString(NpgsqlDataReader data, string columnName)
         {
             int columnIndex = data.GetOrdinal(columnName);
             if (data.IsDBNull(columnIndex))
@@ -42,6 +42,32 @@ namespace IMTE.DataAccess
             else
             {
                 return data.GetString(columnIndex);
+            }
+        }
+
+        protected bool? CheckDbNullBoolean(NpgsqlDataReader data, string columnName)
+        {
+            int columnIndex = data.GetOrdinal(columnName);
+            if (data.IsDBNull(columnIndex))
+            {
+                return null;
+            }
+            else
+            {
+                return data.GetBoolean(columnIndex);
+            }
+        }
+
+        protected decimal CheckDbNullDecimal(NpgsqlDataReader data, string columnName)
+        {
+            int columnIndex = data.GetOrdinal(columnName);
+            if (data.IsDBNull(columnIndex))
+            {
+                return 0;
+            }
+            else
+            {
+                return data.GetDecimal(columnIndex);
             }
         }
 

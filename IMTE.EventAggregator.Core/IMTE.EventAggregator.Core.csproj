@@ -44,6 +44,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DepartmentLookupToMDForm.cs" />
+    <Compile Include="DescriptionLookupToEQMTForm.cs" />
+    <Compile Include="EmployeeLookupToMDForm.cs" />
     <Compile Include="EquipmentToMeasuringDevice.cs" />
     <Compile Include="MachineToolToMeasuringDevice.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

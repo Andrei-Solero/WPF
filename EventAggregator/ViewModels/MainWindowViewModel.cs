@@ -10,7 +10,6 @@ namespace EventAggregator.ViewModels
     public class MainWindowViewModel : BindableBase
     {
         private readonly IDialogService dialogService;
-        private readonly IEventAggregator ea;
 
         public DelegateCommand OpenWindowCommand { get; set; }
 
@@ -33,7 +32,6 @@ namespace EventAggregator.ViewModels
         public MainWindowViewModel(IDialogService dialogService, IEventAggregator ea)
         {
             this.dialogService = dialogService;
-            this.ea = ea;
             OpenWindowCommand = new DelegateCommand(OpenWindow);
 
             ea.GetEvent<SelectedTextSentEvent>().Subscribe(SetSelectedText);

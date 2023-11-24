@@ -1,4 +1,5 @@
 ﻿using IMTE.General.Models;
+using IMTE.Models.General;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,13 +13,13 @@ namespace IMTE.Models.HumanResources
         public int? Id { get; set; }
         public int? Version { get; set; }
         public int? CompanyId { get; set; }
-        public EmployeeType EmployeeType { get; set; }
+        public EmployeeType EmployeeType { get; set; } = new EmployeeType();
         public int? EmergencyContactPersonId { get; set; }
         public int? EducationId { get; set; }
-        public Position Position { get; set; }
+        public Position Position { get; set; } = new Position();
         public int? ModifiedByEmployeeId { get; set; }
-        public int? PrimaryDepartmentId { get; set; }
-        public Person Person { get; set; }
+        public Department PrimaryDepartment { get; set; }
+        public Person Person { get; set; } = new Person();
         public int? SpecificationId { get; set; }
         public string EmployeeNo { get; set; }
         public DateTime? HiredDate { get; set; }
@@ -48,8 +49,7 @@ namespace IMTE.Models.HumanResources
 
         public override string ToString()
         {
-            return $"{Person.First} {Person.Last}";
+            return $"{Person.Last}, {Person.First}, {Person.Middle}";
         }
-
     }
 }

@@ -14,7 +14,7 @@ namespace IMTE.General.Models
         public string First { get; set; }
         public string Last { get; set; }
         public string Middle { get; set; }
-        public DateTime Birthdate { get; set; }
+        public DateTime Birthdate { get; set; } = DateTime.UtcNow;
         public string Title { get; set; }
         public string Gender { get; set; }
         public DateTime SinceDate { get; set; }
@@ -29,7 +29,7 @@ namespace IMTE.General.Models
 
         public override string ToString()
         {
-            return $"{First}, {Last} {Middle    }";
+            return $"{First}, {Last} {Middle}";
         }
 
     }

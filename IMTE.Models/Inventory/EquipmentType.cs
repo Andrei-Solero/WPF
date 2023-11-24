@@ -10,9 +10,9 @@ namespace IMTE.Models.Inventory
 {
     public class EquipmentType
     {
-        public int Id { get; set; }
-        public int Version { get; set; }
-        public int CompanyId { get; set; }
+        public int? Id { get; set; }
+        public int? Version { get; set; }
+        public int? CompanyId { get; set; }
         public Company Company { get; set; }
         public Employee ModifiedByEmployeeId { get; set; }
         public string Name { get; set; }

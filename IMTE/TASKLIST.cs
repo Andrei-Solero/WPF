@@ -12,6 +12,6 @@ namespace IMTE
         //TODO: CREATE TABLE FOR CALIBRATION RESULT
         //TODO: CREATE TABLE FOR CALIBRATION METHOD
         //TODO: CREATE TABLE FOR FREQUENCY OF CALIBRATION
-        //TODO: Make the default view is Equipment and for every lookup, make the default to the list
+        //TODO: Fix the insertion of the machine tool and equipment for measuring device
     }
 }

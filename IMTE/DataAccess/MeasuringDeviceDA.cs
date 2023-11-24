@@ -4,6 +4,7 @@ using IMTE.Models.Definition;
 using IMTE.Models.General;
 using IMTE.Models.HumanResources;
 using IMTE.Models.Inventory;
+using IMTE.Models.Production;
 using Newtonsoft.Json;
 using Npgsql;
 using System;
@@ -34,56 +35,80 @@ namespace IMTE.DataAccess
                     connection.Open();
                     command.Connection = connection;
                     string query = @"
-                                SELECT 
-                                    md.""Id"" as ""MDId"", 
-                                    eq.""Id"" as ""EqId"", eq.""Manufacturer"", eq.""Model"", eq.""HasAccessory"", 
-                                    eq.""ApprovalCode"", eq.""IsPrinted"", eq.""IsSent"", eq.""IsForeignCurrency"",
-                                    eqType.""Id"" as ""EquipmentTypeId"", eqType.""Name"" as ""EquipmentName"",
-                                    it.""Id"" as ""ItemId"", it.""ItemCode"", it.""ShortDescription"", 
-                                    des.""Id"" as ""DesId"", des.""Text"" as ""DescriptionText"",
-                                    pl.""Id"" as ""PlId"", pl.""PlantName"",
-                                    empIssuedTo.""Id"" as ""IssuedToEmployeeId"", 
-                                    empIssuedToPerson.""Id"" as ""IssuedToEmployeePersonId"", empIssuedToPerson.""First"" as ""IssuedToEmpFirst"", 
-                                    empIssuedToPerson.""Last"" as ""IssuedToEmpLast"", empIssuedToPerson.""Middle"" as ""IssuedToEmpMiddle"",
-                                    empIssuedToPosition.""Id"" as ""IssuedToEmployeePositionId"", 
-                                    empIssuedToPosition.""PositionName"" as ""IssuedToEmployeePosition"", 
-                                    empIssuedToPosition.""DutiesDescription"" as ""IssuedToEmployeeDuties"",
+                                    SELECT 
+                                        md.""Id"" as ""MDId"", 
+                                        eq.""Id"" as ""EqId"", eq.""Manufacturer"" as ""EquipmentManufacturer"", eq.""Model"" as ""EquipmentModel"", 
+                                        eq.""HasAccessory"" as ""EquipmentHasAccessory"", eq.""ApprovalCode"" as ""EquipmentApprovalCode"", 
+                                        eq.""IsPrinted"" as ""EquipmentIsPrinted"", eq.""IsSent"" as ""EquipmentIsSent"", 
+                                        eq.""IsForeignCurrency"" as ""EquipmentIsForeignCurrency"",
+                                        eqType.""Id"" as ""EquipmentTypeId"", eqType.""Name"" as ""EquipmentTypeName"",
+                                        eqIt.""Id"" as ""EquipmentItemId"", eqIt.""ItemCode"" as ""EquipmentItemCode"", eqIt.""ShortDescription"" as ""EquipmentItemShortDescription"", 
+                                        eqDes.""Id"" as ""EquipmentItemDescriptionId"", eqDes.""Text"" as ""EquipmentItemDescriptionText"",
+                                        mt.""Id"" as ""MachineToolId"", 
+                                        mtIt.""Id"" as ""MachineToolItemId"", mtIt.""ItemCode"" as ""MachineToolItemCode"", 
+                                        mtIt.""ShortDescription"" as ""MachineToolItemShortDescription"",
+                                        mtDes.""Id"" as ""MachineToolItemDescriptionId"", mtDes.""Text"" as ""MachineToolItemDescriptionText"",
+                                        mtType.""Id"" as ""MachineToolTypeId"", 
+                                        mtType.""Description"" as ""MachineToolTypeDescription"", mtType.""ToolTypeName"" as ""MachineToolTypeName"",
+                                        mt.""Description"" as ""MachineToolDescription"", mt.""Note"" as ""MachineToolNote"",
+                                        mt.""ToolName"" as ""MachineToolName"", mt.""UnitCost"" as ""MachineToolUnitCost"",
+                                        mt.""ToolLifeUsagePcs"" as ""MachineToolLifeUsagePcs"",
         
-                                    empCalibratedBy.""Id"" as ""CalibratedByEmployeeId"",
-                                    empCalibratedByPerson.""Id"" as ""CalibratedToEmployeePersonId"", 
-                                    empCalibratedByPerson.""First"" as ""CalibratedByEmployeeFirst"", 
-                                    empCalibratedByPerson.""Last"" as ""CalibratedByEmployeeLast"", empCalibratedByPerson.""Middle"" as ""CalibratedByEmployeeMiddle"",
-                                    empCalibratedByPosition.""Id"" as ""CalibratedByEmployeePositionId"", 
-                                    empCalibratedByPosition.""PositionName"" as ""CalibratedByEmployeePosition"", 
-                                    empCalibratedByPosition.""DutiesDescription"" as ""CalibratedByEmployeeDuties"",
+                                        pl.""Id"" as ""PlId"", pl.""PlantName"",
         
-                                    dept.""Id"" as ""DepartmentId"", dept.""DepartmentName"",
-                                    loc.""Id"" as ""LocationId"", loc.""Name"" as ""LocationName"",
-                                    md.""Version"" as ""MDVersion"", md.""FrequencyOfCalibration"", md.""LastCalibrationDate"",
-                                    md.""ResultOfCalibration"", md.""NextCalibrationDate"", md.""Status"", md.""ThreadGaugeRIngGaugeUsageNo"",
-                                    md.""CalibrationRemarks"", md.""Remarks"", md.""Date"", md.""Maker"",
-                                    md.""Resolution"", md.""DeviceRange"", md.""Accuracy"", md.""CalibrationCertificate"", md.""Barcode"", 
-                                    md.""CalibrationMethod"", md.""AcceptanceCriteria"",  md.""SerialNo"",
-                                    unit.""Id"" as ""UnitId"", unit.""UnitCategory"", unit.""UnitVal"", unit.""Description""
-                                FROM ""IMTE"".""MeasuringDevices"" md
-                                LEFT OUTER JOIN ""Inventory"".""Equipment"" eq ON md.""EquipmentId"" = eq.""Id""
-                                LEFT OUTER JOIN ""Inventory"".""EquipmentType"" eqType ON eq.""EquipmentTypeId"" = eqType.""Id""
-                                LEFT OUTER JOIN ""General"".""Item"" it ON eq.""ItemId"" = it.""Id""
-                                LEFT OUTER JOIN ""General"".""Description"" des ON it.""DescriptionId"" = des.""Id""
-                                LEFT OUTER JOIN ""General"".""Plant"" pl ON md.""PlantId"" = pl.""Id""
+                                        empIssuedTo.""Id"" as ""IssuedToEmployeeId"", 
+                                        empIssuedToPerson.""Id"" as ""IssuedToEmployeePersonId"", empIssuedToPerson.""First"" as ""IssuedToEmpFirst"", 
+                                        empIssuedToPerson.""Last"" as ""IssuedToEmpLast"", empIssuedToPerson.""Middle"" as ""IssuedToEmpMiddle"",
+                                        empIssuedToPosition.""Id"" as ""IssuedToEmployeePositionId"", 
+                                        empIssuedToPosition.""PositionName"" as ""IssuedToEmployeePosition"", 
+                                        empIssuedToPosition.""DutiesDescription"" as ""IssuedToEmployeeDuties"",
     
-                                LEFT OUTER JOIN ""HumanResources"".""Employee"" empIssuedTo ON md.""IssuedToEmployeeId"" = empIssuedTo.""Id""
-                                LEFT OUTER JOIN ""HumanResources"".""Position"" empIssuedToPosition ON empIssuedTo.""PositionId"" = empIssuedToPosition.""Id""
-                                LEFT OUTER JOIN ""General"".""Person"" empIssuedToPerson ON empIssuedTo.""PersonId"" = empIssuedToPerson.""Id""
+                                        empCalibratedBy.""Id"" as ""CalibratedByEmployeeId"",
+                                        empCalibratedByPerson.""Id"" as ""CalibratedToEmployeePersonId"", 
+                                        empCalibratedByPerson.""First"" as ""CalibratedByEmployeeFirst"", 
+                                        empCalibratedByPerson.""Last"" as ""CalibratedByEmployeeLast"", empCalibratedByPerson.""Middle"" as ""CalibratedByEmployeeMiddle"",
+                                        empCalibratedByPosition.""Id"" as ""CalibratedByEmployeePositionId"", 
+                                        empCalibratedByPosition.""PositionName"" as ""CalibratedByEmployeePosition"", 
+                                        empCalibratedByPosition.""DutiesDescription"" as ""CalibratedByEmployeeDuties"",
     
-                                LEFT OUTER JOIN ""HumanResources"".""Employee"" empCalibratedBy ON md.""CalibratedByEmployeeId"" = empCalibratedBy.""Id""
-                                LEFT OUTER JOIN ""HumanResources"".""Position"" empCalibratedByPosition ON empCalibratedBy.""PositionId"" = empCalibratedByPosition.""Id""
-                                LEFT OUTER JOIN ""General"".""Person"" empCalibratedByPerson ON empCalibratedBy.""PersonId"" = empCalibratedByPerson.""Id""
+                                        dept.""Id"" as ""DepartmentId"", dept.""DepartmentName"",
+                                        loc.""Id"" as ""LocationId"", loc.""Name"" as ""LocationName"",
+                                        md.""Version"" as ""MDVersion"", md.""FrequencyOfCalibration"", md.""LastCalibrationDate"",
+                                        md.""ResultOfCalibration"", md.""NextCalibrationDate"", md.""Status"", md.""ThreadGaugeRIngGaugeUsageNo"",
+                                        md.""CalibrationRemarks"", md.""Remarks"", md.""Date"", md.""Maker"",
+                                        md.""Resolution"", md.""DeviceRange"", md.""Accuracy"", md.""CalibrationCertificate"", md.""Barcode"", 
+                                        md.""CalibrationMethod"", md.""AcceptanceCriteria"",  md.""SerialNo"",
+                                        unit.""Id"" as ""UnitId"", unit.""UnitCategory"", unit.""UnitVal"", unit.""Description""
+                                    FROM ""IMTE"".""MeasuringDevices"" md
+
+                                    LEFT OUTER JOIN ""Inventory"".""Equipment"" eq ON md.""EquipmentId"" = eq.""Id""
+                                    LEFT OUTER JOIN ""Inventory"".""EquipmentType"" eqType ON eq.""EquipmentTypeId"" = eqType.""Id""
+                                    LEFT OUTER JOIN ""General"".""Item"" eqIt ON eq.""ItemId"" = eqIt.""Id""
+                                    LEFT OUTER JOIN ""General"".""Description"" eqDes ON eqIt.""DescriptionId"" = eqDes.""Id""
     
-                                LEFT OUTER JOIN ""General"".""Department"" dept ON md.""DepartmentId"" = dept.""Id""
-                                LEFT OUTER JOIN ""General"".""Location"" loc ON md.""LocationId"" = loc.""Id""
-                                LEFT OUTER JOIN ""Definition"".""Unit"" unit ON md.""UnitId"" = unit.""Id""
-                                WHERE md.""IsDeleted"" = false;";
+                                    LEFT OUTER JOIN ""General"".""Plant"" pl ON md.""PlantId"" = pl.""Id""
+    
+                                    LEFT OUTER JOIN ""Production"".""MachineTool"" mt ON md.""MachineToolId"" = mt.""Id""
+                                    LEFT OUTER JOIN ""Production"".""MachineToolType"" mtType ON mt.""MachineToolTypeId"" = mtType.""Id""
+                                    LEFT OUTER JOIN ""General"".""Item"" mtIt ON mt.""ItemId"" = mtIt.""Id""
+                                    LEFT OUTER JOIN ""General"".""Description"" mtDes ON mtIt.""DescriptionId"" = mtDes.""Id""
+    
+                                    LEFT OUTER JOIN ""HumanResources"".""Employee"" empIssuedTo ON md.""IssuedToEmployeeId"" = empIssuedTo.""Id""
+                                    LEFT OUTER JOIN ""HumanResources"".""Position"" empIssuedToPosition ON empIssuedTo.""PositionId"" = empIssuedToPosition.""Id""
+                                    LEFT OUTER JOIN ""General"".""Person"" empIssuedToPerson ON empIssuedTo.""PersonId"" = empIssuedToPerson.""Id""
+    
+                                    LEFT OUTER JOIN ""HumanResources"".""Employee"" empCalibratedBy ON md.""CalibratedByEmployeeId"" = empCalibratedBy.""Id""
+                                    LEFT OUTER JOIN ""HumanResources"".""Position"" empCalibratedByPosition ON empCalibratedBy.""PositionId"" = empCalibratedByPosition.""Id""
+                                    LEFT OUTER JOIN ""General"".""Person"" empCalibratedByPerson ON empCalibratedBy.""PersonId"" = empCalibratedByPerson.""Id""
+    
+                                    LEFT OUTER JOIN ""General"".""Department"" dept ON md.""DepartmentId"" = dept.""Id""
+                                    LEFT OUTER JOIN ""General"".""Location"" loc ON md.""LocationId"" = loc.""Id""
+                                    LEFT OUTER JOIN ""Definition"".""Unit"" unit ON md.""UnitId"" = unit.""Id""
+                                    WHERE md.""IsDeleted"" = false;
+                                ";
+
+                    // Now you can use the 'sqlQuery' string in your C# code as needed.
+
 
                     command.CommandText = query;
 
@@ -94,32 +119,58 @@ namespace IMTE.DataAccess
                         output.Add(new MeasuringDevice
                         {
                             Id = CheckDbNullInt(data, "MDId"),
-                            Equipment = new Equipment
+                            Equipment = CheckDbNullInt(data, "EqId") == 0 ? null : new Equipment
                             {
                                 Id = CheckDbNullInt(data, "EqId"),
-                                Manufacturer = CheckDbNullString(data, "Manufacturer"),
-                                Model = CheckDbNullString(data, "Model"),
-                                HasAccessory = data.GetBoolean(data.GetOrdinal("HasAccessory")),
-                                ApprovalCode = CheckDbNullString(data, "ApprovalCode"),
-                                IsPrinted = data.GetBoolean(data.GetOrdinal("IsPrinted")),
-                                IsSent = data.GetBoolean(data.GetOrdinal("IsSent")),
-                                IsForeignCurrency = data.GetBoolean(data.GetOrdinal("IsForeignCurrency")),
+                                Manufacturer = CheckDbNullString(data, "EquipmentManufacturer"),
+                                Model = CheckDbNullString(data, "EquipmentModel"),
+                                HasAccessory = CheckDbNullBoolean(data, "EquipmentHasAccessory"),
+                                ApprovalCode = CheckDbNullString(data, "EquipmentApprovalCode"),
+                                IsPrinted = CheckDbNullBoolean(data, "EquipmentIsPrinted"),
+                                IsSent = CheckDbNullBoolean(data, "EquipmentIsSent"),
+                                IsForeignCurrency = CheckDbNullBoolean(data, "EquipmentIsForeignCurrency"),
                                 EquipmentTypeObj = new EquipmentType
                                 {
                                     Id = CheckDbNullInt(data, "EquipmentTypeId"),
-                                    Name = CheckDbNullString(data, "EquipmentName")
+                                    Name = CheckDbNullString(data, "EquipmentTypeName")
                                 },
                                 Item = new Item
                                 {
-                                    Id = CheckDbNullInt(data, "ItemId"),
-                                    ItemCode = CheckDbNullString(data, "ItemCode"),
-                                    ShortDescription = CheckDbNullString(data, "ShortDescription"),
+                                    Id = CheckDbNullInt(data, "EquipmentItemId"),
+                                    ItemCode = CheckDbNullString(data, "EquipmentItemCode"),
+                                    ShortDescription = CheckDbNullString(data, "EquipmentItemShortDescription"),
                                     Description = new Description
                                     {
-                                        Id = CheckDbNullInt(data, "DesId"),
-                                        Text = CheckDbNullString(data, "DescriptionText"),
+                                        Id = CheckDbNullInt(data, "EquipmentItemDescriptionId"),
+                                        Text = CheckDbNullString(data, "EquipmentItemDescriptionText"),
                                     }
                                 },
+                            },
+                            MachineTool = CheckDbNullInt(data, "MachineToolId") == 0 ? null : new MachineTool
+                            {
+                                Id = CheckDbNullInt(data, "MachineToolId"),
+                                Item = new Item
+                                {
+                                    Id = CheckDbNullInt(data, "MachineToolItemId"),
+                                    ItemCode = CheckDbNullString(data, "MachineToolItemCode"),
+                                    ShortDescription = CheckDbNullString(data, "MachineToolItemShortDescription"),
+                                    Description = new Description
+                                    {
+                                        Id = CheckDbNullInt(data, "MachineToolItemDescriptionId"),
+                                        Text = CheckDbNullString(data, "MachineToolItemDescriptionText"),
+                                    }
+                                },
+                                MachineToolType = new MachineToolType
+                                {
+                                    Id = CheckDbNullInt(data, "MachineToolTypeId"),
+                                    Description = CheckDbNullString(data, "MachineToolTypeDescription"),
+                                    ToolTypeName = CheckDbNullString(data, "MachineToolTypeName"),
+                                },
+                                Description = CheckDbNullString(data, "MachineToolDescription"),
+                                Note = CheckDbNullString(data, "MachineToolNote"),
+                                ToolName = CheckDbNullString(data, "MachineToolName"),
+                                UnitCost = CheckDbNullDecimal(data, "MachineToolUnitCost"),
+                                ToolLifeUsagePcs = CheckDbNullInt(data, "MachineToolLifeUsagePcs")
                             },
                             Plant = new Plant
                             {
@@ -275,7 +326,6 @@ namespace IMTE.DataAccess
                 }
             }
 
-
             return item;
         }
 
@@ -317,8 +367,44 @@ namespace IMTE.DataAccess
 
             }
 
-
             return equipment;
+        }
+
+        public MachineTool CreateMachineToolForMeasuringDevice(MachineTool machineToolObj, NpgsqlTransaction transaction, NpgsqlConnection connection)
+        {
+            MachineTool machineTool = machineToolObj;
+
+            using (NpgsqlCommand command = new NpgsqlCommand())
+            {
+                try
+                {
+                    string query = @"INSERT INTO ""Production"".""MachineTool"" (""CompanyId"", ""ItemId"", ""MachineToolTypeId"", ""Description"",
+                                    ""Note"", ""ToolName"", ""UnitCost"", ""ToolLifeUsagePcs"")
+                                    VALUES(2, @ItemId, @MachineToolTypeId, @Description, @Note, @ToolName, @UnitCost, @ToolLifeUsagePcs)
+                                    RETURNING ""Id""";
+
+                    command.Connection = connection;
+                    command.Transaction = transaction;
+                    command.CommandText = query;
+
+                    command.Parameters.AddWithValue("@ItemId", machineTool.Item.Id);
+                    command.Parameters.AddWithValue("@MachineToolTypeId", machineTool.MachineToolType.Id);
+                    command.Parameters.AddWithValue("@Description", machineTool.Item.Description.Text);
+                    command.Parameters.AddWithValue("@Note", machineTool.Note);
+                    command.Parameters.AddWithValue("@ToolName", machineTool.ToolName);
+                    command.Parameters.AddWithValue("@UnitCost", machineTool.UnitCost);
+                    command.Parameters.AddWithValue("@ToolLifeUsagePcs", machineTool.ToolLifeUsagePcs);
+
+                    machineToolObj.Id = Convert.ToInt32(command.ExecuteScalar());
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"{ex.GetType()}: {ex.Message}");
+                }
+
+            }
+
+            return machineTool;
         }
 
         public MeasuringDevice CreateMeasuringDevice(MeasuringDevice measuringDeviceObj)
@@ -333,23 +419,46 @@ namespace IMTE.DataAccess
                 {
                     try
                     {
-                        Description description = CreateDescriptionForItemMeasuringDevice(measuringDeviceObj.Equipment.Item.Description, transaction, connection);
-                        Item item = CreateItemEquipmentForMeasuringDevice(measuringDeviceObj.Equipment.Item, transaction, connection);
-                        Equipment equipment = CreateEquipmentForMeasuringDevice(measuringDeviceObj.Equipment, transaction, connection);
+                        Description description = null;
+                        Item item = null;
+                        Equipment equipment = null;
+                        MachineTool machineTool = null;
+
+                        if (measuringDeviceObj.Equipment != null)
+                        {
+                            description = CreateDescriptionForItemMeasuringDevice(measuringDeviceObj.Equipment.Item.Description, transaction, connection);
+                            item = CreateItemEquipmentForMeasuringDevice(measuringDeviceObj.Equipment.Item, transaction, connection);
+                            equipment = CreateEquipmentForMeasuringDevice(measuringDeviceObj.Equipment, transaction, connection);
+                        }
+                        else if (measuringDeviceObj.MachineTool.Note != null &&
+                            measuringDeviceObj.MachineTool.ToolName != null &&
+                            measuringDeviceObj.MachineTool.UnitCost != 0)
+                        {
+                            description = CreateDescriptionForItemMeasuringDevice(measuringDeviceObj.MachineTool.Item.Description, transaction, connection);
+                            item = CreateItemEquipmentForMeasuringDevice(measuringDeviceObj.MachineTool.Item, transaction, connection);
+                            machineTool = CreateMachineToolForMeasuringDevice(measuringDeviceObj.MachineTool, transaction, connection);
+                        }
 
                         string query = @"INSERT INTO ""IMTE"".""MeasuringDevices"" (""Version"", ""EquipmentId"", ""PlantId"", ""IssuedToEmployeeId"", ""CalibratedByEmployeeId"", ""DepartmentId"",
                                     ""LocationId"", ""FrequencyOfCalibration"", ""LastCalibrationDate"", ""ResultOfCalibration"", ""NextCalibrationDate"",
                                     ""Status"", ""ThreadGaugeRIngGaugeUsageNo"", ""CalibrationRemarks"", ""Remarks"", ""Date"", ""Maker"", ""Resolution"",
-                                    ""DeviceRange"", ""Accuracy"", ""Barcode"", ""CalibrationMethod"", ""AcceptanceCriteria"", ""SerialNo"", ""UnitId"") VALUES
+                                    ""DeviceRange"", ""Accuracy"", ""Barcode"", ""CalibrationMethod"", ""AcceptanceCriteria"", ""SerialNo"", ""UnitId"", 
+                                    ""MachineToolId"") VALUES
                                     (@Version, @EquipmentId, @PlantId, @IssuedToEmployeeId, @CalibratedByEmployeeId, @DepartmentId, @LocationId, @FrequencyOfCalibration, @LastCalibrationDate,
                                     @ResultOfCalibration, @NextCalibrationDate, @Status, @ThreadGaugeRIngGaugeUsageNo, @CalibrationRemarks, @Remarks, @Date,
-                                    @Maker, @Resolution, @DeviceRange, @Accuracy, @Barcode, @CalibrationMethod, @AcceptanceCriteria, @SerialNo, @UnitId)";
+                                    @Maker, @Resolution, @DeviceRange, @Accuracy, @Barcode, @CalibrationMethod, @AcceptanceCriteria, @SerialNo, @UnitId, 
+                                    @MachineToolId)";
 
                         command.Connection = connection;
                         command.CommandText = query;
 
                         command.Parameters.AddWithValue("@Version", 1);
-                        command.Parameters.AddWithValue("@EquipmentId", equipment.Id);
+
+                        if (equipment != null)
+                            command.Parameters.AddWithValue("@EquipmentId", equipment.Id);
+                        else
+                            command.Parameters.AddWithValue("@EquipmentId", DBNull.Value);
+
                         command.Parameters.AddWithValue("@PlantId", measuringDeviceObj.Plant.Id);
                         command.Parameters.AddWithValue("@IssuedToEmployeeId", measuringDeviceObj.IssuedToEmployee.Id);
                         command.Parameters.AddWithValue("@CalibratedByEmployeeId", measuringDeviceObj.CalibratedByEmployee.Id);
@@ -374,6 +483,12 @@ namespace IMTE.DataAccess
                         command.Parameters.AddWithValue("@SerialNo", measuringDeviceObj.SerialNo);
                         command.Parameters.AddWithValue("@UnitId", measuringDeviceObj.Unit.Id);
 
+                        if (machineTool != null)
+                            command.Parameters.AddWithValue("@MachineToolId", machineTool.Id);
+                        else
+                            command.Parameters.AddWithValue("@MachineToolId", DBNull.Value);
+
+
                         command.ExecuteNonQuery();
 
                         transaction.Commit();
@@ -395,52 +510,52 @@ namespace IMTE.DataAccess
             using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
             using (NpgsqlCommand command = new NpgsqlCommand())
             {
-                connection.Open();
-                command.Connection = connection;
-                string sql = @" UPDATE ""IMTE"".""MeasuringDevices"" SET
-                            ""Version"" = @Version,
-                            ""Type"" = @Type,
-                            ""FrequencyOfCalibration"" = @FrequencyOfCalibration,
-                            ""LastCalibrationDate"" = @LastCalibrationDate,
-                            ""ResultOfCalibration"" = @ResultOfCalibration,
-                            ""NextCalibrationDate"" = @NextCalibrationDate,
-                            ""Status"" = @Status,
-                            ""CalibrationRemarks"" = @CalibrationRemarks,
-                            ""TrgTpgAndSettingRemarks"" = @TrgTpgAndSettingsRemark,
-                            ""Remarks"" = @Remarks,
-                            ""Date"" = @Date,
-                            ""Maker"" = @Maker,
-                            ""Resolution"" = @Resolution,
-                            ""DeviceRange"" = @DeviceRange,
-                            ""Accuracy"" = @Accuracy,
-                            ""UnitOfMeasurement"" = @UnitOfMeasurement,
-                            ""Barcode"" = @Barcode,
-                            ""CalibrationMethod"" = @CalibrationMethod
-                            WHERE ""Id"" = @Id";
+                //connection.Open();
+                //command.Connection = connection;
+                //string sql = @" UPDATE ""IMTE"".""MeasuringDevices"" SET
+                //            ""Version"" = @Version,
+                //            ""Type"" = @Type,
+                //            ""FrequencyOfCalibration"" = @FrequencyOfCalibration,
+                //            ""LastCalibrationDate"" = @LastCalibrationDate,
+                //            ""ResultOfCalibration"" = @ResultOfCalibration,
+                //            ""NextCalibrationDate"" = @NextCalibrationDate,
+                //            ""Status"" = @Status,
+                //            ""CalibrationRemarks"" = @CalibrationRemarks,
+                //            ""TrgTpgAndSettingRemarks"" = @TrgTpgAndSettingsRemark,
+                //            ""Remarks"" = @Remarks,
+                //            ""Date"" = @Date,
+                //            ""Maker"" = @Maker,
+                //            ""Resolution"" = @Resolution,
+                //            ""DeviceRange"" = @DeviceRange,
+                //            ""Accuracy"" = @Accuracy,
+                //            ""UnitOfMeasurement"" = @UnitOfMeasurement,
+                //            ""Barcode"" = @Barcode,
+                //            ""CalibrationMethod"" = @CalibrationMethod
+                //            WHERE ""Id"" = @Id";
 
-                command.CommandText = sql;
+                //command.CommandText = sql;
 
-                command.Parameters.AddWithValue("@Version", measuringDeviceObj.Version++);
-                command.Parameters.AddWithValue("@Type", measuringDeviceObj.Type);
-                command.Parameters.AddWithValue("@FrequencyOfCalibration", measuringDeviceObj.FrequencyOfCalibration);
-                command.Parameters.AddWithValue("@LastCalibrationDate", measuringDeviceObj.LastCalibrationDate ?? DateTime.Now.Date);
-                command.Parameters.AddWithValue("@NextCalibrationDate", measuringDeviceObj.NextCalibrationDate ?? DateTime.Now.Date);
-                command.Parameters.AddWithValue("@ResultOfCalibration", measuringDeviceObj.ResultOfCalibration);
-                command.Parameters.AddWithValue("@Status", measuringDeviceObj.Status);
-                command.Parameters.AddWithValue("@CalibrationRemarks", measuringDeviceObj.CalibrationRemarks);
-                command.Parameters.AddWithValue("@TrgTpgAndSettingsRemark", measuringDeviceObj.CalibrationRemarks);
-                command.Parameters.AddWithValue("@Remarks", measuringDeviceObj.Remarks);
-                command.Parameters.AddWithValue("@Date", measuringDeviceObj.Date);
-                command.Parameters.AddWithValue("@Maker", measuringDeviceObj.Maker);
-                command.Parameters.AddWithValue("@Resolution", measuringDeviceObj.Resolution);
-                command.Parameters.AddWithValue("@DeviceRange", measuringDeviceObj.DeviceRange);
-                command.Parameters.AddWithValue("@Accuracy", measuringDeviceObj.Accuracy);
-                command.Parameters.AddWithValue("@UnitOfMeasurement", measuringDeviceObj.Unit);
-                command.Parameters.AddWithValue("@Barcode", measuringDeviceObj.Barcode);
-                command.Parameters.AddWithValue("@CalibrationMethod", measuringDeviceObj.CalibrationMethod);
-                command.Parameters.AddWithValue("@Id", measuringDeviceObj.Id);
+                //command.Parameters.AddWithValue("@Version", measuringDeviceObj.Version++);
+                //command.Parameters.AddWithValue("@Type", measuringDeviceObj.Type);
+                //command.Parameters.AddWithValue("@FrequencyOfCalibration", measuringDeviceObj.FrequencyOfCalibration);
+                //command.Parameters.AddWithValue("@LastCalibrationDate", measuringDeviceObj.LastCalibrationDate ?? DateTime.Now.Date);
+                //command.Parameters.AddWithValue("@NextCalibrationDate", measuringDeviceObj.NextCalibrationDate ?? DateTime.Now.Date);
+                //command.Parameters.AddWithValue("@ResultOfCalibration", measuringDeviceObj.ResultOfCalibration);
+                //command.Parameters.AddWithValue("@Status", measuringDeviceObj.Status);
+                //command.Parameters.AddWithValue("@CalibrationRemarks", measuringDeviceObj.CalibrationRemarks);
+                //command.Parameters.AddWithValue("@TrgTpgAndSettingsRemark", measuringDeviceObj.CalibrationRemarks);
+                //command.Parameters.AddWithValue("@Remarks", measuringDeviceObj.Remarks);
+                //command.Parameters.AddWithValue("@Date", measuringDeviceObj.Date);
+                //command.Parameters.AddWithValue("@Maker", measuringDeviceObj.Maker);
+                //command.Parameters.AddWithValue("@Resolution", measuringDeviceObj.Resolution);
+                //command.Parameters.AddWithValue("@DeviceRange", measuringDeviceObj.DeviceRange);
+                //command.Parameters.AddWithValue("@Accuracy", measuringDeviceObj.Accuracy);
+                //command.Parameters.AddWithValue("@UnitOfMeasurement", measuringDeviceObj.Unit);
+                //command.Parameters.AddWithValue("@Barcode", measuringDeviceObj.Barcode);
+                //command.Parameters.AddWithValue("@CalibrationMethod", measuringDeviceObj.CalibrationMethod);
+                //command.Parameters.AddWithValue("@Id", measuringDeviceObj.Id);
 
-                command.ExecuteNonQuery();
+                //command.ExecuteNonQuery();
             }
         }
 

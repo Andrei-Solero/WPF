@@ -1,0 +1,17 @@
+﻿<UserControl
+    x:Class="IMTE.Views.MDLookup_PlantConfig"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:IMTE.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prism="http://prismlibrary.com/"
+    Width="900"
+    Height="600"
+    prism:ViewModelLocator.AutoWireViewModel="True"
+    Background="White"
+    mc:Ignorable="d">
+    <Grid>
+        <ContentControl prism:RegionManager.RegionName="PlantConfigMainRegion" />
+    </Grid>
+</UserControl>

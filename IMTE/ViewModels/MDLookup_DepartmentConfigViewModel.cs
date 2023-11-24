@@ -21,6 +21,8 @@ namespace IMTE.ViewModels
         {
 			this.regionManager = regionManager;
 
+			regionManager.RegisterViewWithRegion("DeptConfigRegion", "DeptConfigList");
+
 			OpenDepartmentListCommand = new DelegateCommand(OpenDepartmentList);
 			OpenDepartmentCreateCommand = new DelegateCommand(OpenDepartmentCreate);
 		}

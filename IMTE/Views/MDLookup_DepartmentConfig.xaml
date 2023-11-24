@@ -1,123 +1,99 @@
 ﻿<UserControl
-	x:Class="IMTE.Views.MDLookup_DepartmentConfig"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-	xmlns:local="clr-namespace:IMTE.Views"
-	xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	xmlns:prism="http://prismlibrary.com/"
-	Width="900"
-	Height="600"
-	prism:ViewModelLocator.AutoWireViewModel="True"
-	Background="White"
-	mc:Ignorable="d">
-	<GroupBox Header="Department Configuration">
-		<Grid>
-			<Grid.Resources>
-				<Style x:Key="IconStyle" TargetType="{x:Type iconPacks:PackIconMaterialLight}">
-					<Setter Property="Height" Value="25" />
-					<Setter Property="Width" Value="25" />
-					<Setter Property="BorderThickness" Value="0" />
-				</Style>
+    x:Class="IMTE.Views.MDLookup_DepartmentConfig"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:local="clr-namespace:IMTE.Views"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prism="http://prismlibrary.com/"
+    Width="900"
+    Height="600"
+    prism:ViewModelLocator.AutoWireViewModel="True"
+    Background="White"
+    mc:Ignorable="d">
+    <GroupBox Header="Department Configuration">
+        <Grid>
+            <Grid.Resources>
+                <Style x:Key="ButtonLabelStyle" TargetType="TextBlock">
+                    <Setter Property="FontSize" Value="14" />
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="FontWeight" Value="Regular" />
+                    <Setter Property="Margin" Value="0,0,6,0" />
+                </Style>
 
-				<Style x:Key="featherIconStyle" TargetType="{x:Type iconPacks:PackIconFeatherIcons}">
-					<Setter Property="Height" Value="25" />
-					<Setter Property="Width" Value="25" />
-					<Setter Property="BorderThickness" Value="0" />
-				</Style>
+                <Style x:Key="MenuButton" TargetType="Button">
+                    <Setter Property="Width" Value="auto" />
+                    <Setter Property="HorizontalAlignment" Value="Left" />
+                    <Setter Property="Background" Value="White" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="Padding" Value="6,5" />
+                </Style>
 
-				<Style x:Key="lightIcon" TargetType="{x:Type iconPacks:PackIconMaterial}">
-					<Setter Property="Height" Value="25" />
-					<Setter Property="Width" Value="25" />
-					<Setter Property="BorderThickness" Value="0" />
-				</Style>
+                <Style x:Key="ButtonText" TargetType="TextBlock">
+                    <Setter Property="FontSize" Value="14" />
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                </Style>
 
-				<Style x:Key="packIcon" TargetType="{x:Type iconPacks:PackIconFontAwesome}">
-					<Setter Property="Height" Value="25" />
-					<Setter Property="Width" Value="25" />
-					<Setter Property="BorderThickness" Value="0" />
-				</Style>
+                <Style x:Key="LookupButton" TargetType="Button">
+                    <Setter Property="Height" Value="30" />
+                    <Setter Property="Width" Value="30" />
+                    <Setter Property="mah:ControlsHelper.CornerRadius" Value="50" />
+                    <Setter Property="Padding" Value="0" />
+                </Style>
+            </Grid.Resources>
 
-				<Style x:Key="ButtonLabelStyle" TargetType="TextBlock">
-					<Setter Property="FontSize" Value="14" />
-					<Setter Property="VerticalAlignment" Value="Center" />
-					<Setter Property="FontWeight" Value="Regular" />
-					<Setter Property="Margin" Value="0,0,6,0" />
-				</Style>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-				<Style x:Key="MenuButton" TargetType="Button">
-					<Setter Property="Width" Value="auto" />
-					<Setter Property="HorizontalAlignment" Value="Left" />
-					<Setter Property="Background" Value="White" />
-					<Setter Property="BorderThickness" Value="0" />
-					<Setter Property="Padding" Value="6,5" />
-				</Style>
+            <StackPanel
+                Grid.Row="1"
+                Margin="8,0,0,0"
+                Orientation="Horizontal">
 
-				<Style x:Key="ButtonText" TargetType="TextBlock">
-					<Setter Property="FontSize" Value="14" />
-					<Setter Property="VerticalAlignment" Value="Center" />
-				</Style>
+                <StackPanel.Resources>
+                    <Style TargetType="Button">
+                        <Setter Property="Background" Value="White" />
+                        <Setter Property="BorderThickness" Value="0" />
+                        <Setter Property="Padding" Value="10" />
+                        <Setter Property="Width" Value="100" />
+                    </Style>
+                </StackPanel.Resources>
 
-				<Style x:Key="LookupButton" TargetType="Button">
-					<Setter Property="Height" Value="30" />
-					<Setter Property="Width" Value="30" />
-					<Setter Property="mah:ControlsHelper.CornerRadius" Value="50" />
-					<Setter Property="Padding" Value="0" />
-				</Style>
-			</Grid.Resources>
+                <Button Command="{Binding OpenDepartmentCreate}" Style="{StaticResource MenuButton}">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconFontAwesome
+                                Grid.Column="0"
+                                VerticalAlignment="Center"
+                                Foreground="DarkTurquoise"
+                                Kind="PlusSquareSolid"
+                                Style="{StaticResource packIcon}" />
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
 
-			<Grid.RowDefinitions>
-				<RowDefinition Height="auto" />
-				<RowDefinition Height="auto" />
-				<RowDefinition Height="*" />
-			</Grid.RowDefinitions>
+                <Button
+                    Command="{Binding OpenDepartmentList}"
+                    CommandParameter="List"
+                    Style="{StaticResource MenuButton}">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconFontAwesome
+                                Grid.Column="0"
+                                Foreground="DarkTurquoise"
+                                Kind="ThListSolid"
+                                Style="{StaticResource packIcon}" />
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+            </StackPanel>
 
-			<StackPanel
-				Grid.Row="1"
-				Margin="8,0,0,0"
-				Orientation="Horizontal">
-
-				<StackPanel.Resources>
-					<Style TargetType="Button">
-						<Setter Property="Background" Value="White" />
-						<Setter Property="BorderThickness" Value="0" />
-						<Setter Property="Padding" Value="10" />
-						<Setter Property="Width" Value="100" />
-					</Style>
-				</StackPanel.Resources>
-
-				<Button Command="{Binding OpenDepartmentCreateCommand}" Style="{StaticResource MenuButton}">
-					<Button.Content>
-						<StackPanel Orientation="Horizontal">
-							<iconPacks:PackIconFeatherIcons
-								Grid.Column="0"
-								VerticalAlignment="Center"
-								Foreground="DarkTurquoise"
-								Kind="PlusSquare"
-								Style="{StaticResource featherIconStyle}" />
-						</StackPanel>
-					</Button.Content>
-				</Button>
-
-				<Button
-					Command="{Binding OpenDepartmentListCommand}"
-					CommandParameter="List"
-					Style="{StaticResource MenuButton}">
-					<Button.Content>
-						<StackPanel Orientation="Horizontal">
-							<iconPacks:PackIconFontAwesome
-								Grid.Column="0"
-								Foreground="DarkTurquoise"
-								Kind="ListSolid"
-								Style="{StaticResource packIcon}" />
-						</StackPanel>
-					</Button.Content>
-				</Button>
-			</StackPanel>
-
-			<ContentControl Grid.Row="2" prism:RegionManager.RegionName="DeptConfigRegion" />
-		</Grid>
-	</GroupBox>
+            <ContentControl Grid.Row="2" prism:RegionManager.RegionName="DeptConfigRegion" />
+        </Grid>
+    </GroupBox>
 </UserControl>

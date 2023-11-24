@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MDTEst.cs" />
+    <Compile Include="PositionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="EmployeeTest.cs" />
     <Compile Include="DepartmentTest.cs" />
@@ -62,6 +63,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\IMTE.Models\IMTE.Models.csproj">
+      <Project>{4BF9DD0D-EE0B-4329-ADBE-FD00A9F9D26E}</Project>
+      <Name>IMTE.Models</Name>
+    </ProjectReference>
     <ProjectReference Include="..\IMTE\IMTE.csproj">
       <Project>{2b073006-ff90-44f8-8b9e-95584d08c643}</Project>
       <Name>IMTE</Name>

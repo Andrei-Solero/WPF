@@ -16,18 +16,17 @@ namespace IMTE
     {
         protected override DependencyObject CreateShell()
         {
+
             return Container.Resolve<MainWindow>();
         }
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-
+            
         }
 
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
         {
-            base.ConfigureModuleCatalog(moduleCatalog);
-
             moduleCatalog.AddModule<IMTEModule>();
         }
 
