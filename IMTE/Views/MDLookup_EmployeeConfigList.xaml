@@ -31,7 +31,7 @@
             Style="{StaticResource dataGridMain}">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="CellDoubleTapped">
-                    <prism:InvokeCommandAction Command="{Binding PassSelectedObjToMDForm}" />
+                    <prism:InvokeCommandAction Command="{Binding PassSelectedObjToMDFormCommand}" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
             <syncfusion:SfDataGrid.Columns>

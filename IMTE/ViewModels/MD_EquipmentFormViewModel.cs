@@ -1,4 +1,5 @@
-﻿using IMTE.DataAccess;
+﻿
+using IMTE.DataAccess;
 using IMTE.EventAggregator.Core;
 using IMTE.Models.General;
 using IMTE.Models.Inventory;
@@ -17,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace IMTE.ViewModels
 {
-	//[RegionMemberLifetime(KeepAlive = false)]
+	[RegionMemberLifetime(KeepAlive = false)]
 	public class MD_EquipmentFormViewModel : BindableBase, INavigationAware
 	{
 		private readonly IEventAggregator ea;
@@ -25,6 +26,9 @@ namespace IMTE.ViewModels
         private readonly EquipmentTypeDA equipmentTypeDA;
 
         public DelegateCommand OpenDescriptionLookupCommand { get; private set; }
+		public DelegateCommand OpenItemLookupCommand { get; private set; }
+
+
         public MD_EquipmentFormViewModel(IEventAggregator ea, IDialogService dialogService)
         {
 			this.ea = ea;
@@ -37,12 +41,26 @@ namespace IMTE.ViewModels
 			Equipment.Item.Description = Description;
 
 			EquipmentTypes = new ObservableCollection<EquipmentType>(equipmentTypeDA.GetAllEquipmentType());
+
 			OpenDescriptionLookupCommand = new DelegateCommand(OpenDescriptionLookup);
+			OpenItemLookupCommand = new DelegateCommand(OpenItemLookup);
 
 			ea.GetEvent<DescriptionLookupToEQMTForm>().Subscribe(SetDescriptionFromLookup);
+			ea.GetEvent<ItemLookupToMDForm>().Subscribe(SetItemFromLookup);
 		}
 
-        private void SetDescriptionFromLookup(Description obj)
+		private void SetItemFromLookup(Item itemObj)
+		{
+			Item = itemObj;
+			Description = itemObj.Description;
+		}
+
+		private void OpenItemLookup()
+		{
+			dialogService.ShowDialog("ItemConfig");
+		}
+
+		private void SetDescriptionFromLookup(Description obj)
         {
 			Description = obj;
         }

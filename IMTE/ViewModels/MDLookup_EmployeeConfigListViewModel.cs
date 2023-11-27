@@ -18,14 +18,14 @@ namespace IMTE.ViewModels
         private readonly EmployeeDA employeeDA;
         private readonly IEventAggregator ea;
 
-        public DelegateCommand PassSelectedObjToMDForm { get; set; }
+        public DelegateCommand PassSelectedObjToMDFormCommand { get; set; }
 
         public MDLookup_EmployeeConfigListViewModel(IEventAggregator ea)
         {
             this.ea = ea;
 
             employeeDA = new EmployeeDA();
-            PassSelectedObjToMDForm = new DelegateCommand(PassEmployeeLookupToMDForm);
+			PassSelectedObjToMDFormCommand = new DelegateCommand(PassEmployeeLookupToMDForm);
             EmployeeList = new ObservableCollection<Employee>(employeeDA.GetAllEmployees());
             
         }
@@ -53,7 +53,6 @@ namespace IMTE.ViewModels
 
 
         #endregion
-
 
         #region Observable Collections
 

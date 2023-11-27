@@ -1,4 +1,5 @@
-﻿using IMTE.Models.General;
+﻿using IMTE.Models._Interface;
+using IMTE.Models.General;
 using IMTE.Models.HumanResources;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace IMTE.Models.Inventory
 {
-    public class EquipmentType
+    public class EquipmentType : IMeasuringDeviceTool
     {
         public int? Id { get; set; }
         public int? Version { get; set; }

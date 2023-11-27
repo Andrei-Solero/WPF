@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace IMTE.Views
 {
 	/// <summary>
-	/// Interaction logic for MDLookup_EmployeeConfigCreate.xaml
+	/// Interaction logic for MD_EquipmentForLookupList.xaml
 	/// </summary>
-	public partial class MDLookup_EmployeeConfigCreate : UserControl
+	public partial class MD_EquipmentForLookupList : UserControl
 	{
-		public MDLookup_EmployeeConfigCreate()
+		public MD_EquipmentForLookupList()
 		{
 			InitializeComponent();
 		}

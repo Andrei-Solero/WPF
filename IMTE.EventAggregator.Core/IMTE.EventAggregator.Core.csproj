@@ -48,6 +48,7 @@
     <Compile Include="DescriptionLookupToEQMTForm.cs" />
     <Compile Include="EmployeeLookupToMDForm.cs" />
     <Compile Include="EquipmentToMeasuringDevice.cs" />
+    <Compile Include="ItemLookupToMDForm.cs" />
     <Compile Include="MachineToolToMeasuringDevice.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

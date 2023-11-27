@@ -1,5 +1,5 @@
 ﻿<UserControl
-	x:Class="IMTE.Views.MDLookup_DepartmentConfig"
+	x:Class="IMTE.Views.MDLookup_ItemConfig"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -13,7 +13,7 @@
 	prism:ViewModelLocator.AutoWireViewModel="True"
 	Background="White"
 	mc:Ignorable="d">
-	<GroupBox Header="Department Configuration">
+	<GroupBox Header="Item Configuration">
 		<Grid>
 			<Grid.Resources>
 				<Style x:Key="ButtonLabelStyle" TargetType="TextBlock">
@@ -64,36 +64,9 @@
 					</Style>
 				</StackPanel.Resources>
 
-				<Button Command="{Binding OpenDepartmentCreateCommand}" Style="{StaticResource MenuButton}">
-					<Button.Content>
-						<StackPanel Orientation="Horizontal">
-							<iconPacks:PackIconFontAwesome
-								Grid.Column="0"
-								VerticalAlignment="Center"
-								Foreground="DarkTurquoise"
-								Kind="PlusSquareSolid"
-								Style="{StaticResource packIcon}" />
-						</StackPanel>
-					</Button.Content>
-				</Button>
-
-				<Button
-					Command="{Binding OpenDepartmentListCommand}"
-					CommandParameter="List"
-					Style="{StaticResource MenuButton}">
-					<Button.Content>
-						<StackPanel Orientation="Horizontal">
-							<iconPacks:PackIconFontAwesome
-								Grid.Column="0"
-								Foreground="DarkTurquoise"
-								Kind="ThListSolid"
-								Style="{StaticResource packIcon}" />
-						</StackPanel>
-					</Button.Content>
-				</Button>
 			</StackPanel>
 
-			<ContentControl Grid.Row="2" prism:RegionManager.RegionName="DeptConfigRegion" />
+			<ContentControl Grid.Row="2" prism:RegionManager.RegionName="ItemConfigRegion" />
 		</Grid>
 	</GroupBox>
 </UserControl>

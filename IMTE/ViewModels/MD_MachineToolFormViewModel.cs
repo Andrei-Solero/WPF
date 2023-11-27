@@ -2,9 +2,11 @@
 using IMTE.EventAggregator.Core;
 using IMTE.Models.General;
 using IMTE.Models.Production;
+using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
 using Prism.Regions;
+using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,15 +16,19 @@ using System.Threading.Tasks;
 
 namespace IMTE.ViewModels
 {
-	//[RegionMemberLifetime(KeepAlive = false)]
+	[RegionMemberLifetime(KeepAlive = false)]
 	public class MD_MachineToolFormViewModel : BindableBase, INavigationAware
 	{
 		private readonly IEventAggregator ea;
+		private readonly IDialogService dialogService;
 		private readonly MachineToolTypeDA machineToolTypeDA;
 
-		public MD_MachineToolFormViewModel(IEventAggregator ea)
+        public DelegateCommand OpenDescriptionLookupCommand { get; set; }
+
+        public MD_MachineToolFormViewModel(IEventAggregator ea, IDialogService dialogService)
         {
 			this.ea = ea;
+			this.dialogService = dialogService;
 			machineToolTypeDA = new MachineToolTypeDA();
 			ea.GetEvent<MachineToolToMeasuringDevice>().Publish(MachineTool);
 
@@ -33,9 +39,16 @@ namespace IMTE.ViewModels
 			MachineToolTypes = new ObservableCollection<MachineToolType>(machineToolTypeDA.GetAllMachineToolType());
 
 			ea.GetEvent<DescriptionLookupToEQMTForm>().Subscribe(SetDescriptionFromLookup);
+
+			OpenDescriptionLookupCommand = new DelegateCommand(OpenDescriptionLookup);
 		}
 
-        private void SetDescriptionFromLookup(Description obj)
+		private void OpenDescriptionLookup()
+		{
+			dialogService.ShowDialog("ItemDescriptionConfig");
+		}
+
+		private void SetDescriptionFromLookup(Description obj)
         {
 			Description = obj;
         }

@@ -15,14 +15,14 @@ using System.Windows.Shapes;
 
 namespace IMTE.Views
 {
-    /// <summary>
-    /// Interaction logic for MDLookup_ItemDescriptionCreate.xaml
-    /// </summary>
-    public partial class MDLookup_ItemDescriptionCreate : UserControl
-    {
-        public MDLookup_ItemDescriptionCreate()
-        {
-            InitializeComponent();
-        }
-    }
+	/// <summary>
+	/// Interaction logic for MDLookup_ItemConfigList.xaml
+	/// </summary>
+	public partial class MDLookup_ItemConfigList : UserControl
+	{
+		public MDLookup_ItemConfigList()
+		{
+			InitializeComponent();
+		}
+	}
 }

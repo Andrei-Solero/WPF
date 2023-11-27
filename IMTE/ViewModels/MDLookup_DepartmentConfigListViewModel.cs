@@ -4,6 +4,7 @@ using IMTE.Models.General;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
+using Prism.Regions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,18 +14,19 @@ using System.Threading.Tasks;
 
 namespace IMTE.ViewModels
 {
+    [RegionMemberLifetime(KeepAlive = false)]
 	public class MDLookup_DepartmentConfigListViewModel : BindableBase
 	{
         private readonly DepartmentDA departmentDA;
         private readonly IEventAggregator ea;
 
-        public DelegateCommand PassSelectedObjToMDForm { get; set; }
+        public DelegateCommand PassSelectedObjToMDFormCommand { get; set; }
 
         public MDLookup_DepartmentConfigListViewModel(IEventAggregator ea)
         {
             departmentDA = new DepartmentDA();
             Departments = new ObservableCollection<Department>(departmentDA.GetAllDepartments());
-            PassSelectedObjToMDForm = new DelegateCommand(OpenformBySelectedObject);
+			PassSelectedObjToMDFormCommand = new DelegateCommand(OpenformBySelectedObject);
             this.ea = ea;
         }
 

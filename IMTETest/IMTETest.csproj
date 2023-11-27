@@ -52,11 +52,13 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Itemtest.cs" />
     <Compile Include="MDTEst.cs" />
     <Compile Include="PositionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="EmployeeTest.cs" />
     <Compile Include="DepartmentTest.cs" />
+    <Compile Include="EquipmentTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

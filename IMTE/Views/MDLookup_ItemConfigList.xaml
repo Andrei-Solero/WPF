@@ -1,5 +1,5 @@
 ﻿<UserControl
-	x:Class="IMTE.Views.MDLookup_ItemDescriptionConfigList"
+	x:Class="IMTE.Views.MDLookup_ItemConfigList"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -17,7 +17,6 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*" />
 			<RowDefinition Height="auto" />
-			<RowDefinition Height="auto" />
 		</Grid.RowDefinitions>
 
 		<syncfusion:SfDataGrid
@@ -27,17 +26,25 @@
 			ColumnSizer="Star"
 			GridLinesVisibility="Horizontal"
 			ItemsSource="{Binding ElementName=dataPage, Path=PagedSource}"
-			SelectedItem="{Binding SelectedDescription}"
+			SelectedItem="{Binding SelectedItemObj}"
 			Style="{StaticResource dataGridMain}">
 			<i:Interaction.Triggers>
 				<i:EventTrigger EventName="CellDoubleTapped">
-					<prism:InvokeCommandAction Command="{Binding PassTextToItemDescriptionCommand}" />
+					<prism:InvokeCommandAction Command="{Binding PassSelectedObjToMDFormCommand}" />
 				</i:EventTrigger>
 			</i:Interaction.Triggers>
 			<syncfusion:SfDataGrid.Columns>
 				<syncfusion:GridTextColumn
-					HeaderText="Text"
-					MappingName="Text"
+					HeaderText="Item Code"
+					MappingName="ItemCode"
+					TextTrimming="CharacterEllipsis" />
+				<syncfusion:GridTextColumn
+					HeaderText="Item Short Descritpion"
+					MappingName="ShortDescription"
+					TextTrimming="CharacterEllipsis" />
+				<syncfusion:GridTextColumn
+					HeaderText="Description"
+					MappingName="Description.Text"
 					TextTrimming="CharacterEllipsis" />
 			</syncfusion:SfDataGrid.Columns>
 		</syncfusion:SfDataGrid>
@@ -47,7 +54,7 @@
 			Grid.Row="1"
 			Margin="15,0"
 			PageSize="30"
-			Source="{Binding Descriptions}" />
+			Source="{Binding Items}" />
 
 	</Grid>
 </UserControl>

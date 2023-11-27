@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace IMTE.ViewModels
 {
-	public class MDLookup_DepartmentConfigViewModel : BindableBase, IDialogAware
+	public class MDLookup_DepartmentConfigViewModel : DialogAwareBase
 	{
 		private readonly IRegionManager regionManager;
 
@@ -35,22 +35,6 @@ namespace IMTE.ViewModels
 		private void OpenDepartmentList()
 		{
 			regionManager.RequestNavigate("DeptConfigRegion", "DeptConfigList");
-		}
-
-		public string Title => "";
-
-		public event Action<IDialogResult> RequestClose;
-
-		public bool CanCloseDialog() => true;
-
-		public void OnDialogClosed()
-		{
-			
-		}
-
-		public void OnDialogOpened(IDialogParameters parameters)
-		{
-			
 		}
 	}
 }

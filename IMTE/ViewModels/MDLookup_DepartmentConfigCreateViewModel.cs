@@ -4,6 +4,7 @@ using IMTE.Models.General;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
+using Prism.Regions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ using System.Windows;
 
 namespace IMTE.ViewModels
 {
+    [RegionMemberLifetime(KeepAlive = false)]
     public class MDLookup_DepartmentConfigCreateViewModel : BindableBase
     {
         private readonly IEventAggregator ea;

@@ -1,4 +1,5 @@
-﻿using IMTE.Models.Definition;
+﻿using IMTE.Models._Interface;
+using IMTE.Models.Definition;
 using IMTE.Models.General;
 using IMTE.Models.HumanResources;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace IMTE.Models.Production
 {
-    public class MachineTool
+    public class MachineTool : IMeasuringDeviceTool
     {
         public int Id { get; set; }
         public int Version { get; set; }

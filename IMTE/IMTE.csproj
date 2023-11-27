@@ -280,6 +280,7 @@
     <Compile Include="DataAccess\EmployeeTypeDA.cs" />
     <Compile Include="DataAccess\EquipmentDA.cs" />
     <Compile Include="DataAccess\EquipmentTypeDA.cs" />
+    <Compile Include="DataAccess\ItemDA.cs" />
     <Compile Include="DataAccess\LocationDA.cs" />
     <Compile Include="DataAccess\MachineToolTypeDA.cs" />
     <Compile Include="DataAccess\MeasuringDeviceDA.cs" />
@@ -290,18 +291,24 @@
     <Compile Include="IMTEModule.cs" />
     <Compile Include="Statics.cs" />
     <Compile Include="TASKLIST.cs" />
+    <Compile Include="ViewModels\DialogAwareBase.cs" />
     <Compile Include="ViewModels\MDLookup_DepartmentConfigCreateViewModel.cs" />
     <Compile Include="ViewModels\MDLookup_DepartmentConfigListViewModel.cs" />
     <Compile Include="ViewModels\MDLookup_DepartmentConfigViewModel.cs" />
     <Compile Include="ViewModels\MDLookup_EmployeeConfigCreateViewModel.cs" />
     <Compile Include="ViewModels\MDLookup_EmployeeConfigListViewModel.cs" />
     <Compile Include="ViewModels\MDLookup_EmployeeConfigViewModel.cs" />
+    <Compile Include="ViewModels\MDLookup_ItemConfigListViewModel.cs" />
+    <Compile Include="ViewModels\MDLookup_ItemConfigViewModel.cs" />
     <Compile Include="ViewModels\MDLookup_ItemDescriptionConfigCreateViewModel.cs" />
     <Compile Include="ViewModels\MDLookup_ItemDescriptionConfigListViewModel.cs" />
     <Compile Include="ViewModels\MDLookup_ItemDescriptionConfigViewModel.cs" />
     <Compile Include="ViewModels\MDLookup_PlantConfigViewModel.cs" />
+    <Compile Include="ViewModels\MD_EquipmentForLookupListViewModel.cs" />
+    <Compile Include="ViewModels\MD_EquipmentFormLookupViewModel.cs" />
     <Compile Include="ViewModels\MD_EquipmentFormViewModel.cs" />
     <Compile Include="ViewModels\MD_MachineToolFormViewModel.cs" />
+    <Compile Include="ViewModels\MD_ToolLookupViewModel.cs" />
     <Compile Include="ViewModels\MeasuringDeviceFormViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MeasuringDeviceListViewModel.cs" />
@@ -323,20 +330,29 @@
     <Compile Include="Views\MDLookup_EmployeeConfigList.xaml.cs">
       <DependentUpon>MDLookup_EmployeeConfigList.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\MDLookup_ItemConfig.xaml.cs">
+      <DependentUpon>MDLookup_ItemConfig.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MDLookup_ItemConfigList.xaml.cs">
+      <DependentUpon>MDLookup_ItemConfigList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MDLookup_ItemDescriptionConfig.xaml.cs">
       <DependentUpon>MDLookup_ItemDescriptionConfig.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MDLookup_ItemDescriptionConfigList.xaml.cs">
       <DependentUpon>MDLookup_ItemDescriptionConfigList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\MDLookup_ItemDescriptionCreate.xaml.cs">
-      <DependentUpon>MDLookup_ItemDescriptionCreate.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\MDLookup_PlantConfig.xaml.cs">
       <DependentUpon>MDLookup_PlantConfig.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\MD_EquipmentForLookupList.xaml.cs">
+      <DependentUpon>MD_EquipmentForLookupList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MD_EquipmentForm.xaml.cs">
       <DependentUpon>MD_EquipmentForm.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MD_EquipmentFormLookup.xaml.cs">
+      <DependentUpon>MD_EquipmentFormLookup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MD_MachineToolForm.xaml.cs">
       <DependentUpon>MD_MachineToolForm.xaml</DependentUpon>
@@ -418,6 +434,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\MDLookup_ItemConfig.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MDLookup_ItemConfigList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MDLookup_ItemDescriptionConfig.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -426,15 +450,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\MDLookup_ItemDescriptionCreate.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\MDLookup_PlantConfig.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\MD_EquipmentForLookupList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MD_EquipmentForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MD_EquipmentFormLookup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

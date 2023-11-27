@@ -8,10 +8,12 @@ namespace IMTE
 {
     class TASKLIST
     {
-        //TODO: CREATE TABLE FOR ACCEPTANCE CRITERIA
-        //TODO: CREATE TABLE FOR CALIBRATION RESULT
-        //TODO: CREATE TABLE FOR CALIBRATION METHOD
-        //TODO: CREATE TABLE FOR FREQUENCY OF CALIBRATION
-        //TODO: Fix the insertion of the machine tool and equipment for measuring device
-    }
+		//TODO: CREATE TABLE FOR ACCEPTANCE CRITERIA
+		//TODO: CREATE TABLE FOR CALIBRATION RESULT
+		//TODO: CREATE TABLE FOR CALIBRATION METHOD
+		//TODO: CREATE TABLE FOR FREQUENCY OF CALIBRATION
+		//TODO: 
+		//TODO: Equipment and machine tool lookup
+		//TODO: updating the measuring device
+	}
 }
