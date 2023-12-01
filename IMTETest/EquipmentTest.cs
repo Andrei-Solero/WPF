@@ -13,5 +13,7 @@ namespace IMTETest
 			EquipmentDA equipmentDA = new EquipmentDA();
 			var a = equipmentDA.GetAllEquipment();
 		}
+
+		
 	}
 }

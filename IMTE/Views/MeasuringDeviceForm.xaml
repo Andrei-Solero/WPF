@@ -86,10 +86,7 @@
                     </Button.Content>
                 </Button>
 
-                <Button
-                    Command="{Binding SaveChangesCommand}"
-                    CommandParameter="{Binding CurrentMeasuringDevice}"
-                    Style="{StaticResource MenuButton}">
+                <Button Command="{Binding SaveChangesCommand}" Style="{StaticResource MenuButton}">
                     <Button.Content>
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconFontAwesome
@@ -168,7 +165,7 @@
                         BorderBrush="LightGray"
                         BorderThickness="2"
                         CornerRadius="5">
-                        <Grid>
+                        <Grid IsEnabled="{Binding IsDataSaving}">
                             <StackPanel Margin="15">
 
                                 <!--  ID & serial no  -->
@@ -184,7 +181,7 @@
                                         mah:TextBoxHelper.Watermark="Serial No"
                                         BorderBrush="Gray"
                                         Style="{StaticResource FormTextboxStyle}"
-                                        Text="{Binding CurrentMeasuringDevice.SerialNo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        Text="{Binding SerialNo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                                     <CheckBox
                                         Grid.Column="2"
@@ -226,6 +223,7 @@
                                                 Height="25"
                                                 Margin="4,0,0,0"
                                                 Padding="0"
+                                                VerticalAlignment="Top"
                                                 mah:ControlsHelper.CornerRadius="50"
                                                 Command="{Binding IssuedToEmployeeLookupCommand}">
                                                 <Button.Content>
@@ -297,17 +295,22 @@
                                             Height="25"
                                             AllowAutoComplete="True"
                                             AllowIncrementalFiltering="True"
+                                            AutoGenerateColumns="False"
                                             DisplayMember="Name"
                                             ItemsSource="{Binding Locations}"
-                                            SelectedItem="{Binding CurrentMeasuringDevice.Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            SelectedItem="{Binding Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                            <syncfusion:SfMultiColumnDropDownControl.Columns>
+                                                <syncfusion:GridTextColumn Width="200" MappingName="Name" />
+                                            </syncfusion:SfMultiColumnDropDownControl.Columns>
+                                        </syncfusion:SfMultiColumnDropDownControl>
                                     </StackPanel>
 
                                     <StackPanel Grid.Column="1" Grid.ColumnSpan="2">
                                         <TextBlock Margin="0,0,0,3" Text="Plant" />
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="auto" />
+                                                <ColumnDefinition Width="140*" />
+                                                <ColumnDefinition Width="29*" />
                                             </Grid.ColumnDefinitions>
 
                                             <syncfusion:SfMultiColumnDropDownControl
@@ -315,10 +318,14 @@
                                                 Height="25"
                                                 AllowAutoComplete="True"
                                                 AllowIncrementalFiltering="True"
-                                                AutoGenerateColumns="True"
+                                                AutoGenerateColumns="False"
                                                 DisplayMember="PlantName"
                                                 ItemsSource="{Binding Plants}"
-                                                SelectedItem="{Binding CurrentMeasuringDevice.Plant, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                SelectedItem="{Binding Plant, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <syncfusion:SfMultiColumnDropDownControl.Columns>
+                                                    <syncfusion:GridTextColumn Width="200" MappingName="PlantName" />
+                                                </syncfusion:SfMultiColumnDropDownControl.Columns>
+                                            </syncfusion:SfMultiColumnDropDownControl>
 
                                             <Button
                                                 Grid.Column="1"
@@ -351,7 +358,8 @@
                     Margin="0,8,15,0"
                     Padding="4"
                     mah:ControlsHelper.CornerRadius="3"
-                    Header="Calibration Details">
+                    Header="Calibration Details"
+                    IsEnabled="{Binding IsDataSaving}">
                     <StackPanel Margin="10" VerticalAlignment="Center">
 
                         <!--  Calibrated By  -->
@@ -433,7 +441,7 @@
                                         Grid.Column="0"
                                         Height="25"
                                         ItemsSource="{Binding CalibrationResults}"
-                                        SelectedItem="{Binding CurrentMeasuringDevice.ResultOfCalibration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        SelectedItem="{Binding ResultOfCalibration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                                     <CheckBox
                                         Grid.Column="2"
@@ -459,7 +467,7 @@
                                         AllowAutoComplete="True"
                                         AllowIncrementalFiltering="True"
                                         ItemsSource="{Binding CalibrationMethods}"
-                                        SelectedItem="{Binding CurrentMeasuringDevice.CalibrationMethod, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        SelectedItem="{Binding CalibrationMethod, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                                     <CheckBox
                                         Grid.Column="2"
@@ -493,7 +501,7 @@
                                         AllowAutoComplete="True"
                                         AllowIncrementalFiltering="True"
                                         ItemsSource="{Binding AcceptanceCriterias}"
-                                        SelectedItem="{Binding CurrentMeasuringDevice.AcceptanceCriteria, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        SelectedItem="{Binding AcceptanceCriteria, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                                     <CheckBox
                                         Grid.Column="2"
@@ -518,7 +526,7 @@
                                         AllowAutoComplete="True"
                                         AllowIncrementalFiltering="True"
                                         ItemsSource="{Binding FrequencyOfCalibrations}"
-                                        SelectedItem="{Binding CurrentMeasuringDevice.FrequencyOfCalibration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        SelectedItem="{Binding FrequencyOfCalibration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                                     <CheckBox
                                         Grid.Column="2"
@@ -545,7 +553,7 @@
                                         <ColumnDefinition Width="auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <DatePicker mah:ControlsHelper.CornerRadius="4" SelectedDate="{Binding CurrentMeasuringDevice.LastCalibrationDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    <DatePicker mah:ControlsHelper.CornerRadius="4" SelectedDate="{Binding LastCalibrationDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                                     <CheckBox
                                         Grid.Column="2"
@@ -564,7 +572,7 @@
                                         <ColumnDefinition Width="auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <DatePicker mah:ControlsHelper.CornerRadius="4" SelectedDate="{Binding CurrentMeasuringDevice.NextCalibrationDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    <DatePicker mah:ControlsHelper.CornerRadius="4" SelectedDate="{Binding NextCalibrationDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                                     <CheckBox
                                         Grid.Column="2"
@@ -588,7 +596,7 @@
                                 FontSize="12"
                                 MaxLength="500"
                                 Style="{StaticResource FormTextboxStyle}"
-                                Text="{Binding CurrentMeasuringDevice.CalibrationRemarks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                Text="{Binding CalibrationRemarks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                 TextWrapping="Wrap"
                                 VerticalScrollBarVisibility="Auto" />
 
@@ -604,7 +612,8 @@
                     <Border
                         BorderBrush="LightGray"
                         BorderThickness="2"
-                        CornerRadius="5">
+                        CornerRadius="5"
+                        IsEnabled="{Binding IsDataSaving}">
                         <StackPanel Margin="15">
 
                             <!--  ID & serial no  -->
@@ -622,7 +631,7 @@
                                     Width="150"
                                     Height="25"
                                     VerticalAlignment="Center"
-                                    Value="{Binding CurrentMeasuringDevice.ThreadGaugeRingGaugeUsageNo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    Value="{Binding ThreadGaugeRingGaugeUsageNo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 <CheckBox
                                     Grid.Column="2"
                                     Margin="4,0,0,0"
@@ -644,8 +653,8 @@
                                         Height="25"
                                         AllowAutoComplete="True"
                                         AllowIncrementalFiltering="True"
-                                        ItemsSource="{Binding Status}"
-                                        SelectedItem="{Binding CurrentMeasuringDevice.Status, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        ItemsSource="{Binding StatusData}"
+                                        SelectedItem="{Binding Status, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </StackPanel>
 
                                 <TextBox
@@ -654,7 +663,7 @@
                                     VerticalAlignment="Bottom"
                                     mah:TextBoxHelper.Watermark="Barcode"
                                     Style="{StaticResource FormTextboxStyle}"
-                                    Text="{Binding CurrentMeasuringDevice.Barcode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    Text="{Binding Barcode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             </Grid>
 
                             <!--  Issued to & Description  -->
@@ -669,7 +678,7 @@
                                     FontSize="12"
                                     MaxLength="500"
                                     Style="{StaticResource FormTextboxStyle}"
-                                    Text="{Binding CurrentMeasuringDevice.Remarks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Text="{Binding Remarks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                     TextWrapping="Wrap"
                                     VerticalScrollBarVisibility="Auto" />
 
@@ -684,7 +693,8 @@
                     Margin="0,8,15,0"
                     Padding="4"
                     mah:ControlsHelper.CornerRadius="3"
-                    Header="Instrument Details">
+                    Header="Instrument Details"
+                    IsEnabled="{Binding IsDataSaving}">
                     <StackPanel Margin="10">
 
                         <!--  Calibration Result & Calibration Method  -->
@@ -702,7 +712,7 @@
                                         <ColumnDefinition Width="auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <DatePicker mah:ControlsHelper.CornerRadius="4" SelectedDate="{Binding CurrentMeasuringDevice.Date, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    <DatePicker mah:ControlsHelper.CornerRadius="4" SelectedDate="{Binding Date, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                                     <CheckBox
                                         Grid.Column="2"
@@ -727,8 +737,8 @@
                                         Height="25"
                                         AllowAutoComplete="True"
                                         AllowIncrementalFiltering="True"
-                                        ItemsSource="{Binding Maker}"
-                                        SelectedItem="{Binding CurrentMeasuringDevice.Maker, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        ItemsSource="{Binding Makers}"
+                                        SelectedItem="{Binding Maker, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                                     <CheckBox
                                         Grid.Column="2"
@@ -761,8 +771,8 @@
                                         Height="25"
                                         AllowAutoComplete="True"
                                         AllowIncrementalFiltering="True"
-                                        ItemsSource="{Binding Resolution}"
-                                        SelectedItem="{Binding CurrentMeasuringDevice.Resolution, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        ItemsSource="{Binding Resolutions}"
+                                        SelectedItem="{Binding Resolution, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                                     <CheckBox
                                         Grid.Column="2"
@@ -787,7 +797,7 @@
                                         AllowAutoComplete="True"
                                         AllowIncrementalFiltering="True"
                                         ItemsSource="{Binding Range}"
-                                        SelectedItem="{Binding CurrentMeasuringDevice.DeviceRange, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        SelectedItem="{Binding DeviceRange, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                                     <CheckBox
                                         Grid.Column="2"
@@ -819,8 +829,8 @@
                                         Height="25"
                                         AllowAutoComplete="True"
                                         AllowIncrementalFiltering="True"
-                                        ItemsSource="{Binding Accuracy}"
-                                        SelectedItem="{Binding CurrentMeasuringDevice.Accuracy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        ItemsSource="{Binding Accuracies}"
+                                        SelectedItem="{Binding Accuracy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                                     <CheckBox
                                         Grid.Column="2"
@@ -845,9 +855,14 @@
                                         Height="25"
                                         AllowAutoComplete="True"
                                         AllowIncrementalFiltering="True"
-                                        AutoGenerateColumns="True"
+                                        AutoGenerateColumns="False"
                                         ItemsSource="{Binding Units}"
-                                        SelectedItem="{Binding CurrentMeasuringDevice.Unit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        SelectedItem="{Binding Unit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                        <syncfusion:SfMultiColumnDropDownControl.Columns>
+                                            <syncfusion:GridTextColumn Width="200" MappingName="UnitVal" />
+                                            <syncfusion:GridTextColumn Width="200" MappingName="UnitCategory" />
+                                        </syncfusion:SfMultiColumnDropDownControl.Columns>
+                                    </syncfusion:SfMultiColumnDropDownControl>
 
                                     <Button
                                         Grid.Column="1"
@@ -855,7 +870,8 @@
                                         Height="25"
                                         Margin="4,0,0,0"
                                         Padding="0"
-                                        mah:ControlsHelper.CornerRadius="50">
+                                        mah:ControlsHelper.CornerRadius="50"
+                                        Command="{Binding OpenUnitConfigLookupCommand}">
                                         <Button.Content>
                                             <iconPacks:PackIconModern Width="10" Kind="Magnify" />
                                         </Button.Content>
@@ -884,7 +900,7 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <Grid Grid.Row="0">
+                    <Grid Grid.Row="0" IsEnabled="{Binding IsDataSaving}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
@@ -907,7 +923,8 @@
                     <ContentControl
                         Grid.Row="1"
                         Height="auto"
-                        prism:RegionManager.RegionName="EquipmentMachineToolRegion" />
+                        prism:RegionManager.RegionName="EquipmentMachineToolRegion"
+                        IsEnabled="{Binding IsDataSaving}" />
                 </Grid>
 
             </Grid>

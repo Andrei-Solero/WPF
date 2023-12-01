@@ -44,7 +44,7 @@ namespace IMTE.IMTEEntity.Models
         public string Accuracy { get; set; }
         public UnitEntity Unit { get; set; }
         public byte? CalibrationCertificate { get; set; }
-        public string Barcode { get; set; } = null;
+        public string Barcode { get; set; }
         public string CalibrationMethod { get; set; }
         public string AcceptanceCriteria { get; set; }
         public bool? IsDeleted { get; set; }

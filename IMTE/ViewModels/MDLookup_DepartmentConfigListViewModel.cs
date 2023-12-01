@@ -26,11 +26,11 @@ namespace IMTE.ViewModels
         {
             departmentDA = new DepartmentDA();
             Departments = new ObservableCollection<Department>(departmentDA.GetAllDepartments());
-			PassSelectedObjToMDFormCommand = new DelegateCommand(OpenformBySelectedObject);
+			PassSelectedObjToMDFormCommand = new DelegateCommand(PassSelectedObjToMDForm);
             this.ea = ea;
         }
 
-        private void OpenformBySelectedObject()
+        private void PassSelectedObjToMDForm()
         {
             ea.GetEvent<DepartmentLookupToMDForm>().Publish(SelectedDepartment);
         }

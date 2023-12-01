@@ -2,6 +2,8 @@
 using IMTE.IMTEEntity.Models;
 using IMTE.Models.General;
 using IMTE.Models.HumanResources;
+using IMTE.Models.Inventory;
+using IMTE.Models.Production;
 using IMTE.ViewModels;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -11,6 +13,24 @@ namespace IMTETest
     [TestClass]
     public class MDTEst
     {
+        [TestMethod]
+        public void GetMDByEquipment()
+        {
+            Equipment eq = new Equipment { Id = 27 };
+            MeasuringDeviceDA mdDA = new MeasuringDeviceDA();
+
+            var a = mdDA.GetMeasuringDeviceBySelectedEquipment(eq);
+        }
+
+        [TestMethod]
+        public void GetMDByMachineTool()
+        {
+            MachineTool mt = new MachineTool { Id = 1 };
+            MeasuringDeviceDA mdDA = new MeasuringDeviceDA();
+
+            var a = mdDA.GetMeasuringDeviceBySelectedMachineTool(mt);
+        }
+
         [TestMethod]
         public void SaveMeasuringDeviceWithEquipment()
         {
@@ -61,10 +81,12 @@ namespace IMTETest
                 {
                     Item = new Item
                     {
-                        ItemCode = "samplesamplesamplesample",
+                        Id = 960,
+                        ItemCode = "123222",
                         ShortDescription = "samplesamplesample",
                         Description = new Description
                         {
+                            Id = 1808,
                             Text = "samplesamplesamplesample"
                         }
                     },

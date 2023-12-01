@@ -28,8 +28,6 @@ namespace IMTE.ViewModels
 
 			PassSelectedObjToMDFormCommand = new DelegateCommand(PassSelectedObjToMDForm);
 			Items = new ObservableCollection<Item>(itemDA.GetAllItems());
-
-			SelectedItemObj.Description = Description;
 		}
 
 		private void PassSelectedObjToMDForm()
@@ -55,7 +53,11 @@ namespace IMTE.ViewModels
         public Description Description
         {
             get { return _description; }
-            set { SetProperty(ref _description, value); }
+            set 
+            { 
+                SetProperty(ref _description, value);
+                SelectedItemObj.Description = value;
+            }
         }
 
 
@@ -63,7 +65,11 @@ namespace IMTE.ViewModels
         public Item SelectedItemObj
         {
             get { return _selectedItemObj; }
-            set { SetProperty(ref _selectedItemObj, value); }
+            set 
+            { 
+                SetProperty(ref _selectedItemObj, value);
+                Description = value.Description;
+            }
         }
 
         #endregion

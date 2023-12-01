@@ -59,6 +59,8 @@
     <Compile Include="EmployeeTest.cs" />
     <Compile Include="DepartmentTest.cs" />
     <Compile Include="EquipmentTest.cs" />
+    <Compile Include="MachineToolTest.cs" />
+    <Compile Include="UnitEntityTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

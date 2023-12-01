@@ -1,4 +1,5 @@
-﻿using Npgsql;
+﻿using IMTE.Models.Definition;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,15 +11,13 @@ namespace IMTE.DataAccess
 {
     public class UnitDA : DataAccessFunctions<Models.Definition.UnitEntity>
     {
-        public IEnumerable<Models.Definition.UnitEntity> GetAllUnit()
+        public IEnumerable<UnitEntity> GetAllUnit()
         {
             var output = new List<Models.Definition.UnitEntity>();
 
             using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
             using (NpgsqlCommand command = new NpgsqlCommand())
             {
-                // TODO connection the 'location' here and ohter foreign keys needed
-                // TODO After that bind that to the view
                 connection.Open();
                 command.Connection = connection;
                 command.CommandText = @"SELECT * FROM ""Definition"".""Unit""
@@ -30,21 +29,52 @@ namespace IMTE.DataAccess
                 {
                     output.Add(new Models.Definition.UnitEntity
                     {
-                        Id = data.GetInt32(data.GetOrdinal("Id")),
-                        Version = data.GetInt32(data.GetOrdinal("Version")),
-                        //ModifiedByEmployeeId = data.GetInt32(data.GetOrdinal("ModifiedByEmployeeId")),
-                        UnitCategory = data.GetString(data.GetOrdinal("UnitCategory")),
-                        UnitVal = data.GetString(data.GetOrdinal("UnitVal")),
-                        Description = data.GetString(data.GetOrdinal("Description")),
-                        //CreatedDate = data.GetDateTime(data.GetOrdinal("CreatedDate")),
-                        IsDeleted = data.GetBoolean(data.GetOrdinal("IsDeleted")),
-                        CreatedOn = data.GetDateTime(data.GetOrdinal("CreatedOn")),
-                        ModifiedOn = data.GetDateTime(data.GetOrdinal("ModifiedOn")),
+                        Id = CheckDbNullInt(data, "Id"),
+                        UnitCategory = CheckDbNullString(data, "UnitCategory"),
+                        UnitVal = CheckDbNullString(data, "UnitVal"),
                     });
                 }
 
                 return output;
             }
+        }
+
+        public UnitEntity CreateUnit(UnitEntity unitObj)
+        {
+            var output = new UnitEntity();
+
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                using (NpgsqlTransaction transaction = connection.BeginTransaction())
+                using (NpgsqlCommand command = new NpgsqlCommand())
+                {
+                    try
+                    {
+                        string query = @"INSERT INTO ""Definition"".""Unit""(""UnitCategory"", ""UnitVal"")
+                                    VALUES(@UnitCategory, @UnitVal)
+                                    RETURNING ""Id""";
+
+
+                        command.Connection = connection;
+                        command.CommandText = query;
+
+                        command.Parameters.AddWithValue("@UnitCategory", unitObj.UnitCategory);
+                        command.Parameters.AddWithValue("@UnitVal", unitObj.UnitVal);
+
+                        output.Id = Convert.ToInt32(command.ExecuteScalar());
+
+                        transaction.Commit();
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
+
+            return output;
         }
     }
 }

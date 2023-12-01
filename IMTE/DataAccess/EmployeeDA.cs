@@ -132,7 +132,6 @@ namespace IMTE.DataAccess
                     #endregion
 
                 }
-
             }
 
             return output;
@@ -146,7 +145,7 @@ namespace IMTE.DataAccess
                 try
                 {
                     string query = @"INSERT INTO ""General"".""Person""(""First"", ""Last"", ""Middle"",
-                                    ""Birthdate"") VALUES (@First, @Last, @Middle, @Birthdate)
+                                    ""Birthdate"", ""CreatedDate"", ""CreatedOn"") VALUES (@First, @Last, @Middle, @Birthdate, @CreatedDate, @CreatedOn)
                                     RETURNING ""Id""";
 
                     command.Connection = connection;
@@ -157,6 +156,8 @@ namespace IMTE.DataAccess
                     command.Parameters.AddWithValue("@Last", personObj.Last);
                     command.Parameters.AddWithValue("@Middle", personObj.Middle);
                     command.Parameters.AddWithValue("@Birthdate", personObj.Birthdate);
+                    command.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
+                    command.Parameters.AddWithValue("@CreatedOn", DateTime.UtcNow);
 
                     personObj.Id = Convert.ToInt32(command.ExecuteScalar());
                 }
@@ -183,8 +184,8 @@ namespace IMTE.DataAccess
                     try
                     {
                         string query = @"INSERT INTO ""HumanResources"".""Employee"" (""CompanyId"", ""EmployeeNo"", ""EmployeeTypeId"", ""PositionId"",
-                                    ""PrimaryDepartmentId"", ""PersonId"") VALUES (2, @EmployeeNo, @EmployeeTypeId, @PositionId,
-                                    @PrimaryDepartmentId, @PersonId)";
+                                    ""PrimaryDepartmentId"", ""PersonId"", ""CreatedDate"", ""CreatedOn"") VALUES (2, @EmployeeNo, @EmployeeTypeId, @PositionId,
+                                    @PrimaryDepartmentId, @PersonId, @CreatedDate, @CreatedOn)";
 
                         command.Connection = connection;
                         command.CommandText = query;
@@ -196,6 +197,8 @@ namespace IMTE.DataAccess
                         command.Parameters.AddWithValue("@PositionId", empObj.Position.Id);
                         command.Parameters.AddWithValue("@PrimaryDepartmentId", empObj.PrimaryDepartment.Id);
                         command.Parameters.AddWithValue("@PersonId", empObj.Person.Id);
+                        command.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
+                        command.Parameters.AddWithValue("@CreatedOn", DateTime.UtcNow);
 
                         command.ExecuteNonQuery();
 

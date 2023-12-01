@@ -16,6 +16,7 @@ namespace IMTE.DataAccess
 
         }
 
+
         public IEnumerable<Equipment> GetAllEquipment()
         {
             var output = new List<Equipment>();
@@ -54,7 +55,7 @@ namespace IMTE.DataAccess
                         IsPrinted = CheckDbNullBoolean(data, "IsPrinted"),
                         IsForeignCurrency = CheckDbNullBoolean(data, "IsForeignCurrency"),
                         IsSent = CheckDbNullBoolean(data, "IsSent"),
-                        EquipmentTypeObj = new EquipmentType
+                        EquipmentType = new EquipmentType
                         {
                             Id = CheckDbNullInt(data, "EquipmentTypeId"),
                             Name = CheckDbNullString(data, "EquipmentTypeName"),
@@ -76,6 +77,42 @@ namespace IMTE.DataAccess
             }
 
             return output;
+        }
+
+        public void UpdateEquipment(Equipment equipmentObj, NpgsqlTransaction transaction, NpgsqlConnection connection)
+        {
+            using (NpgsqlCommand command = new NpgsqlCommand())
+            {
+                string query = @"UPDATE ""Inventory"".""Equipment"" SET
+									""Version"" = ""Version"" + 1,
+                                    ""EquipmentTypeId"" = @EquipmentTypeId,
+                                    ""ItemId"" = @ItemId,
+                                    ""Model"" = @Model,
+                                    ""HasAccessory"" = @HasAccessory,
+                                    ""ApprovalCode"" = @ApprovalCode,
+                                    ""IsPrinted"" = @IsPrinted,
+                                    ""IsSent"" = @IsSent,
+                                    ""IsForeignCurrency"" = @IsForeignCurrency,
+                                    ""ModifiedOn"" = @ModifiedOn
+                                    WHERE ""Id"" = @Id";
+
+                command.Connection = connection;
+                command.Transaction = transaction;
+                command.CommandText = query;
+
+                command.Parameters.AddWithValue("@EquipmentTypeId", equipmentObj.EquipmentType.Id);
+                command.Parameters.AddWithValue("@ItemId", equipmentObj.Item.Id);
+                command.Parameters.AddWithValue("@Model", equipmentObj.Model);
+                command.Parameters.AddWithValue("@HasAccessory", equipmentObj.HasAccessory);
+                command.Parameters.AddWithValue("@ApprovalCode", equipmentObj.ApprovalCode);
+                command.Parameters.AddWithValue("@IsPrinted", equipmentObj.IsPrinted);
+                command.Parameters.AddWithValue("@IsSent", equipmentObj.IsSent);
+                command.Parameters.AddWithValue("@IsForeignCurrency", equipmentObj.IsForeignCurrency);
+                command.Parameters.AddWithValue("@ModifiedOn", DateTime.UtcNow);
+                command.Parameters.AddWithValue("@Id", equipmentObj.Id);
+
+                command.ExecuteNonQuery();
+            }
         }
 
     }

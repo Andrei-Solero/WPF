@@ -26,6 +26,9 @@ namespace IMTE
             containerRegistry.RegisterDialog<MDLookup_PlantConfig, MDLookup_PlantConfigViewModel>("PlantConfig");
             containerRegistry.RegisterDialog<MDLookup_ItemDescriptionConfig, MDLookup_ItemDescriptionConfigViewModel>("ItemDescriptionConfig");
             containerRegistry.RegisterDialog<MDLookup_ItemConfig, MDLookup_ItemConfigViewModel>("ItemConfig");
+            containerRegistry.RegisterDialog<MD_EquipmentFormLookup, MD_EquipmentFormLookupViewModel>("EquipmentConfig");
+            containerRegistry.RegisterDialog<MD_MachineToolFormLookup, MD_MachineToolFormLookupViewModel>("MachineToolConfig");
+            containerRegistry.RegisterDialog<MDLookup_UnitConfig, MDLookup_UnitConfigViewModel>("UnitConfig");
 
             containerRegistry.RegisterForNavigation<SplashScreen>("");
             containerRegistry.RegisterForNavigation<MeasuringDeviceList>("List");
@@ -43,6 +46,12 @@ namespace IMTE
 
             containerRegistry.RegisterForNavigation<MD_EquipmentForm>("EquipmentFormForMeasuringDevice");
             containerRegistry.RegisterForNavigation<MD_MachineToolForm>("MachineToolForMeasuringDevice");
+
+            containerRegistry.RegisterForNavigation<MD_EquipmentForLookupList>("EquipmentList");
+            containerRegistry.RegisterForNavigation<MD_MachineToolFormLookupList>("MachineToolList");
+
+            containerRegistry.RegisterForNavigation<MDLookup_UnitConfigList>("UnitConfigList");
+            containerRegistry.RegisterForNavigation<MDLookup_UnitConfigCreate>("UnitConfigCreate");
 
         }
     }

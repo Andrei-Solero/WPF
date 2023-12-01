@@ -17,7 +17,8 @@ namespace IMTE.ViewModels
 		{
 			this.regionManager = regionManager;
 
-			//regionManager.RegisterViewWithRegion("EquipmentRegion", "")
-		}
+			regionManager.RegisterViewWithRegion("EquipmentRegion", "EquipmentList");
+
+        }
 	}
 }

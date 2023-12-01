@@ -13,13 +13,13 @@ namespace IMTE.Models.HumanResources
         public int? Id { get; set; }
         public int? Version { get; set; }
         public int? CompanyId { get; set; }
-        public EmployeeType EmployeeType { get; set; } = new EmployeeType();
+        public EmployeeType EmployeeType { get; set; }
         public int? EmergencyContactPersonId { get; set; }
         public int? EducationId { get; set; }
-        public Position Position { get; set; } = new Position();
+        public Position Position { get; set; }
         public int? ModifiedByEmployeeId { get; set; }
         public Department PrimaryDepartment { get; set; }
-        public Person Person { get; set; } = new Person();
+        public Person Person { get; set; }
         public int? SpecificationId { get; set; }
         public string EmployeeNo { get; set; }
         public DateTime? HiredDate { get; set; }

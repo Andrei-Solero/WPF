@@ -13,7 +13,6 @@ namespace IMTE
 		//TODO: CREATE TABLE FOR CALIBRATION METHOD
 		//TODO: CREATE TABLE FOR FREQUENCY OF CALIBRATION
 		//TODO: 
-		//TODO: Equipment and machine tool lookup
-		//TODO: updating the measuring device
+		//TODO: 
 	}
 }

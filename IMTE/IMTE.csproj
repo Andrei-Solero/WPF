@@ -282,12 +282,14 @@
     <Compile Include="DataAccess\EquipmentTypeDA.cs" />
     <Compile Include="DataAccess\ItemDA.cs" />
     <Compile Include="DataAccess\LocationDA.cs" />
+    <Compile Include="DataAccess\MachineToolDA.cs" />
     <Compile Include="DataAccess\MachineToolTypeDA.cs" />
     <Compile Include="DataAccess\MeasuringDeviceDA.cs" />
     <Compile Include="DataAccess\PlantDA.cs" />
     <Compile Include="DataAccess\PositionDA.cs" />
     <Compile Include="DataAccess\SpecificationDA.cs" />
     <Compile Include="DataAccess\UnitDA.cs" />
+    <Compile Include="DataValidation\EquipmentMachineToolItemValidator.cs" />
     <Compile Include="IMTEModule.cs" />
     <Compile Include="Statics.cs" />
     <Compile Include="TASKLIST.cs" />
@@ -304,9 +306,14 @@
     <Compile Include="ViewModels\MDLookup_ItemDescriptionConfigListViewModel.cs" />
     <Compile Include="ViewModels\MDLookup_ItemDescriptionConfigViewModel.cs" />
     <Compile Include="ViewModels\MDLookup_PlantConfigViewModel.cs" />
+    <Compile Include="ViewModels\MDLookup_UnitConfigCreateViewModel.cs" />
+    <Compile Include="ViewModels\MDLookup_UnitConfigListViewModel.cs" />
+    <Compile Include="ViewModels\MDLookup_UnitConfigViewModel.cs" />
     <Compile Include="ViewModels\MD_EquipmentForLookupListViewModel.cs" />
     <Compile Include="ViewModels\MD_EquipmentFormLookupViewModel.cs" />
     <Compile Include="ViewModels\MD_EquipmentFormViewModel.cs" />
+    <Compile Include="ViewModels\MD_MachineToolFormLookupListViewModel.cs" />
+    <Compile Include="ViewModels\MD_MachineToolFormLookupViewModel.cs" />
     <Compile Include="ViewModels\MD_MachineToolFormViewModel.cs" />
     <Compile Include="ViewModels\MD_ToolLookupViewModel.cs" />
     <Compile Include="ViewModels\MeasuringDeviceFormViewModel.cs" />
@@ -345,6 +352,15 @@
     <Compile Include="Views\MDLookup_PlantConfig.xaml.cs">
       <DependentUpon>MDLookup_PlantConfig.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\MDLookup_UnitConfig.xaml.cs">
+      <DependentUpon>MDLookup_UnitConfig.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MDLookup_UnitConfigCreate.xaml.cs">
+      <DependentUpon>MDLookup_UnitConfigCreate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MDLookup_UnitConfigList.xaml.cs">
+      <DependentUpon>MDLookup_UnitConfigList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MD_EquipmentForLookupList.xaml.cs">
       <DependentUpon>MD_EquipmentForLookupList.xaml</DependentUpon>
     </Compile>
@@ -356,6 +372,12 @@
     </Compile>
     <Compile Include="Views\MD_MachineToolForm.xaml.cs">
       <DependentUpon>MD_MachineToolForm.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MD_MachineToolFormLookup.xaml.cs">
+      <DependentUpon>MD_MachineToolFormLookup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MD_MachineToolFormLookupList.xaml.cs">
+      <DependentUpon>MD_MachineToolFormLookupList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MeasuringDeviceForm.xaml.cs">
       <DependentUpon>MeasuringDeviceForm.xaml</DependentUpon>
@@ -454,6 +476,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\MDLookup_UnitConfig.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MDLookup_UnitConfigCreate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MDLookup_UnitConfigList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MD_EquipmentForLookupList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -467,6 +501,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MD_MachineToolForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MD_MachineToolFormLookup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MD_MachineToolFormLookupList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

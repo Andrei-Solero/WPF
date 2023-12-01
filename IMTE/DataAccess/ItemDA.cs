@@ -20,7 +20,7 @@ namespace IMTE.DataAccess
 			{
 				string query = @"
 								SELECT 
-									item.""Id"" as ""ItemId"", item.""ItemCode"", item.""ShortDescription"",
+									item.""Id"" as ""ItemId"", item.""Version"", item.""ItemCode"", item.""ShortDescription"",
 									des.""Id"" as ""DescriptionId"", des.""Text"" as ""DescriptionText""
 								FROM ""General"".""Item"" item
 								LEFT OUTER JOIN ""General"".""Description"" des ON item.""DescriptionId"" = des.""Id""";
@@ -37,6 +37,7 @@ namespace IMTE.DataAccess
 					output.Add(new Item
 					{
 						Id = CheckDbNullInt(data, "ItemId"),
+						Version = CheckDbNullInt(data, "Version"),
 						ItemCode = CheckDbNullString(data, "ItemCode"),
 						ShortDescription = CheckDbNullString(data, "ShortDescription"),
 						Description = new Description
@@ -50,5 +51,34 @@ namespace IMTE.DataAccess
 
 			return output;
 		}
+
+		// Update the item that is related to a measuring device
+		public void UpdateItem(Item itemObj, NpgsqlTransaction transaction, NpgsqlConnection connection)
+        {
+			using (NpgsqlCommand command = new NpgsqlCommand())
+			{
+				string query = @"UPDATE ""General"".""Item"" SET
+									""Version"" = ""Version"" + 1,
+                                    ""DescriptionId"" = @DescriptionId,
+                                    ""ItemCode"" = @ItemCode,
+                                    ""ShortDescription"" = @ShortDescription,
+                                    ""ModifiedOn"" = @ModifiedOn
+                                    WHERE ""Id"" = @Id";
+
+				command.Connection = connection;
+				command.Transaction = transaction;
+				command.CommandText = query;
+
+				command.Parameters.AddWithValue("@Version", itemObj.Version++);
+				command.Parameters.AddWithValue("@DescriptionId", itemObj.Description.Id);
+				command.Parameters.AddWithValue("@ItemCode", itemObj.ItemCode);
+				command.Parameters.AddWithValue("@ShortDescription", itemObj.ShortDescription);
+				command.Parameters.AddWithValue("@ModifiedOn", DateTime.UtcNow);
+				command.Parameters.AddWithValue("@Id", itemObj.Id);
+
+				command.ExecuteNonQuery();
+			}
+		}
+
 	}
 }

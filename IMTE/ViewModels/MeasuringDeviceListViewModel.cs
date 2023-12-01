@@ -27,7 +27,7 @@ namespace IMTE.ViewModels
             set { SetProperty(ref _measuringDeviceList, value); }
         }
 
-        private MeasuringDevice _selectedMeasuringDevice;
+        private MeasuringDevice _selectedMeasuringDevice = new MeasuringDevice();
         public MeasuringDevice SelectedMeasuringDevice
         {
             get { return _selectedMeasuringDevice; }

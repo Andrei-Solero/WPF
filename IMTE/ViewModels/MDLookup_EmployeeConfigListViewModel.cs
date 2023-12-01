@@ -27,7 +27,6 @@ namespace IMTE.ViewModels
             employeeDA = new EmployeeDA();
 			PassSelectedObjToMDFormCommand = new DelegateCommand(PassEmployeeLookupToMDForm);
             EmployeeList = new ObservableCollection<Employee>(employeeDA.GetAllEmployees());
-            
         }
 
         private void PassEmployeeLookupToMDForm()
@@ -64,10 +63,6 @@ namespace IMTE.ViewModels
         }
 
         #endregion
-
-
-
-
 
     }
 }

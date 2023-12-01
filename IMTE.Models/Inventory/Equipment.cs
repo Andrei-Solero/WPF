@@ -16,7 +16,7 @@ namespace IMTE.Models.Inventory
         public Company Company { get; set; }
         public int? AssetId { get; set; }
         public int? EquipmentTypeId { get; set; }
-        public EquipmentType EquipmentTypeObj { get; set; } = new EquipmentType();
+        public EquipmentType EquipmentType { get; set; }
         public int? ModifiedByEmployeeId { get; set; }
         public Employee ModifiedByEmployee { get; set; }
         public int? CurrencyId { get; set; }

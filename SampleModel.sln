@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.7.34221.43
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32413.511
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPFMVVM", "WPFMVVM\WPFMVVM.csproj", "{CE06E3E2-DF25-46B4-A337-8EC7F42B8679}"
 EndProject
@@ -35,13 +35,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestPrismUnity", "TestPrism
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventAggregatorPrism", "EventAggregatorPrism\EventAggregatorPrism.csproj", "{44186EA8-D784-489E-8EC9-393C0406BAA0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventAggregator", "EventAggregator\EventAggregator.csproj", "{AD8B6349-0AA8-4895-841C-6C084F8EA40B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventAggregator", "EventAggregator\EventAggregator.csproj", "{AD8B6349-0AA8-4895-841C-6C084F8EA40B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventAggregator.Core", "EventAggregator.Core\EventAggregator.Core.csproj", "{E249B6AD-55EE-4CC7-A1B2-855B1E534F80}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventAggregator.Core", "EventAggregator.Core\EventAggregator.Core.csproj", "{E249B6AD-55EE-4CC7-A1B2-855B1E534F80}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMTE.EventAggregator.Core", "IMTE.EventAggregator.Core\IMTE.EventAggregator.Core.csproj", "{1D908551-E8D1-4D4D-AF9B-650B30C8321F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMTE.Models", "IMTE.Models\IMTE.Models.csproj", "{4BF9DD0D-EE0B-4329-ADBE-FD00A9F9D26E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataValidation", "DataValidation", "{49341F14-1990-4A4A-AC53-31417E1964B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -144,6 +146,7 @@ Global
 		{E249B6AD-55EE-4CC7-A1B2-855B1E534F80} = {D990D39C-F265-4687-ADE6-6060D3FADC55}
 		{1D908551-E8D1-4D4D-AF9B-650B30C8321F} = {86C947DE-9B5B-488C-888F-EF4850D3058E}
 		{4BF9DD0D-EE0B-4329-ADBE-FD00A9F9D26E} = {86C947DE-9B5B-488C-888F-EF4850D3058E}
+		{49341F14-1990-4A4A-AC53-31417E1964B7} = {D990D39C-F265-4687-ADE6-6060D3FADC55}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7B446FDD-5914-40E2-BC7C-9173A195FD26}

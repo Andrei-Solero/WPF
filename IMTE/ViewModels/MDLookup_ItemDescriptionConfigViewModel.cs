@@ -20,6 +20,8 @@ namespace IMTE.ViewModels
         {
             this.regionManager = regionManager;
 
+            regionManager.RegisterViewWithRegion("ItemDescriptionRegionMain", "ItemDescriptionConfigList");
+
             OpenCreateDescriptionCommand = new DelegateCommand(OpenCreateDescription);
             OpenListDescriptionCommand = new DelegateCommand(OpenListDescription);
         }

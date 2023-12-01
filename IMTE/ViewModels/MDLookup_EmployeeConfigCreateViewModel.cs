@@ -24,7 +24,7 @@ namespace IMTE.ViewModels
         private readonly PositionDA positionDA;
         private readonly DepartmentDA departmentDA;
 
-        public DelegateCommand SaveEmployeeCommand { get; private set; }
+        public DelegateCommand SaveChangesCommand { get; private set; }
 
         public MDLookup_EmployeeConfigCreateViewModel(IEventAggregator ea)
         {
@@ -38,21 +38,28 @@ namespace IMTE.ViewModels
             JobPositions = new ObservableCollection<Position>(positionDA.GetAllJobPosition());
             Departments = new ObservableCollection<Department>(departmentDA.GetAllDepartments());
 
-            SaveEmployeeCommand = new DelegateCommand(SaveEmployee);
-            
+            SaveChangesCommand = new DelegateCommand(SaveEmployee);
+
+            SetEmployeeDataFromSeparateObject();
         }
 
-        #region DelegateCommand Implementation
+        #region Helper
 
-        private void SaveEmployee()
+        private void SetEmployeeDataFromSeparateObject()
         {
             Employee.Person = Person;
             Employee.EmployeeType = EmployeeType;
             Employee.Position = Position;
             Employee.PrimaryDepartment = Department;
+        }
 
+        #endregion
+
+        #region DelegateCommand Implementation
+
+        private void SaveEmployee()
+        {
             employeeDA.CreateEmployee(Employee);
-
             MessageBox.Show("Employee Saved");
 
             ea.GetEvent<EmployeeLookupToMDForm>().Publish(Employee);

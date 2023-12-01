@@ -18,7 +18,7 @@ namespace IMTE.Models.Production
         public int CurrencyExchangeId { get; set; }
         public Currency Currency { get; set; }
         public Item Item { get; set; }
-        public MachineToolType MachineToolType { get; set; } = new MachineToolType();
+        public MachineToolType MachineToolType { get; set; }
         public int ManufacturerCompanyId { get; set; }
         public Employee ModifiedByEmployeeId { get; set; }
         public int AssetId { get; set; }

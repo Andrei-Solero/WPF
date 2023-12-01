@@ -62,5 +62,29 @@ namespace IMTE.DataAccess
             return output;
         }
 
+        public void UpdateDescription(Description descriptionObj, NpgsqlTransaction transaction, NpgsqlConnection connection)
+        {
+            using (NpgsqlCommand command = new NpgsqlCommand())
+            {
+                string query = @"UPDATE ""General"".""Description"" SET
+                                    ""Text"" = @Text,
+                                    ""Version"" = @Version,
+                                    ""ModifiedOn"" = @CreatedOn
+                                    WHERE ""Id"" = @Id";
+
+                command.Connection = connection;
+                command.Transaction = transaction;
+                command.CommandText = query;
+
+                command.Parameters.AddWithValue("@Text", descriptionObj.Text);
+                command.Parameters.AddWithValue("@Version", descriptionObj.Version++);
+                command.Parameters.AddWithValue("@CreatedOn", DateTime.UtcNow);
+                command.Parameters.AddWithValue("@Id", descriptionObj.Id);
+
+                command.ExecuteNonQuery();
+            }
+
+        }
+
     }
 }

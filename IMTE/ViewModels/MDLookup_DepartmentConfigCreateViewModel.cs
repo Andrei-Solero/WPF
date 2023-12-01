@@ -33,7 +33,6 @@ namespace IMTE.ViewModels
         private void SaveDepartment()
         {
             departmentDA.CreateDepartment(Department);
-
             MessageBox.Show("Department Saved!", "Department", MessageBoxButton.OK);
 
             ea.GetEvent<DepartmentLookupToMDForm>().Publish(Department);
