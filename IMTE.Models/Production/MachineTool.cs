@@ -12,18 +12,18 @@ namespace IMTE.Models.Production
 {
     public class MachineTool : IMeasuringDeviceTool
     {
-        public int Id { get; set; }
-        public int Version { get; set; }
+        public int? Id { get; set; }
+        public int? Version { get; set; }
         public Company Company{ get; set; }
-        public int CurrencyExchangeId { get; set; }
+        public int? CurrencyExchangeId { get; set; }
         public Currency Currency { get; set; }
         public Item Item { get; set; }
         public MachineToolType MachineToolType { get; set; }
-        public int ManufacturerCompanyId { get; set; }
+        public int? ManufacturerCompanyId { get; set; }
         public Employee ModifiedByEmployeeId { get; set; }
-        public int AssetId { get; set; }
+        public int? AssetId { get; set; }
         public Specification Specification { get; set; }
-        public int DocumentSetId { get; set; }
+        public int? DocumentSetId { get; set; }
         public string Description { get; set; }
         public string Note { get; set; }
         public string ToolName { get; set; }
@@ -32,7 +32,7 @@ namespace IMTE.Models.Production
         public DateTime CreatedOn { get; set; }
         public DateTime ModifiedOn { get; set; }
         public byte ToolImage { get; set; }
-        public int ToolLifeUsagePcs { get; set; }
+        public int? ToolLifeUsagePcs { get; set; }
 
     }
 }

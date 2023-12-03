@@ -1,5 +1,4 @@
-﻿
-using IMTE.DataAccess;
+﻿using IMTE.DataAccess;
 using IMTE.EventAggregator.Core;
 using IMTE.IMTEEntity.Models;
 using IMTE.Models.General;
@@ -19,6 +18,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace IMTE.ViewModels
+
 {
     [RegionMemberLifetime(KeepAlive = false)]
     public class MD_EquipmentFormViewModel : BindableBase, INavigationAware, IDataErrorInfo
@@ -312,7 +312,6 @@ namespace IMTE.ViewModels
 
         #endregion
 
-
         #region IDataErrorInfo
 
         private Dictionary<string, string> _errorCollection = new Dictionary<string, string>();
@@ -324,31 +323,32 @@ namespace IMTE.ViewModels
 
 
         public string Error => null;
+        private string result = null;
 
         public string this[string columnName]
         {
             get
             {
-                string result = null;
-
-                switch (columnName)
-                {
-                    case "Manufacturer":
-                        if (string.IsNullOrWhiteSpace(Manufacturer))
-                            result = "Description Text cannot be empty";
-                        break;
-
-                }
-
-                if (ErrorCollection.ContainsKey(columnName))
-                    ErrorCollection[columnName] = result;
-                else if (result != null)
-                    ErrorCollection.Add(columnName, result);
-
-                SetProperty(ref _errorCollection, ErrorCollection);
-
                 return result;
             }
+            set
+            {
+				switch (columnName)
+				{
+					case "Manufacturer":
+						if (string.IsNullOrEmpty(Manufacturer))
+							result = "Description Text cannot be empty";
+						break;
+
+				}
+
+				if (ErrorCollection.ContainsKey(columnName))
+					ErrorCollection[columnName] = result;
+				else if (result != null)
+					ErrorCollection.Add(columnName, result);
+
+				SetProperty(ref _errorCollection, ErrorCollection);
+			}
         }
 
         #endregion

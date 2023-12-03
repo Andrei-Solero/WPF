@@ -154,8 +154,8 @@ namespace IMTE.ViewModels
 			}
 		}
 
-		private int _toolLifeUsagePcs;
-		public int ToolLifeUsagePcs
+		private int? _toolLifeUsagePcs;
+		public int? ToolLifeUsagePcs
 		{
 			get { return _toolLifeUsagePcs; }
 			set

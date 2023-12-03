@@ -61,6 +61,7 @@
     <Compile Include="HumanResources\Employee.cs" />
     <Compile Include="HumanResources\EmployeeType.cs" />
     <Compile Include="HumanResources\Position.cs" />
+    <Compile Include="IMTEEntity\AcceptanceCriteria.cs" />
     <Compile Include="IMTEEntity\MeasuringDevice.cs" />
     <Compile Include="Inventory\Equipment.cs" />
     <Compile Include="Inventory\EquipmentType.cs" />

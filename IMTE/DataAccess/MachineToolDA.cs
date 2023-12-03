@@ -72,5 +72,39 @@ namespace IMTE.DataAccess
 
             return output;
         }
+
+        public void UpdateMachineTool(MachineTool machineToolObj, NpgsqlTransaction transaction, NpgsqlConnection connection)
+        {
+			using (NpgsqlCommand command = new NpgsqlCommand())
+			{
+				string query = @"UPDATE ""Production"".""MachineTool"" SET
+									""Version"" = ""Version"" + 1,
+                                    ""ItemId"" = @ItemId,
+                                    ""MachineToolTypeId"" = @MachineToolTypeId,
+                                    ""Description"" = @Description,
+                                    ""Note"" = @Note,
+                                    ""ToolName"" = @ToolName,
+                                    ""UnitCost"" = @UnitCost,
+                                    ""ToolLifeUsagePcs"" = @ToolLifeUsagePcs,
+                                    ""ModifiedOn"" = @ModifiedOn
+                                    WHERE ""Id"" = @Id";
+
+				command.Connection = connection;
+				command.Transaction = transaction;
+				command.CommandText = query;
+
+				command.Parameters.AddWithValue("@ItemId", machineToolObj.Item.Id);
+				command.Parameters.AddWithValue("@MachineToolTypeId", machineToolObj.MachineToolType.Id);
+				command.Parameters.AddWithValue("@Description", machineToolObj.Description);
+				command.Parameters.AddWithValue("@Note", machineToolObj.Note);
+				command.Parameters.AddWithValue("@ToolName", machineToolObj.ToolName);
+				command.Parameters.AddWithValue("@UnitCost", machineToolObj.UnitCost);
+				command.Parameters.AddWithValue("@ToolLifeUsagePcs", machineToolObj.ToolLifeUsagePcs);
+				command.Parameters.AddWithValue("@ModifiedOn", DateTime.UtcNow);
+
+				command.ExecuteNonQuery();
+			}
+		}
+
     }
 }

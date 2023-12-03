@@ -18,34 +18,36 @@ using System.Windows;
 
 namespace IMTE.DataAccess
 {
-    public class MeasuringDeviceDA : DataAccessFunctions<MeasuringDevice>
-    {
-        private readonly DescriptionDA descriptionDA;
-        private readonly ItemDA itemDA;
-        private readonly EquipmentDA equipmentDA;
+	public class MeasuringDeviceDA : DataAccessFunctions<MeasuringDevice>
+	{
+		private readonly DescriptionDA descriptionDA;
+		private readonly ItemDA itemDA;
+		private readonly EquipmentDA equipmentDA;
+		private readonly MachineToolDA machineToolDA;
 
-        public MeasuringDeviceDA()
-        {
-            descriptionDA = new DescriptionDA();
-            itemDA = new ItemDA();
-            equipmentDA = new EquipmentDA();
-        }
+		public MeasuringDeviceDA()
+		{
+			descriptionDA = new DescriptionDA();
+			itemDA = new ItemDA();
+			equipmentDA = new EquipmentDA();
+			machineToolDA = new MachineToolDA();
+		}
 
-        public IEnumerable<MeasuringDevice> GetAllMeasuringDevices()
-        {
-            NpgsqlConnection connection = null;
-            NpgsqlCommand command = null;
+		public IEnumerable<MeasuringDevice> GetAllMeasuringDevices()
+		{
+			NpgsqlConnection connection = null;
+			NpgsqlCommand command = null;
 
-            try
-            {
-                var output = new List<MeasuringDevice>();
+			try
+			{
+				var output = new List<MeasuringDevice>();
 
-                using (connection = new NpgsqlConnection(ConnectionString))
-                using (command = new NpgsqlCommand())
-                {
-                    connection.Open();
-                    command.Connection = connection;
-                    string query = @"
+				using (connection = new NpgsqlConnection(ConnectionString))
+				using (command = new NpgsqlCommand())
+				{
+					connection.Open();
+					command.Connection = connection;
+					string query = @"
                                     SELECT 
                                         md.""Id"" as ""MDId"", 
                                         eq.""Id"" as ""EqId"", eq.""Manufacturer"" as ""EquipmentManufacturer"", eq.""Model"" as ""EquipmentModel"", 
@@ -118,176 +120,176 @@ namespace IMTE.DataAccess
                                     WHERE md.""IsDeleted"" = false;
                                 ";
 
-                    command.CommandText = query;
+					command.CommandText = query;
 
-                    var data = command.ExecuteReader();
+					var data = command.ExecuteReader();
 
-                    while (data.Read())
-                    {
-                        output.Add(new MeasuringDevice
-                        {
-                            Id = CheckDbNullInt(data, "MDId"),
-                            Equipment = CheckDbNullInt(data, "EqId") == 0 ? null : new Equipment
-                            {
-                                Id = CheckDbNullInt(data, "EqId"),
-                                Manufacturer = CheckDbNullString(data, "EquipmentManufacturer"),
-                                Model = CheckDbNullString(data, "EquipmentModel"),
-                                HasAccessory = CheckDbNullBoolean(data, "EquipmentHasAccessory"),
-                                ApprovalCode = CheckDbNullString(data, "EquipmentApprovalCode"),
-                                IsPrinted = CheckDbNullBoolean(data, "EquipmentIsPrinted"),
-                                IsSent = CheckDbNullBoolean(data, "EquipmentIsSent"),
-                                IsForeignCurrency = CheckDbNullBoolean(data, "EquipmentIsForeignCurrency"),
-                                EquipmentType = new EquipmentType
-                                {
-                                    Id = CheckDbNullInt(data, "EquipmentTypeId"),
-                                    Name = CheckDbNullString(data, "EquipmentTypeName")
-                                },
-                                Item = new Item
-                                {
-                                    Id = CheckDbNullInt(data, "EquipmentItemId"),
-                                    ItemCode = CheckDbNullString(data, "EquipmentItemCode"),
-                                    ShortDescription = CheckDbNullString(data, "EquipmentItemShortDescription"),
-                                    Description = new Description
-                                    {
-                                        Id = CheckDbNullInt(data, "EquipmentItemDescriptionId"),
-                                        Text = CheckDbNullString(data, "EquipmentItemDescriptionText"),
-                                    }
-                                },
-                            },
-                            MachineTool = CheckDbNullInt(data, "MachineToolId") == 0 ? null : new MachineTool
-                            {
-                                Id = CheckDbNullInt(data, "MachineToolId"),
-                                Item = new Item
-                                {
-                                    Id = CheckDbNullInt(data, "MachineToolItemId"),
-                                    ItemCode = CheckDbNullString(data, "MachineToolItemCode"),
-                                    ShortDescription = CheckDbNullString(data, "MachineToolItemShortDescription"),
-                                    Description = new Description
-                                    {
-                                        Id = CheckDbNullInt(data, "MachineToolItemDescriptionId"),
-                                        Text = CheckDbNullString(data, "MachineToolItemDescriptionText"),
-                                    }
-                                },
-                                MachineToolType = new MachineToolType
-                                {
-                                    Id = CheckDbNullInt(data, "MachineToolTypeId"),
-                                    Description = CheckDbNullString(data, "MachineToolTypeDescription"),
-                                    ToolTypeName = CheckDbNullString(data, "MachineToolTypeName"),
-                                },
-                                Description = CheckDbNullString(data, "MachineToolDescription"),
-                                Note = CheckDbNullString(data, "MachineToolNote"),
-                                ToolName = CheckDbNullString(data, "MachineToolName"),
-                                UnitCost = CheckDbNullDecimal(data, "MachineToolUnitCost"),
-                                ToolLifeUsagePcs = CheckDbNullInt(data, "MachineToolLifeUsagePcs")
-                            },
-                            Plant = new Plant
-                            {
-                                Id = CheckDbNullInt(data, "PlId"),
-                                PlantName = CheckDbNullString(data, "PlantName"),
-                            },
-                            IssuedToEmployee = new Employee
-                            {
-                                Id = CheckDbNullInt(data, "IssuedToEmployeeId"),
-                                Person = new Person
-                                {
-                                    Id = CheckDbNullInt(data, "IssuedToEmployeePersonId"),
-                                    First = CheckDbNullString(data, "IssuedToEmpFirst"),
-                                    Last = CheckDbNullString(data, "IssuedToEmpLast"),
-                                    Middle = CheckDbNullString(data, "IssuedToEmpMiddle"),
-                                },
-                                Position = new Position
-                                {
-                                    Id = CheckDbNullInt(data, "IssuedToEmployeePositionId"),
-                                    PositionName = CheckDbNullString(data, "IssuedToEmployeePosition"),
-                                    DutiesDescription = CheckDbNullString(data, "IssuedToEmployeeDuties"),
-                                }
-                            },
-                            CalibratedByEmployee = new Employee
-                            {
-                                Id = CheckDbNullInt(data, "CalibratedByEmployeeId"),
-                                Person = new Person
-                                {
-                                    Id = CheckDbNullInt(data, "CalibratedToEmployeePersonId"),
-                                    First = CheckDbNullString(data, "CalibratedByEmployeeFirst"),
-                                    Last = CheckDbNullString(data, "CalibratedByEmployeeLast"),
-                                    Middle = CheckDbNullString(data, "CalibratedByEmployeeMiddle"),
-                                },
-                                Position = new Position
-                                {
-                                    Id = CheckDbNullInt(data, "CalibratedByEmployeePositionId"),
-                                    PositionName = CheckDbNullString(data, "CalibratedByEmployeePosition"),
-                                    DutiesDescription = CheckDbNullString(data, "CalibratedByEmployeeDuties"),
-                                }
-                            },
-                            Department = new Department
-                            {
-                                Id = CheckDbNullInt(data, "DepartmentId"),
-                                DepartmentName = CheckDbNullString(data, "DepartmentName")
-                            },
-                            Location = new Location
-                            {
-                                Id = CheckDbNullInt(data, "LocationId"),
-                                Name = CheckDbNullString(data, "LocationName")
-                            },
-                            Version = CheckDbNullInt(data, "MDVersion"),
-                            FrequencyOfCalibration = CheckDbNullString(data, "FrequencyOfCalibration"),
-                            LastCalibrationDate = data.GetDateTime(data.GetOrdinal("LastCalibrationDate")),
-                            ResultOfCalibration = CheckDbNullString(data, "ResultOfCalibration"),
-                            NextCalibrationDate = data.GetDateTime(data.GetOrdinal("NextCalibrationDate")),
-                            Status = CheckDbNullString(data, "Status"),
-                            ThreadGaugeRingGaugeUsageNo = CheckDbNullInt(data, "ThreadGaugeRIngGaugeUsageNo"),
-                            CalibrationRemarks = CheckDbNullString(data, "CalibrationRemarks"),
-                            Remarks = CheckDbNullString(data, "Remarks"),
-                            Date = CheckDbNullString(data, "Date"),
-                            Maker = CheckDbNullString(data, "Maker"),
-                            Resolution = CheckDbNullString(data, "Resolution"),
-                            DeviceRange = CheckDbNullString(data, "DeviceRange"),
-                            Accuracy = CheckDbNullString(data, "Accuracy"),
-                            Barcode = CheckDbNullString(data, "Barcode"),
-                            CalibrationMethod = CheckDbNullString(data, "CalibrationMethod"),
-                            AcceptanceCriteria = CheckDbNullString(data, "AcceptanceCriteria"),
-                            SerialNo = CheckDbNullString(data, "SerialNo"),
-                            Unit = new UnitEntity
-                            {
-                                Id = CheckDbNullInt(data, "UnitId"),
-                                UnitCategory = CheckDbNullString(data, "UnitCategory"),
-                                UnitVal = CheckDbNullString(data, "UnitVal"),
-                                Description = CheckDbNullString(data, "Description"),
-                            }
-                        });
-                    }
-                }
+					while (data.Read())
+					{
+						output.Add(new MeasuringDevice
+						{
+							Id = CheckDbNullInt(data, "MDId"),
+							Equipment = CheckDbNullInt(data, "EqId") == 0 ? null : new Equipment
+							{
+								Id = CheckDbNullInt(data, "EqId"),
+								Manufacturer = CheckDbNullString(data, "EquipmentManufacturer"),
+								Model = CheckDbNullString(data, "EquipmentModel"),
+								HasAccessory = CheckDbNullBoolean(data, "EquipmentHasAccessory"),
+								ApprovalCode = CheckDbNullString(data, "EquipmentApprovalCode"),
+								IsPrinted = CheckDbNullBoolean(data, "EquipmentIsPrinted"),
+								IsSent = CheckDbNullBoolean(data, "EquipmentIsSent"),
+								IsForeignCurrency = CheckDbNullBoolean(data, "EquipmentIsForeignCurrency"),
+								EquipmentType = new EquipmentType
+								{
+									Id = CheckDbNullInt(data, "EquipmentTypeId"),
+									Name = CheckDbNullString(data, "EquipmentTypeName")
+								},
+								Item = new Item
+								{
+									Id = CheckDbNullInt(data, "EquipmentItemId"),
+									ItemCode = CheckDbNullString(data, "EquipmentItemCode"),
+									ShortDescription = CheckDbNullString(data, "EquipmentItemShortDescription"),
+									Description = new Description
+									{
+										Id = CheckDbNullInt(data, "EquipmentItemDescriptionId"),
+										Text = CheckDbNullString(data, "EquipmentItemDescriptionText"),
+									}
+								},
+							},
+							MachineTool = CheckDbNullInt(data, "MachineToolId") == 0 ? null : new MachineTool
+							{
+								Id = CheckDbNullInt(data, "MachineToolId"),
+								Item = new Item
+								{
+									Id = CheckDbNullInt(data, "MachineToolItemId"),
+									ItemCode = CheckDbNullString(data, "MachineToolItemCode"),
+									ShortDescription = CheckDbNullString(data, "MachineToolItemShortDescription"),
+									Description = new Description
+									{
+										Id = CheckDbNullInt(data, "MachineToolItemDescriptionId"),
+										Text = CheckDbNullString(data, "MachineToolItemDescriptionText"),
+									}
+								},
+								MachineToolType = new MachineToolType
+								{
+									Id = CheckDbNullInt(data, "MachineToolTypeId"),
+									Description = CheckDbNullString(data, "MachineToolTypeDescription"),
+									ToolTypeName = CheckDbNullString(data, "MachineToolTypeName"),
+								},
+								Description = CheckDbNullString(data, "MachineToolDescription"),
+								Note = CheckDbNullString(data, "MachineToolNote"),
+								ToolName = CheckDbNullString(data, "MachineToolName"),
+								UnitCost = CheckDbNullDecimal(data, "MachineToolUnitCost"),
+								ToolLifeUsagePcs = CheckDbNullInt(data, "MachineToolLifeUsagePcs")
+							},
+							Plant = new Plant
+							{
+								Id = CheckDbNullInt(data, "PlId"),
+								PlantName = CheckDbNullString(data, "PlantName"),
+							},
+							IssuedToEmployee = new Employee
+							{
+								Id = CheckDbNullInt(data, "IssuedToEmployeeId"),
+								Person = new Person
+								{
+									Id = CheckDbNullInt(data, "IssuedToEmployeePersonId"),
+									First = CheckDbNullString(data, "IssuedToEmpFirst"),
+									Last = CheckDbNullString(data, "IssuedToEmpLast"),
+									Middle = CheckDbNullString(data, "IssuedToEmpMiddle"),
+								},
+								Position = new Position
+								{
+									Id = CheckDbNullInt(data, "IssuedToEmployeePositionId"),
+									PositionName = CheckDbNullString(data, "IssuedToEmployeePosition"),
+									DutiesDescription = CheckDbNullString(data, "IssuedToEmployeeDuties"),
+								}
+							},
+							CalibratedByEmployee = new Employee
+							{
+								Id = CheckDbNullInt(data, "CalibratedByEmployeeId"),
+								Person = new Person
+								{
+									Id = CheckDbNullInt(data, "CalibratedToEmployeePersonId"),
+									First = CheckDbNullString(data, "CalibratedByEmployeeFirst"),
+									Last = CheckDbNullString(data, "CalibratedByEmployeeLast"),
+									Middle = CheckDbNullString(data, "CalibratedByEmployeeMiddle"),
+								},
+								Position = new Position
+								{
+									Id = CheckDbNullInt(data, "CalibratedByEmployeePositionId"),
+									PositionName = CheckDbNullString(data, "CalibratedByEmployeePosition"),
+									DutiesDescription = CheckDbNullString(data, "CalibratedByEmployeeDuties"),
+								}
+							},
+							Department = new Department
+							{
+								Id = CheckDbNullInt(data, "DepartmentId"),
+								DepartmentName = CheckDbNullString(data, "DepartmentName")
+							},
+							Location = new Location
+							{
+								Id = CheckDbNullInt(data, "LocationId"),
+								Name = CheckDbNullString(data, "LocationName")
+							},
+							Version = CheckDbNullInt(data, "MDVersion"),
+							FrequencyOfCalibration = CheckDbNullString(data, "FrequencyOfCalibration"),
+							LastCalibrationDate = data.GetDateTime(data.GetOrdinal("LastCalibrationDate")),
+							ResultOfCalibration = CheckDbNullString(data, "ResultOfCalibration"),
+							NextCalibrationDate = data.GetDateTime(data.GetOrdinal("NextCalibrationDate")),
+							Status = CheckDbNullString(data, "Status"),
+							ThreadGaugeRingGaugeUsageNo = CheckDbNullInt(data, "ThreadGaugeRIngGaugeUsageNo"),
+							CalibrationRemarks = CheckDbNullString(data, "CalibrationRemarks"),
+							Remarks = CheckDbNullString(data, "Remarks"),
+							Date = CheckDbNullString(data, "Date"),
+							Maker = CheckDbNullString(data, "Maker"),
+							Resolution = CheckDbNullString(data, "Resolution"),
+							DeviceRange = CheckDbNullString(data, "DeviceRange"),
+							Accuracy = CheckDbNullString(data, "Accuracy"),
+							Barcode = CheckDbNullString(data, "Barcode"),
+							CalibrationMethod = CheckDbNullString(data, "CalibrationMethod"),
+							AcceptanceCriteria = CheckDbNullString(data, "AcceptanceCriteria"),
+							SerialNo = CheckDbNullString(data, "SerialNo"),
+							Unit = new UnitEntity
+							{
+								Id = CheckDbNullInt(data, "UnitId"),
+								UnitCategory = CheckDbNullString(data, "UnitCategory"),
+								UnitVal = CheckDbNullString(data, "UnitVal"),
+								Description = CheckDbNullString(data, "Description"),
+							}
+						});
+					}
+				}
 
-                return output;
-            }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
-                connection.Close();
-                connection.Dispose();
+				return output;
+			}
+			catch
+			{
+				throw;
+			}
+			finally
+			{
+				connection.Close();
+				connection.Dispose();
 
-                command.Dispose();
-            }
-        }
+				command.Dispose();
+			}
+		}
 
-        public MeasuringDevice GetMeasuringDeviceBySelectedMachineTool(MachineTool machineTool)
-        {
-            var output = new MeasuringDevice();
+		public MeasuringDevice GetMeasuringDeviceBySelectedMachineTool(MachineTool machineTool)
+		{
+			var output = new MeasuringDevice();
 
-            NpgsqlConnection connection = null;
-            NpgsqlCommand command = null;
+			NpgsqlConnection connection = null;
+			NpgsqlCommand command = null;
 
-            try
-            {
-                using (connection = new NpgsqlConnection(ConnectionString))
-                using (command = new NpgsqlCommand())
-                {
-                    connection.Open();
-                    command.Connection = connection;
-                    string query = @"
+			try
+			{
+				using (connection = new NpgsqlConnection(ConnectionString))
+				using (command = new NpgsqlCommand())
+				{
+					connection.Open();
+					command.Connection = connection;
+					string query = @"
                                     SELECT 
                                         md.""Id"" as ""MDId"", 
                                         mt.""Id"" as ""MachineToolId"", 
@@ -348,152 +350,152 @@ namespace IMTE.DataAccess
                                     WHERE md.""IsDeleted"" = false AND md.""MachineToolId"" = @MachineToolId;
                                 ";
 
-                    command.CommandText = query;
+					command.CommandText = query;
 
-                    command.Parameters.AddWithValue("MachineToolId", machineTool.Id);
+					command.Parameters.AddWithValue("MachineToolId", machineTool.Id);
 
-                    var data = command.ExecuteReader();
+					var data = command.ExecuteReader();
 
-                    if (data.Read())
-                    {
-                        output = new MeasuringDevice
-                        {
-                            Id = CheckDbNullInt(data, "MDId"),
+					if (data.Read())
+					{
+						output = new MeasuringDevice
+						{
+							Id = CheckDbNullInt(data, "MDId"),
 
-                            MachineTool = CheckDbNullInt(data, "MachineToolId") == 0 ? null : new MachineTool
-                            {
-                                Id = CheckDbNullInt(data, "MachineToolId"),
-                                Item = new Item
-                                {
-                                    Id = CheckDbNullInt(data, "MachineToolItemId"),
-                                    ItemCode = CheckDbNullString(data, "MachineToolItemCode"),
-                                    ShortDescription = CheckDbNullString(data, "MachineToolItemShortDescription"),
-                                    Description = new Description
-                                    {
-                                        Id = CheckDbNullInt(data, "MachineToolItemDescriptionId"),
-                                        Text = CheckDbNullString(data, "MachineToolItemDescriptionText")
-                                    },
-                                },
-                                MachineToolType = new MachineToolType
-                                {
-                                    Id = CheckDbNullInt(data, "MachineToolTypeId"),
-                                    Description = CheckDbNullString(data, "MachineToolTypeDescription"),
-                                    ToolTypeName = CheckDbNullString(data, "MachineToolTypeName"),
-                                },
-                                Description = CheckDbNullString(data, "MachineToolDescription"),
-                                Note = CheckDbNullString(data, "MachineToolNote"),
-                                ToolName = CheckDbNullString(data, "MachineToolName"),
-                                UnitCost = CheckDbNullDecimal(data, "MachineToolUnitCost"),
-                                ToolLifeUsagePcs = CheckDbNullInt(data, "MachineToolLifeUsagePcs"),
-                            },
-                            Plant = new Plant
-                            {
-                                Id = CheckDbNullInt(data, "PlId"),
-                                PlantName = CheckDbNullString(data, "PlantName"),
-                            },
-                            IssuedToEmployee = new Employee
-                            {
-                                Id = CheckDbNullInt(data, "IssuedToEmployeeId"),
-                                Person = new Person
-                                {
-                                    Id = CheckDbNullInt(data, "IssuedToEmployeePersonId"),
-                                    First = CheckDbNullString(data, "IssuedToEmpFirst"),
-                                    Last = CheckDbNullString(data, "IssuedToEmpLast"),
-                                    Middle = CheckDbNullString(data, "IssuedToEmpMiddle"),
-                                },
-                                Position = new Position
-                                {
-                                    Id = CheckDbNullInt(data, "IssuedToEmployeePositionId"),
-                                    PositionName = CheckDbNullString(data, "IssuedToEmployeePosition"),
-                                    DutiesDescription = CheckDbNullString(data, "IssuedToEmployeeDuties"),
-                                }
-                            },
-                            CalibratedByEmployee = new Employee
-                            {
-                                Id = CheckDbNullInt(data, "CalibratedByEmployeeId"),
-                                Person = new Person
-                                {
-                                    Id = CheckDbNullInt(data, "CalibratedToEmployeePersonId"),
-                                    First = CheckDbNullString(data, "CalibratedByEmployeeFirst"),
-                                    Last = CheckDbNullString(data, "CalibratedByEmployeeLast"),
-                                    Middle = CheckDbNullString(data, "CalibratedByEmployeeMiddle"),
-                                },
-                                Position = new Position
-                                {
-                                    Id = CheckDbNullInt(data, "CalibratedByEmployeePositionId"),
-                                    PositionName = CheckDbNullString(data, "CalibratedByEmployeePosition"),
-                                    DutiesDescription = CheckDbNullString(data, "CalibratedByEmployeeDuties"),
-                                }
-                            },
-                            Department = new Department
-                            {
-                                Id = CheckDbNullInt(data, "DepartmentId"),
-                                DepartmentName = CheckDbNullString(data, "DepartmentName")
-                            },
-                            Location = new Location
-                            {
-                                Id = CheckDbNullInt(data, "LocationId"),
-                                Name = CheckDbNullString(data, "LocationName")
-                            },
-                            Version = CheckDbNullInt(data, "MDVersion"),
-                            FrequencyOfCalibration = CheckDbNullString(data, "FrequencyOfCalibration"),
-                            LastCalibrationDate = data.GetDateTime(data.GetOrdinal("LastCalibrationDate")),
-                            ResultOfCalibration = CheckDbNullString(data, "ResultOfCalibration"),
-                            NextCalibrationDate = data.GetDateTime(data.GetOrdinal("NextCalibrationDate")),
-                            Status = CheckDbNullString(data, "Status"),
-                            ThreadGaugeRingGaugeUsageNo = CheckDbNullInt(data, "ThreadGaugeRIngGaugeUsageNo"),
-                            CalibrationRemarks = CheckDbNullString(data, "CalibrationRemarks"),
-                            Remarks = CheckDbNullString(data, "Remarks"),
-                            Date = CheckDbNullString(data, "Date"),
-                            Maker = CheckDbNullString(data, "Maker"),
-                            Resolution = CheckDbNullString(data, "Resolution"),
-                            DeviceRange = CheckDbNullString(data, "DeviceRange"),
-                            Accuracy = CheckDbNullString(data, "Accuracy"),
-                            Barcode = CheckDbNullString(data, "Barcode"),
-                            CalibrationMethod = CheckDbNullString(data, "CalibrationMethod"),
-                            AcceptanceCriteria = CheckDbNullString(data, "AcceptanceCriteria"),
-                            SerialNo = CheckDbNullString(data, "SerialNo"),
-                            Unit = new UnitEntity
-                            {
-                                Id = CheckDbNullInt(data, "UnitId"),
-                                UnitCategory = CheckDbNullString(data, "UnitCategory"),
-                                UnitVal = CheckDbNullString(data, "UnitVal"),
-                                Description = CheckDbNullString(data, "Description"),
-                            }
-                        };
-                    }
-                }
+							MachineTool = CheckDbNullInt(data, "MachineToolId") == 0 ? null : new MachineTool
+							{
+								Id = CheckDbNullInt(data, "MachineToolId"),
+								Item = new Item
+								{
+									Id = CheckDbNullInt(data, "MachineToolItemId"),
+									ItemCode = CheckDbNullString(data, "MachineToolItemCode"),
+									ShortDescription = CheckDbNullString(data, "MachineToolItemShortDescription"),
+									Description = new Description
+									{
+										Id = CheckDbNullInt(data, "MachineToolItemDescriptionId"),
+										Text = CheckDbNullString(data, "MachineToolItemDescriptionText")
+									},
+								},
+								MachineToolType = new MachineToolType
+								{
+									Id = CheckDbNullInt(data, "MachineToolTypeId"),
+									Description = CheckDbNullString(data, "MachineToolTypeDescription"),
+									ToolTypeName = CheckDbNullString(data, "MachineToolTypeName"),
+								},
+								Description = CheckDbNullString(data, "MachineToolDescription"),
+								Note = CheckDbNullString(data, "MachineToolNote"),
+								ToolName = CheckDbNullString(data, "MachineToolName"),
+								UnitCost = CheckDbNullDecimal(data, "MachineToolUnitCost"),
+								ToolLifeUsagePcs = CheckDbNullInt(data, "MachineToolLifeUsagePcs"),
+							},
+							Plant = new Plant
+							{
+								Id = CheckDbNullInt(data, "PlId"),
+								PlantName = CheckDbNullString(data, "PlantName"),
+							},
+							IssuedToEmployee = new Employee
+							{
+								Id = CheckDbNullInt(data, "IssuedToEmployeeId"),
+								Person = new Person
+								{
+									Id = CheckDbNullInt(data, "IssuedToEmployeePersonId"),
+									First = CheckDbNullString(data, "IssuedToEmpFirst"),
+									Last = CheckDbNullString(data, "IssuedToEmpLast"),
+									Middle = CheckDbNullString(data, "IssuedToEmpMiddle"),
+								},
+								Position = new Position
+								{
+									Id = CheckDbNullInt(data, "IssuedToEmployeePositionId"),
+									PositionName = CheckDbNullString(data, "IssuedToEmployeePosition"),
+									DutiesDescription = CheckDbNullString(data, "IssuedToEmployeeDuties"),
+								}
+							},
+							CalibratedByEmployee = new Employee
+							{
+								Id = CheckDbNullInt(data, "CalibratedByEmployeeId"),
+								Person = new Person
+								{
+									Id = CheckDbNullInt(data, "CalibratedToEmployeePersonId"),
+									First = CheckDbNullString(data, "CalibratedByEmployeeFirst"),
+									Last = CheckDbNullString(data, "CalibratedByEmployeeLast"),
+									Middle = CheckDbNullString(data, "CalibratedByEmployeeMiddle"),
+								},
+								Position = new Position
+								{
+									Id = CheckDbNullInt(data, "CalibratedByEmployeePositionId"),
+									PositionName = CheckDbNullString(data, "CalibratedByEmployeePosition"),
+									DutiesDescription = CheckDbNullString(data, "CalibratedByEmployeeDuties"),
+								}
+							},
+							Department = new Department
+							{
+								Id = CheckDbNullInt(data, "DepartmentId"),
+								DepartmentName = CheckDbNullString(data, "DepartmentName")
+							},
+							Location = new Location
+							{
+								Id = CheckDbNullInt(data, "LocationId"),
+								Name = CheckDbNullString(data, "LocationName")
+							},
+							Version = CheckDbNullInt(data, "MDVersion"),
+							FrequencyOfCalibration = CheckDbNullString(data, "FrequencyOfCalibration"),
+							LastCalibrationDate = data.GetDateTime(data.GetOrdinal("LastCalibrationDate")),
+							ResultOfCalibration = CheckDbNullString(data, "ResultOfCalibration"),
+							NextCalibrationDate = data.GetDateTime(data.GetOrdinal("NextCalibrationDate")),
+							Status = CheckDbNullString(data, "Status"),
+							ThreadGaugeRingGaugeUsageNo = CheckDbNullInt(data, "ThreadGaugeRIngGaugeUsageNo"),
+							CalibrationRemarks = CheckDbNullString(data, "CalibrationRemarks"),
+							Remarks = CheckDbNullString(data, "Remarks"),
+							Date = CheckDbNullString(data, "Date"),
+							Maker = CheckDbNullString(data, "Maker"),
+							Resolution = CheckDbNullString(data, "Resolution"),
+							DeviceRange = CheckDbNullString(data, "DeviceRange"),
+							Accuracy = CheckDbNullString(data, "Accuracy"),
+							Barcode = CheckDbNullString(data, "Barcode"),
+							CalibrationMethod = CheckDbNullString(data, "CalibrationMethod"),
+							AcceptanceCriteria = CheckDbNullString(data, "AcceptanceCriteria"),
+							SerialNo = CheckDbNullString(data, "SerialNo"),
+							Unit = new UnitEntity
+							{
+								Id = CheckDbNullInt(data, "UnitId"),
+								UnitCategory = CheckDbNullString(data, "UnitCategory"),
+								UnitVal = CheckDbNullString(data, "UnitVal"),
+								Description = CheckDbNullString(data, "Description"),
+							}
+						};
+					}
+				}
 
-                return output;
-            }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
-                connection.Close();
-                connection.Dispose();
+				return output;
+			}
+			catch
+			{
+				throw;
+			}
+			finally
+			{
+				connection.Close();
+				connection.Dispose();
 
-                command.Dispose();
-            }
-        }
+				command.Dispose();
+			}
+		}
 
-        public MeasuringDevice GetMeasuringDeviceBySelectedEquipment(Equipment equipmentObj)
-        {
-            var output = new MeasuringDevice();
+		public MeasuringDevice GetMeasuringDeviceBySelectedEquipment(Equipment equipmentObj)
+		{
+			var output = new MeasuringDevice();
 
-            NpgsqlConnection connection = null;
-            NpgsqlCommand command = null;
+			NpgsqlConnection connection = null;
+			NpgsqlCommand command = null;
 
-            try
-            {
-                using (connection = new NpgsqlConnection(ConnectionString))
-                using (command = new NpgsqlCommand())
-                {
-                    connection.Open();
-                    command.Connection = connection;
-                    string query = @"
+			try
+			{
+				using (connection = new NpgsqlConnection(ConnectionString))
+				using (command = new NpgsqlCommand())
+				{
+					connection.Open();
+					command.Connection = connection;
+					string query = @"
                                     SELECT 
                                         md.""Id"" as ""MDId"", 
                                         eq.""Id"" as ""EqId"", eq.""Manufacturer"" as ""EquipmentManufacturer"", eq.""Model"" as ""EquipmentModel"", 
@@ -554,320 +556,320 @@ namespace IMTE.DataAccess
                                     WHERE md.""IsDeleted"" = false AND md.""EquipmentId"" = @EquipmentId;
                                 ";
 
-                    command.CommandText = query;
+					command.CommandText = query;
 
-                    command.Parameters.AddWithValue("EquipmentId", equipmentObj.Id);
+					command.Parameters.AddWithValue("EquipmentId", equipmentObj.Id);
 
-                    var data = command.ExecuteReader();
+					var data = command.ExecuteReader();
 
-                    if (data.Read())
-                    {
-                        output = new MeasuringDevice
-                        {
-                            Id = CheckDbNullInt(data, "MDId"),
-                            Equipment = CheckDbNullInt(data, "EqId") == 0 ? null : new Equipment
-                            {
-                                Id = CheckDbNullInt(data, "EqId"),
-                                Manufacturer = CheckDbNullString(data, "EquipmentManufacturer"),
-                                Model = CheckDbNullString(data, "EquipmentModel"),
-                                HasAccessory = CheckDbNullBoolean(data, "EquipmentHasAccessory"),
-                                ApprovalCode = CheckDbNullString(data, "EquipmentApprovalCode"),
-                                IsPrinted = CheckDbNullBoolean(data, "EquipmentIsPrinted"),
-                                IsSent = CheckDbNullBoolean(data, "EquipmentIsSent"),
-                                IsForeignCurrency = CheckDbNullBoolean(data, "EquipmentIsForeignCurrency"),
-                                EquipmentType = new EquipmentType
-                                {
-                                    Id = CheckDbNullInt(data, "EquipmentTypeId"),
-                                    Name = CheckDbNullString(data, "EquipmentTypeName")
-                                },
-                                Item = new Item
-                                {
-                                    Id = CheckDbNullInt(data, "EquipmentItemId"),
-                                    ItemCode = CheckDbNullString(data, "EquipmentItemCode"),
-                                    ShortDescription = CheckDbNullString(data, "EquipmentItemShortDescription"),
-                                    Description = new Description
-                                    {
-                                        Id = CheckDbNullInt(data, "EquipmentItemDescriptionId"),
-                                        Text = CheckDbNullString(data, "EquipmentItemDescriptionText"),
-                                    }
-                                },
-                            },
-                            Plant = new Plant
-                            {
-                                Id = CheckDbNullInt(data, "PlId"),
-                                PlantName = CheckDbNullString(data, "PlantName"),
-                            },
-                            IssuedToEmployee = new Employee
-                            {
-                                Id = CheckDbNullInt(data, "IssuedToEmployeeId"),
-                                Person = new Person
-                                {
-                                    Id = CheckDbNullInt(data, "IssuedToEmployeePersonId"),
-                                    First = CheckDbNullString(data, "IssuedToEmpFirst"),
-                                    Last = CheckDbNullString(data, "IssuedToEmpLast"),
-                                    Middle = CheckDbNullString(data, "IssuedToEmpMiddle"),
-                                },
-                                Position = new Position
-                                {
-                                    Id = CheckDbNullInt(data, "IssuedToEmployeePositionId"),
-                                    PositionName = CheckDbNullString(data, "IssuedToEmployeePosition"),
-                                    DutiesDescription = CheckDbNullString(data, "IssuedToEmployeeDuties"),
-                                }
-                            },
-                            CalibratedByEmployee = new Employee
-                            {
-                                Id = CheckDbNullInt(data, "CalibratedByEmployeeId"),
-                                Person = new Person
-                                {
-                                    Id = CheckDbNullInt(data, "CalibratedToEmployeePersonId"),
-                                    First = CheckDbNullString(data, "CalibratedByEmployeeFirst"),
-                                    Last = CheckDbNullString(data, "CalibratedByEmployeeLast"),
-                                    Middle = CheckDbNullString(data, "CalibratedByEmployeeMiddle"),
-                                },
-                                Position = new Position
-                                {
-                                    Id = CheckDbNullInt(data, "CalibratedByEmployeePositionId"),
-                                    PositionName = CheckDbNullString(data, "CalibratedByEmployeePosition"),
-                                    DutiesDescription = CheckDbNullString(data, "CalibratedByEmployeeDuties"),
-                                }
-                            },
-                            Department = new Department
-                            {
-                                Id = CheckDbNullInt(data, "DepartmentId"),
-                                DepartmentName = CheckDbNullString(data, "DepartmentName")
-                            },
-                            Location = new Location
-                            {
-                                Id = CheckDbNullInt(data, "LocationId"),
-                                Name = CheckDbNullString(data, "LocationName")
-                            },
-                            Version = CheckDbNullInt(data, "MDVersion"),
-                            FrequencyOfCalibration = CheckDbNullString(data, "FrequencyOfCalibration"),
-                            LastCalibrationDate = data.GetDateTime(data.GetOrdinal("LastCalibrationDate")),
-                            ResultOfCalibration = CheckDbNullString(data, "ResultOfCalibration"),
-                            NextCalibrationDate = data.GetDateTime(data.GetOrdinal("NextCalibrationDate")),
-                            Status = CheckDbNullString(data, "Status"),
-                            ThreadGaugeRingGaugeUsageNo = CheckDbNullInt(data, "ThreadGaugeRIngGaugeUsageNo"),
-                            CalibrationRemarks = CheckDbNullString(data, "CalibrationRemarks"),
-                            Remarks = CheckDbNullString(data, "Remarks"),
-                            Date = CheckDbNullString(data, "Date"),
-                            Maker = CheckDbNullString(data, "Maker"),
-                            Resolution = CheckDbNullString(data, "Resolution"),
-                            DeviceRange = CheckDbNullString(data, "DeviceRange"),
-                            Accuracy = CheckDbNullString(data, "Accuracy"),
-                            Barcode = CheckDbNullString(data, "Barcode"),
-                            CalibrationMethod = CheckDbNullString(data, "CalibrationMethod"),
-                            AcceptanceCriteria = CheckDbNullString(data, "AcceptanceCriteria"),
-                            SerialNo = CheckDbNullString(data, "SerialNo"),
-                            Unit = new UnitEntity
-                            {
-                                Id = CheckDbNullInt(data, "UnitId"),
-                                UnitCategory = CheckDbNullString(data, "UnitCategory"),
-                                UnitVal = CheckDbNullString(data, "UnitVal"),
-                                Description = CheckDbNullString(data, "Description"),
-                            }
-                        };
-                    }
-                }
+					if (data.Read())
+					{
+						output = new MeasuringDevice
+						{
+							Id = CheckDbNullInt(data, "MDId"),
+							Equipment = CheckDbNullInt(data, "EqId") == 0 ? null : new Equipment
+							{
+								Id = CheckDbNullInt(data, "EqId"),
+								Manufacturer = CheckDbNullString(data, "EquipmentManufacturer"),
+								Model = CheckDbNullString(data, "EquipmentModel"),
+								HasAccessory = CheckDbNullBoolean(data, "EquipmentHasAccessory"),
+								ApprovalCode = CheckDbNullString(data, "EquipmentApprovalCode"),
+								IsPrinted = CheckDbNullBoolean(data, "EquipmentIsPrinted"),
+								IsSent = CheckDbNullBoolean(data, "EquipmentIsSent"),
+								IsForeignCurrency = CheckDbNullBoolean(data, "EquipmentIsForeignCurrency"),
+								EquipmentType = new EquipmentType
+								{
+									Id = CheckDbNullInt(data, "EquipmentTypeId"),
+									Name = CheckDbNullString(data, "EquipmentTypeName")
+								},
+								Item = new Item
+								{
+									Id = CheckDbNullInt(data, "EquipmentItemId"),
+									ItemCode = CheckDbNullString(data, "EquipmentItemCode"),
+									ShortDescription = CheckDbNullString(data, "EquipmentItemShortDescription"),
+									Description = new Description
+									{
+										Id = CheckDbNullInt(data, "EquipmentItemDescriptionId"),
+										Text = CheckDbNullString(data, "EquipmentItemDescriptionText"),
+									}
+								},
+							},
+							Plant = new Plant
+							{
+								Id = CheckDbNullInt(data, "PlId"),
+								PlantName = CheckDbNullString(data, "PlantName"),
+							},
+							IssuedToEmployee = new Employee
+							{
+								Id = CheckDbNullInt(data, "IssuedToEmployeeId"),
+								Person = new Person
+								{
+									Id = CheckDbNullInt(data, "IssuedToEmployeePersonId"),
+									First = CheckDbNullString(data, "IssuedToEmpFirst"),
+									Last = CheckDbNullString(data, "IssuedToEmpLast"),
+									Middle = CheckDbNullString(data, "IssuedToEmpMiddle"),
+								},
+								Position = new Position
+								{
+									Id = CheckDbNullInt(data, "IssuedToEmployeePositionId"),
+									PositionName = CheckDbNullString(data, "IssuedToEmployeePosition"),
+									DutiesDescription = CheckDbNullString(data, "IssuedToEmployeeDuties"),
+								}
+							},
+							CalibratedByEmployee = new Employee
+							{
+								Id = CheckDbNullInt(data, "CalibratedByEmployeeId"),
+								Person = new Person
+								{
+									Id = CheckDbNullInt(data, "CalibratedToEmployeePersonId"),
+									First = CheckDbNullString(data, "CalibratedByEmployeeFirst"),
+									Last = CheckDbNullString(data, "CalibratedByEmployeeLast"),
+									Middle = CheckDbNullString(data, "CalibratedByEmployeeMiddle"),
+								},
+								Position = new Position
+								{
+									Id = CheckDbNullInt(data, "CalibratedByEmployeePositionId"),
+									PositionName = CheckDbNullString(data, "CalibratedByEmployeePosition"),
+									DutiesDescription = CheckDbNullString(data, "CalibratedByEmployeeDuties"),
+								}
+							},
+							Department = new Department
+							{
+								Id = CheckDbNullInt(data, "DepartmentId"),
+								DepartmentName = CheckDbNullString(data, "DepartmentName")
+							},
+							Location = new Location
+							{
+								Id = CheckDbNullInt(data, "LocationId"),
+								Name = CheckDbNullString(data, "LocationName")
+							},
+							Version = CheckDbNullInt(data, "MDVersion"),
+							FrequencyOfCalibration = CheckDbNullString(data, "FrequencyOfCalibration"),
+							LastCalibrationDate = data.GetDateTime(data.GetOrdinal("LastCalibrationDate")),
+							ResultOfCalibration = CheckDbNullString(data, "ResultOfCalibration"),
+							NextCalibrationDate = data.GetDateTime(data.GetOrdinal("NextCalibrationDate")),
+							Status = CheckDbNullString(data, "Status"),
+							ThreadGaugeRingGaugeUsageNo = CheckDbNullInt(data, "ThreadGaugeRIngGaugeUsageNo"),
+							CalibrationRemarks = CheckDbNullString(data, "CalibrationRemarks"),
+							Remarks = CheckDbNullString(data, "Remarks"),
+							Date = CheckDbNullString(data, "Date"),
+							Maker = CheckDbNullString(data, "Maker"),
+							Resolution = CheckDbNullString(data, "Resolution"),
+							DeviceRange = CheckDbNullString(data, "DeviceRange"),
+							Accuracy = CheckDbNullString(data, "Accuracy"),
+							Barcode = CheckDbNullString(data, "Barcode"),
+							CalibrationMethod = CheckDbNullString(data, "CalibrationMethod"),
+							AcceptanceCriteria = CheckDbNullString(data, "AcceptanceCriteria"),
+							SerialNo = CheckDbNullString(data, "SerialNo"),
+							Unit = new UnitEntity
+							{
+								Id = CheckDbNullInt(data, "UnitId"),
+								UnitCategory = CheckDbNullString(data, "UnitCategory"),
+								UnitVal = CheckDbNullString(data, "UnitVal"),
+								Description = CheckDbNullString(data, "Description"),
+							}
+						};
+					}
+				}
 
-                return output;
-            }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
-                connection.Close();
-                connection.Dispose();
+				return output;
+			}
+			catch
+			{
+				throw;
+			}
+			finally
+			{
+				connection.Close();
+				connection.Dispose();
 
-                command.Dispose();
-            }
-        }
+				command.Dispose();
+			}
+		}
 
-        public Description CreateDescriptionForItemMeasuringDevice(Description descriptionObj, NpgsqlTransaction transaction, NpgsqlConnection connection)
-        {
-            Description description = descriptionObj;
+		public Description CreateDescriptionForItemMeasuringDevice(Description descriptionObj, NpgsqlTransaction transaction, NpgsqlConnection connection)
+		{
+			Description description = descriptionObj;
 
-            using (NpgsqlCommand command = new NpgsqlCommand())
-            {
-                try
-                {
-                    string query = @"INSERT INTO ""General"".""Description"" (""Text"", ""CreatedDate"", ""CreatedOn"")
+			using (NpgsqlCommand command = new NpgsqlCommand())
+			{
+				try
+				{
+					string query = @"INSERT INTO ""General"".""Description"" (""Text"", ""CreatedDate"", ""CreatedOn"")
                                     VALUES(@Text, @CreatedDate, @CreatedOn)
                                     RETURNING ""Id""";
 
-                    command.Connection = connection;
-                    command.Transaction = transaction;
-                    command.CommandText = query;
+					command.Connection = connection;
+					command.Transaction = transaction;
+					command.CommandText = query;
 
-                    command.Parameters.AddWithValue("@Text", descriptionObj.Text);
-                    command.Parameters.AddWithValue("@CreatedDate", DateTime.Now);
-                    command.Parameters.AddWithValue("@CreatedOn", DateTime.Now);
+					command.Parameters.AddWithValue("@Text", descriptionObj.Text);
+					command.Parameters.AddWithValue("@CreatedDate", DateTime.Now);
+					command.Parameters.AddWithValue("@CreatedOn", DateTime.Now);
 
-                    description.Id = Convert.ToInt32(command.ExecuteScalar());
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"{ex.GetType()}: {ex.Message}");
-                }
-            }
+					description.Id = Convert.ToInt32(command.ExecuteScalar());
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show($"{ex.GetType()}: {ex.Message}");
+				}
+			}
 
 
-            return description;
-        }
+			return description;
+		}
 
-        public Item CreateItemEquipmentForMeasuringDevice(Item itemObj, NpgsqlTransaction transaction, NpgsqlConnection connection)
-        {
-            Item item = itemObj;
+		public Item CreateItemEquipmentForMeasuringDevice(Item itemObj, NpgsqlTransaction transaction, NpgsqlConnection connection)
+		{
+			Item item = itemObj;
 
-            using (NpgsqlCommand command = new NpgsqlCommand())
-            {
-                try
-                {
-                    string query = @"INSERT INTO ""General"".""Item"" (""StockingUnitId"", ""CurrencyId"", ""CompanyId"", ""DescriptionId"", ""ItemCode"", ""ShortDescription"", ""Inactive"", ""IsSold"", ""IsBought"", ""IsMfgComponent"", ""IsMfgConsumable"", ""IsObsolete""
+			using (NpgsqlCommand command = new NpgsqlCommand())
+			{
+				try
+				{
+					string query = @"INSERT INTO ""General"".""Item"" (""StockingUnitId"", ""CurrencyId"", ""CompanyId"", ""DescriptionId"", ""ItemCode"", ""ShortDescription"", ""Inactive"", ""IsSold"", ""IsBought"", ""IsMfgComponent"", ""IsMfgConsumable"", ""IsObsolete""
                             )
                                     VALUES(1, 2, 1, @DescriptionId, @ItemCode, @ShortDescription, false, false, false, false, false, false)
                                     RETURNING ""Id""";
 
-                    command.Connection = connection;
-                    command.Transaction = transaction;
-                    command.CommandText = query;
+					command.Connection = connection;
+					command.Transaction = transaction;
+					command.CommandText = query;
 
-                    command.Parameters.AddWithValue("@DescriptionId", itemObj.Description.Id);
-                    command.Parameters.AddWithValue("@ItemCode", itemObj.ItemCode);
-                    command.Parameters.AddWithValue("@ShortDescription", itemObj.ShortDescription);
+					command.Parameters.AddWithValue("@DescriptionId", itemObj.Description.Id);
+					command.Parameters.AddWithValue("@ItemCode", itemObj.ItemCode);
+					command.Parameters.AddWithValue("@ShortDescription", itemObj.ShortDescription);
 
-                    item.Id = Convert.ToInt32(command.ExecuteScalar());
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"{ex.GetType()}: {ex.Message}");
-                }
-            }
+					item.Id = Convert.ToInt32(command.ExecuteScalar());
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show($"{ex.GetType()}: {ex.Message}");
+				}
+			}
 
-            return item;
-        }
+			return item;
+		}
 
-        public Equipment CreateEquipmentForMeasuringDevice(Equipment equipmentObj, NpgsqlTransaction transaction, NpgsqlConnection connection)
-        {
-            Equipment equipment = equipmentObj;
+		public Equipment CreateEquipmentForMeasuringDevice(Equipment equipmentObj, NpgsqlTransaction transaction, NpgsqlConnection connection)
+		{
+			Equipment equipment = equipmentObj;
 
-            using (NpgsqlCommand command = new NpgsqlCommand())
-            {
-                try
-                {
-                    string query = @"INSERT INTO ""Inventory"".""Equipment"" (""CompanyId"", ""ItemId"", ""Manufacturer"", ""Model"",
+			using (NpgsqlCommand command = new NpgsqlCommand())
+			{
+				try
+				{
+					string query = @"INSERT INTO ""Inventory"".""Equipment"" (""CompanyId"", ""ItemId"", ""Manufacturer"", ""Model"",
                                     ""HasAccessory"", ""ApprovalCode"", ""IsPrinted"", ""IsSent"", ""IsForeignCurrency"",
                                     ""EquipmentTypeId"")
                                     VALUES(2, @ItemId, @Manufacturer, @Model, @HasAccessory, @ApprovalCode, @IsPrinted, @IsSent, @IsForeignCurrency,
                                     @EquipmentTypeId)
                                     RETURNING ""Id""";
 
-                    command.Connection = connection;
-                    command.Transaction = transaction;
-                    command.CommandText = query;
+					command.Connection = connection;
+					command.Transaction = transaction;
+					command.CommandText = query;
 
-                    command.Parameters.AddWithValue("@ItemId", equipmentObj.Item.Id);
-                    command.Parameters.AddWithValue("@Manufacturer", equipmentObj.Manufacturer);
-                    command.Parameters.AddWithValue("@Model", equipmentObj.Model);
-                    command.Parameters.AddWithValue("@HasAccessory", equipmentObj.HasAccessory);
-                    command.Parameters.AddWithValue("@ApprovalCode", equipmentObj.ApprovalCode);
-                    command.Parameters.AddWithValue("@IsPrinted", equipmentObj.IsPrinted);
-                    command.Parameters.AddWithValue("@IsSent", equipmentObj.IsSent);
-                    command.Parameters.AddWithValue("@IsForeignCurrency", equipmentObj.IsForeignCurrency);
-                    command.Parameters.AddWithValue("@EquipmentTypeId", equipmentObj.EquipmentType.Id);
+					command.Parameters.AddWithValue("@ItemId", equipmentObj.Item.Id);
+					command.Parameters.AddWithValue("@Manufacturer", equipmentObj.Manufacturer);
+					command.Parameters.AddWithValue("@Model", equipmentObj.Model);
+					command.Parameters.AddWithValue("@HasAccessory", equipmentObj.HasAccessory);
+					command.Parameters.AddWithValue("@ApprovalCode", equipmentObj.ApprovalCode);
+					command.Parameters.AddWithValue("@IsPrinted", equipmentObj.IsPrinted);
+					command.Parameters.AddWithValue("@IsSent", equipmentObj.IsSent);
+					command.Parameters.AddWithValue("@IsForeignCurrency", equipmentObj.IsForeignCurrency);
+					command.Parameters.AddWithValue("@EquipmentTypeId", equipmentObj.EquipmentType.Id);
 
-                    equipment.Id = Convert.ToInt32(command.ExecuteScalar());
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"{ex.GetType()}: {ex.Message}");
-                }
+					equipment.Id = Convert.ToInt32(command.ExecuteScalar());
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show($"{ex.GetType()}: {ex.Message}");
+				}
 
-            }
+			}
 
-            return equipment;
-        }
+			return equipment;
+		}
 
-        public MachineTool CreateMachineToolForMeasuringDevice(MachineTool machineToolObj, NpgsqlTransaction transaction, NpgsqlConnection connection)
-        {
-            MachineTool machineTool = machineToolObj;
+		public MachineTool CreateMachineToolForMeasuringDevice(MachineTool machineToolObj, NpgsqlTransaction transaction, NpgsqlConnection connection)
+		{
+			MachineTool machineTool = machineToolObj;
 
-            using (NpgsqlCommand command = new NpgsqlCommand())
-            {
-                try
-                {
-                    string query = @"INSERT INTO ""Production"".""MachineTool"" (""CompanyId"", ""ItemId"", ""MachineToolTypeId"", ""Description"",
+			using (NpgsqlCommand command = new NpgsqlCommand())
+			{
+				try
+				{
+					string query = @"INSERT INTO ""Production"".""MachineTool"" (""CompanyId"", ""ItemId"", ""MachineToolTypeId"", ""Description"",
                                     ""Note"", ""ToolName"", ""UnitCost"", ""ToolLifeUsagePcs"")
                                     VALUES(2, @ItemId, @MachineToolTypeId, @Description, @Note, @ToolName, @UnitCost, @ToolLifeUsagePcs)
                                     RETURNING ""Id""";
 
-                    command.Connection = connection;
-                    command.Transaction = transaction;
-                    command.CommandText = query;
+					command.Connection = connection;
+					command.Transaction = transaction;
+					command.CommandText = query;
 
-                    command.Parameters.AddWithValue("@ItemId", machineTool.Item.Id);
-                    command.Parameters.AddWithValue("@MachineToolTypeId", machineTool.MachineToolType.Id);
-                    command.Parameters.AddWithValue("@Description", machineTool.Item.Description.Text);
-                    command.Parameters.AddWithValue("@Note", machineTool.Note);
-                    command.Parameters.AddWithValue("@ToolName", machineTool.ToolName);
-                    command.Parameters.AddWithValue("@UnitCost", machineTool.UnitCost);
-                    command.Parameters.AddWithValue("@ToolLifeUsagePcs", machineTool.ToolLifeUsagePcs);
+					command.Parameters.AddWithValue("@ItemId", machineTool.Item.Id);
+					command.Parameters.AddWithValue("@MachineToolTypeId", machineTool.MachineToolType.Id);
+					command.Parameters.AddWithValue("@Description", machineTool.Item.Description.Text);
+					command.Parameters.AddWithValue("@Note", machineTool.Note);
+					command.Parameters.AddWithValue("@ToolName", machineTool.ToolName);
+					command.Parameters.AddWithValue("@UnitCost", machineTool.UnitCost);
+					command.Parameters.AddWithValue("@ToolLifeUsagePcs", machineTool.ToolLifeUsagePcs);
 
-                    machineToolObj.Id = Convert.ToInt32(command.ExecuteScalar());
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"{ex.GetType()}: {ex.Message}");
-                }
-            }
+					machineToolObj.Id = Convert.ToInt32(command.ExecuteScalar());
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show($"{ex.GetType()}: {ex.Message}");
+				}
+			}
 
-            return machineTool;
-        }
+			return machineTool;
+		}
 
-        public MeasuringDevice CreateMeasuringDevice(MeasuringDevice measuringDeviceObj)
-        {
-            MeasuringDevice measuringDevice = measuringDeviceObj;
+		public MeasuringDevice CreateMeasuringDevice(MeasuringDevice measuringDeviceObj)
+		{
+			MeasuringDevice measuringDevice = measuringDeviceObj;
 
-            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
-            {
-                connection.Open();
-                using (NpgsqlTransaction transaction = connection.BeginTransaction())
-                using (NpgsqlCommand command = new NpgsqlCommand())
-                {
-                    try
-                    {
-                        Description description = null;
-                        Item item = null;
-                        Equipment equipment = null;
-                        MachineTool machineTool = null;
+			using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+			{
+				connection.Open();
+				using (NpgsqlTransaction transaction = connection.BeginTransaction())
+				using (NpgsqlCommand command = new NpgsqlCommand())
+				{
+					try
+					{
+						Description description = null;
+						Item item = null;
+						Equipment equipment = null;
+						MachineTool machineTool = null;
 
-                        // Will check if the data for measuring device is equipment
-                        if (measuringDeviceObj.Equipment != null)
-                        {
-                            // Will check if the user selected a description from lookup
-                            // (Non 0 value from the Equipment.Item.Description.Id && Equipment.Item.Id means that the user selected a Description or Item in lookup) same concept for machine tool logic
-                            if (measuringDeviceObj.Equipment.Item.Description.Id == 0) // Will create new entry for description since the id is 0
-                                description = CreateDescriptionForItemMeasuringDevice(measuringDeviceObj.Equipment.Item.Description, transaction, connection);
-                            if (measuringDevice.Equipment.Item.Id == 0) // Will create new entry for Item since the id is 0
-                                item = CreateItemEquipmentForMeasuringDevice(measuringDeviceObj.Equipment.Item, transaction, connection);
+						// Will check if the data for measuring device is equipment
+						if (measuringDeviceObj.Equipment != null)
+						{
+							// Will check if the user selected a description from lookup
+							// (Non 0 value from the Equipment.Item.Description.Id && Equipment.Item.Id means that the user selected a Description or Item in lookup) same concept for machine tool logic
+							if (measuringDeviceObj.Equipment.Item.Description.Id == 0) // Will create new entry for description since the id is 0
+								description = CreateDescriptionForItemMeasuringDevice(measuringDeviceObj.Equipment.Item.Description, transaction, connection);
+							if (measuringDevice.Equipment.Item.Id == 0) // Will create new entry for Item since the id is 0
+								item = CreateItemEquipmentForMeasuringDevice(measuringDeviceObj.Equipment.Item, transaction, connection);
 
-                            equipment = CreateEquipmentForMeasuringDevice(measuringDeviceObj.Equipment, transaction, connection);
-                        }
-                        // Will check if the data for measuring device is machine tool
+							equipment = CreateEquipmentForMeasuringDevice(measuringDeviceObj.Equipment, transaction, connection);
+						}
+						// Will check if the data for measuring device is machine tool
 
-                        else if (measuringDeviceObj.MachineTool != null)
-                        {
-                            if (measuringDeviceObj.MachineTool.Item.Description.Id == 0)
-                                description = CreateDescriptionForItemMeasuringDevice(measuringDeviceObj.MachineTool.Item.Description, transaction, connection);
-                            if (measuringDeviceObj.MachineTool.Item.Id == 0)
-                                item = CreateItemEquipmentForMeasuringDevice(measuringDeviceObj.MachineTool.Item, transaction, connection);
+						else if (measuringDeviceObj.MachineTool != null)
+						{
+							if (measuringDeviceObj.MachineTool.Item.Description.Id == 0)
+								description = CreateDescriptionForItemMeasuringDevice(measuringDeviceObj.MachineTool.Item.Description, transaction, connection);
+							if (measuringDeviceObj.MachineTool.Item.Id == 0)
+								item = CreateItemEquipmentForMeasuringDevice(measuringDeviceObj.MachineTool.Item, transaction, connection);
 
-                            machineTool = CreateMachineToolForMeasuringDevice(measuringDeviceObj.MachineTool, transaction, connection);
-                        }
+							machineTool = CreateMachineToolForMeasuringDevice(measuringDeviceObj.MachineTool, transaction, connection);
+						}
 
-                        string query = @"INSERT INTO ""IMTE"".""MeasuringDevices"" (""Version"", ""EquipmentId"", ""PlantId"", ""IssuedToEmployeeId"", ""CalibratedByEmployeeId"", ""DepartmentId"",
+						string query = @"INSERT INTO ""IMTE"".""MeasuringDevices"" (""Version"", ""EquipmentId"", ""PlantId"", ""IssuedToEmployeeId"", ""CalibratedByEmployeeId"", ""DepartmentId"",
                                     ""LocationId"", ""FrequencyOfCalibration"", ""LastCalibrationDate"", ""ResultOfCalibration"", ""NextCalibrationDate"",
                                     ""Status"", ""ThreadGaugeRIngGaugeUsageNo"", ""CalibrationRemarks"", ""Remarks"", ""Date"", ""Maker"", ""Resolution"",
                                     ""DeviceRange"", ""Accuracy"", ""Barcode"", ""CalibrationMethod"", ""AcceptanceCriteria"", ""SerialNo"", ""UnitId"", 
@@ -877,75 +879,75 @@ namespace IMTE.DataAccess
                                     @Maker, @Resolution, @DeviceRange, @Accuracy, @Barcode, @CalibrationMethod, @AcceptanceCriteria, @SerialNo, @UnitId, 
                                     @MachineToolId, @CreatedOn)";
 
-                        command.Connection = connection;
-                        command.CommandText = query;
+						command.Connection = connection;
+						command.CommandText = query;
 
-                        command.Parameters.AddWithValue("@Version", 1);
+						command.Parameters.AddWithValue("@Version", 1);
 
-                        if (equipment != null)
-                            command.Parameters.AddWithValue("@EquipmentId", equipment.Id);
-                        else
-                            command.Parameters.AddWithValue("@EquipmentId", DBNull.Value);
+						if (equipment != null)
+							command.Parameters.AddWithValue("@EquipmentId", equipment.Id);
+						else
+							command.Parameters.AddWithValue("@EquipmentId", DBNull.Value);
 
-                        command.Parameters.AddWithValue("@PlantId", measuringDeviceObj.Plant.Id);
-                        command.Parameters.AddWithValue("@IssuedToEmployeeId", measuringDeviceObj.IssuedToEmployee.Id);
-                        command.Parameters.AddWithValue("@CalibratedByEmployeeId", measuringDeviceObj.CalibratedByEmployee.Id);
-                        command.Parameters.AddWithValue("@DepartmentId", measuringDeviceObj.Department.Id);
-                        command.Parameters.AddWithValue("@LocationId", measuringDeviceObj.Location.Id);
-                        command.Parameters.AddWithValue("@FrequencyOfCalibration", measuringDeviceObj.FrequencyOfCalibration);
-                        command.Parameters.AddWithValue("@LastCalibrationDate", measuringDeviceObj.LastCalibrationDate);
-                        command.Parameters.AddWithValue("@ResultOfCalibration", measuringDeviceObj.ResultOfCalibration);
-                        command.Parameters.AddWithValue("@NextCalibrationDate", measuringDeviceObj.NextCalibrationDate);
-                        command.Parameters.AddWithValue("@Status", measuringDeviceObj.Status);
-                        command.Parameters.AddWithValue("@ThreadGaugeRIngGaugeUsageNo", measuringDeviceObj.ThreadGaugeRingGaugeUsageNo);
-                        command.Parameters.AddWithValue("@CalibrationRemarks", measuringDeviceObj.CalibrationRemarks);
-                        command.Parameters.AddWithValue("@Remarks", measuringDeviceObj.Remarks);
-                        command.Parameters.AddWithValue("@Date", measuringDeviceObj.Date);
-                        command.Parameters.AddWithValue("@Maker", measuringDeviceObj.Maker);
-                        command.Parameters.AddWithValue("@Resolution", measuringDeviceObj.Resolution);
-                        command.Parameters.AddWithValue("@DeviceRange", measuringDeviceObj.DeviceRange);
-                        command.Parameters.AddWithValue("@Accuracy", measuringDeviceObj.Accuracy);
-                        command.Parameters.AddWithValue("@Barcode", measuringDeviceObj.Barcode);
-                        command.Parameters.AddWithValue("@CalibrationMethod", measuringDeviceObj.CalibrationMethod);
-                        command.Parameters.AddWithValue("@AcceptanceCriteria", measuringDeviceObj.AcceptanceCriteria);
-                        command.Parameters.AddWithValue("@SerialNo", measuringDeviceObj.SerialNo);
-                        command.Parameters.AddWithValue("@UnitId", measuringDeviceObj.Unit.Id);
-                        command.Parameters.AddWithValue("@CreatedOn", DateTime.UtcNow);
+						command.Parameters.AddWithValue("@PlantId", measuringDeviceObj.Plant.Id);
+						command.Parameters.AddWithValue("@IssuedToEmployeeId", measuringDeviceObj.IssuedToEmployee.Id);
+						command.Parameters.AddWithValue("@CalibratedByEmployeeId", measuringDeviceObj.CalibratedByEmployee.Id);
+						command.Parameters.AddWithValue("@DepartmentId", measuringDeviceObj.Department.Id);
+						command.Parameters.AddWithValue("@LocationId", measuringDeviceObj.Location.Id);
+						command.Parameters.AddWithValue("@FrequencyOfCalibration", measuringDeviceObj.FrequencyOfCalibration);
+						command.Parameters.AddWithValue("@LastCalibrationDate", measuringDeviceObj.LastCalibrationDate);
+						command.Parameters.AddWithValue("@ResultOfCalibration", measuringDeviceObj.ResultOfCalibration);
+						command.Parameters.AddWithValue("@NextCalibrationDate", measuringDeviceObj.NextCalibrationDate);
+						command.Parameters.AddWithValue("@Status", measuringDeviceObj.Status);
+						command.Parameters.AddWithValue("@ThreadGaugeRIngGaugeUsageNo", measuringDeviceObj.ThreadGaugeRingGaugeUsageNo);
+						command.Parameters.AddWithValue("@CalibrationRemarks", measuringDeviceObj.CalibrationRemarks);
+						command.Parameters.AddWithValue("@Remarks", measuringDeviceObj.Remarks);
+						command.Parameters.AddWithValue("@Date", measuringDeviceObj.Date);
+						command.Parameters.AddWithValue("@Maker", measuringDeviceObj.Maker);
+						command.Parameters.AddWithValue("@Resolution", measuringDeviceObj.Resolution);
+						command.Parameters.AddWithValue("@DeviceRange", measuringDeviceObj.DeviceRange);
+						command.Parameters.AddWithValue("@Accuracy", measuringDeviceObj.Accuracy);
+						command.Parameters.AddWithValue("@Barcode", measuringDeviceObj.Barcode);
+						command.Parameters.AddWithValue("@CalibrationMethod", measuringDeviceObj.CalibrationMethod);
+						command.Parameters.AddWithValue("@AcceptanceCriteria", measuringDeviceObj.AcceptanceCriteria);
+						command.Parameters.AddWithValue("@SerialNo", measuringDeviceObj.SerialNo);
+						command.Parameters.AddWithValue("@UnitId", measuringDeviceObj.Unit.Id);
+						command.Parameters.AddWithValue("@CreatedOn", DateTime.UtcNow);
 
-                        if (machineTool != null)
-                            command.Parameters.AddWithValue("@MachineToolId", machineTool.Id);
-                        else
-                            command.Parameters.AddWithValue("@MachineToolId", DBNull.Value);
-
-
-                        command.ExecuteNonQuery();
-
-                        transaction.Commit();
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        MessageBox.Show($"{ex.GetType()}: {ex.Message}");
-                    }
-                }
-            }
+						if (machineTool != null)
+							command.Parameters.AddWithValue("@MachineToolId", machineTool.Id);
+						else
+							command.Parameters.AddWithValue("@MachineToolId", DBNull.Value);
 
 
-            return measuringDevice;
-        }
+						command.ExecuteNonQuery();
 
-        public void UpdateMeasuringDevice(MeasuringDevice measuringDeviceObj)
-        {
-            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
-            {
-                connection.Open();
-                using (NpgsqlTransaction transaction = connection.BeginTransaction())
-                using (NpgsqlCommand command = new NpgsqlCommand())
-                {
-                    try
-                    {
-                        command.Connection = connection;
-                        string sql = @" UPDATE ""IMTE"".""MeasuringDevices"" SET
+						transaction.Commit();
+					}
+					catch (Exception ex)
+					{
+						transaction.Rollback();
+						MessageBox.Show($"{ex.GetType()}: {ex.Message}");
+					}
+				}
+			}
+
+
+			return measuringDevice;
+		}
+
+		public void UpdateMeasuringDevice(MeasuringDevice measuringDeviceObj)
+		{
+			using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+			{
+				connection.Open();
+				using (NpgsqlTransaction transaction = connection.BeginTransaction())
+				using (NpgsqlCommand command = new NpgsqlCommand())
+				{
+					try
+					{
+						command.Connection = connection;
+						string sql = @" UPDATE ""IMTE"".""MeasuringDevices"" SET
                             ""Version"" = @Version,
                             ""SerialNo"" = @SerialNo,
                             ""DepartmentId"" = @DepartmentId,
@@ -974,116 +976,128 @@ namespace IMTE.DataAccess
                             ""MachineToolId"" = @MachineToolId
                             WHERE ""Id"" = @Id";
 
-                        command.CommandText = sql;
+						command.CommandText = sql;
 
-                        command.Parameters.AddWithValue("@Version", measuringDeviceObj.Version++);
-                        command.Parameters.AddWithValue("@SerialNo", measuringDeviceObj.SerialNo);
-                        command.Parameters.AddWithValue("@DepartmentId", measuringDeviceObj.Department.Id);
-                        command.Parameters.AddWithValue("@LocationId", measuringDeviceObj.Location.Id);
-                        command.Parameters.AddWithValue("@PlantId", measuringDeviceObj.Plant.Id);
-                        command.Parameters.AddWithValue("@IssuedToEmployeeId", measuringDeviceObj.IssuedToEmployee.Id);
-                        command.Parameters.AddWithValue("@CalibratedByEmployeeId", measuringDeviceObj.CalibratedByEmployee.Id);
-                        command.Parameters.AddWithValue("@ResultOfCalibration", measuringDeviceObj.ResultOfCalibration);
-                        command.Parameters.AddWithValue("@CalibrationMethod", measuringDeviceObj.CalibrationMethod);
-                        command.Parameters.AddWithValue("@AcceptanceCriteria", measuringDeviceObj.AcceptanceCriteria);
-                        command.Parameters.AddWithValue("@FrequencyOfCalibration", measuringDeviceObj.FrequencyOfCalibration);
-                        command.Parameters.AddWithValue("@LastCalibrationDate", measuringDeviceObj.LastCalibrationDate.Value.ToUniversalTime());
-                        command.Parameters.AddWithValue("@NextCalibrationDate", measuringDeviceObj.NextCalibrationDate.Value.ToUniversalTime());
-                        command.Parameters.AddWithValue("@CalibrationRemarks", measuringDeviceObj.CalibrationRemarks);
-                        command.Parameters.AddWithValue("@ThreadGaugeRIngGaugeUsageNo", measuringDeviceObj.ThreadGaugeRingGaugeUsageNo);
-                        command.Parameters.AddWithValue("@Status", measuringDeviceObj.Status);
-                        command.Parameters.AddWithValue("@Barcode", measuringDeviceObj.Barcode);
-                        command.Parameters.AddWithValue("@Remarks", measuringDeviceObj.Remarks);
-                        command.Parameters.AddWithValue("@Date", measuringDeviceObj.Date);
-                        command.Parameters.AddWithValue("@Maker", measuringDeviceObj.Maker);
-                        command.Parameters.AddWithValue("@Resolution", measuringDeviceObj.Resolution);
-                        command.Parameters.AddWithValue("@Range", measuringDeviceObj.DeviceRange);
-                        command.Parameters.AddWithValue("@Accuracy", measuringDeviceObj.Accuracy);
-                        command.Parameters.AddWithValue("@UnitId", measuringDeviceObj.Unit.Id);
+						command.Parameters.AddWithValue("@Version", measuringDeviceObj.Version++);
+						command.Parameters.AddWithValue("@SerialNo", measuringDeviceObj.SerialNo);
+						command.Parameters.AddWithValue("@DepartmentId", measuringDeviceObj.Department.Id);
+						command.Parameters.AddWithValue("@LocationId", measuringDeviceObj.Location.Id);
+						command.Parameters.AddWithValue("@PlantId", measuringDeviceObj.Plant.Id);
+						command.Parameters.AddWithValue("@IssuedToEmployeeId", measuringDeviceObj.IssuedToEmployee.Id);
+						command.Parameters.AddWithValue("@CalibratedByEmployeeId", measuringDeviceObj.CalibratedByEmployee.Id);
+						command.Parameters.AddWithValue("@ResultOfCalibration", measuringDeviceObj.ResultOfCalibration);
+						command.Parameters.AddWithValue("@CalibrationMethod", measuringDeviceObj.CalibrationMethod);
+						command.Parameters.AddWithValue("@AcceptanceCriteria", measuringDeviceObj.AcceptanceCriteria);
+						command.Parameters.AddWithValue("@FrequencyOfCalibration", measuringDeviceObj.FrequencyOfCalibration);
+						command.Parameters.AddWithValue("@LastCalibrationDate", measuringDeviceObj.LastCalibrationDate.Value.ToUniversalTime());
+						command.Parameters.AddWithValue("@NextCalibrationDate", measuringDeviceObj.NextCalibrationDate.Value.ToUniversalTime());
+						command.Parameters.AddWithValue("@CalibrationRemarks", measuringDeviceObj.CalibrationRemarks);
+						command.Parameters.AddWithValue("@ThreadGaugeRIngGaugeUsageNo", measuringDeviceObj.ThreadGaugeRingGaugeUsageNo);
+						command.Parameters.AddWithValue("@Status", measuringDeviceObj.Status);
+						command.Parameters.AddWithValue("@Barcode", measuringDeviceObj.Barcode);
+						command.Parameters.AddWithValue("@Remarks", measuringDeviceObj.Remarks);
+						command.Parameters.AddWithValue("@Date", measuringDeviceObj.Date);
+						command.Parameters.AddWithValue("@Maker", measuringDeviceObj.Maker);
+						command.Parameters.AddWithValue("@Resolution", measuringDeviceObj.Resolution);
+						command.Parameters.AddWithValue("@Range", measuringDeviceObj.DeviceRange);
+						command.Parameters.AddWithValue("@Accuracy", measuringDeviceObj.Accuracy);
+						command.Parameters.AddWithValue("@UnitId", measuringDeviceObj.Unit.Id);
 
-                        // Check if equipment
-                        if (measuringDeviceObj.Equipment != null)
-                        {
-                            // will check if the user created a new Equipment's Item's Description(Equipment.Item.Description.Id==0 = created new)
-                            if (measuringDeviceObj.Equipment.Item.Description.Id != 0)
-                                descriptionDA.UpdateDescription(measuringDeviceObj.Equipment.Item.Description, transaction, connection);
-                            else
-                                measuringDeviceObj.Equipment.Item.Description = CreateDescriptionForItemMeasuringDevice(measuringDeviceObj.Equipment.Item.Description, transaction, connection);
+						// Check if equipment
+						if (measuringDeviceObj.Equipment != null)
+						{
+							// will check if the user created a new Equipment's Item's Description(Equipment.Item.Description.Id==0 = created new)
+							if (measuringDeviceObj.Equipment.Item.Description.Id != 0)
+								descriptionDA.UpdateDescription(measuringDeviceObj.Equipment.Item.Description, transaction, connection);
+							else
+								measuringDeviceObj.Equipment.Item.Description = CreateDescriptionForItemMeasuringDevice(measuringDeviceObj.Equipment.Item.Description, transaction, connection);
 
-                            // will check if the user created a new Equipment's Item(Equipment.Item.Id==0 = created new)
-                            if (measuringDeviceObj.Equipment.Item.Id != 0)
-                                itemDA.UpdateItem(measuringDeviceObj.Equipment.Item, transaction, connection);
-                            else
-                                measuringDeviceObj.Equipment.Item = CreateItemEquipmentForMeasuringDevice(measuringDeviceObj.Equipment.Item, transaction, connection);
+							// will check if the user created a new Equipment's Item(Equipment.Item.Id==0 = created new)
+							if (measuringDeviceObj.Equipment.Item.Id != 0)
+								itemDA.UpdateItem(measuringDeviceObj.Equipment.Item, transaction, connection);
+							else
+								measuringDeviceObj.Equipment.Item = CreateItemEquipmentForMeasuringDevice(measuringDeviceObj.Equipment.Item, transaction, connection);
 
-                            // will check if the user created a new Equipment(Equipment.Id==0 = created new)
-                            if (measuringDeviceObj.Equipment.Id != 0 && measuringDeviceObj.Equipment.Id != null)
-                                equipmentDA.UpdateEquipment(measuringDeviceObj.Equipment, transaction, connection);
-                            else
-                                measuringDeviceObj.Equipment = CreateEquipmentForMeasuringDevice(measuringDeviceObj.Equipment, transaction, connection);
+							// will check if the user created a new Equipment(Equipment.Id==0 = created new)
+							if (measuringDeviceObj.Equipment.Id != 0 && measuringDeviceObj.Equipment.Id != null)
+								equipmentDA.UpdateEquipment(measuringDeviceObj.Equipment, transaction, connection);
+							else
+								measuringDeviceObj.Equipment = CreateEquipmentForMeasuringDevice(measuringDeviceObj.Equipment, transaction, connection);
 
-                            command.Parameters.AddWithValue("@EquipmentId", measuringDeviceObj.Equipment.Id);
-                        }
-                        else
-                            command.Parameters.AddWithValue("@EquipmentId", DBNull.Value);
+							command.Parameters.AddWithValue("@EquipmentId", measuringDeviceObj.Equipment.Id);
+						}
+						else
+							command.Parameters.AddWithValue("@EquipmentId", DBNull.Value);
 
-                        // Check if machine tool
-                        if (measuringDeviceObj.MachineTool != null)
-                        {
-                            if (measuringDeviceObj.MachineTool.Id == 0)
-                            {
-                                measuringDeviceObj.MachineTool = CreateMachineToolForMeasuringDevice(measuringDeviceObj.MachineTool, transaction, connection);
-                            }
+						// Check if machine tool
+						if (measuringDeviceObj.MachineTool != null)
+						{
+							var machineTool = measuringDeviceObj.MachineTool;
 
-                            command.Parameters.AddWithValue("@MachineToolId", measuringDeviceObj.MachineTool.Id);
-                            descriptionDA.UpdateDescription(measuringDeviceObj.MachineTool.Item.Description, transaction, connection);
-                        }
-                        else
-                            command.Parameters.AddWithValue("@MachineToolId", DBNull.Value);
+							if (machineTool.Item.Description.Id != 0)
+								descriptionDA.UpdateDescription(machineTool.Item.Description, transaction, connection);
+							else
+								machineTool.Item.Description = CreateDescriptionForItemMeasuringDevice(machineTool.Item.Description, transaction, connection);
 
-                        command.Parameters.AddWithValue("@Id", measuringDeviceObj.Id);
-                        command.ExecuteNonQuery();
-                        transaction.Commit();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"{ex.Message}: {ex.StackTrace}");
-                        transaction.Rollback();
-                    }
-                }
-            }
-        }
+							if (machineTool.Item.Id != 0)
+								itemDA.UpdateItem(machineTool.Item, transaction, connection);
+							else
+								machineTool.Item = CreateItemEquipmentForMeasuringDevice(machineTool.Item, transaction, connection);
 
-        public void DeleteMeasuringDevice(MeasuringDevice measuringDeviceObj)
-        {
-            try
-            {
-                using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
-                using (NpgsqlCommand command = new NpgsqlCommand())
-                {
+							if (machineTool.Id != 0 && machineTool.Id != null)
+								machineToolDA.UpdateMachineTool(machineTool, transaction, connection);
+							else
+								machineTool = CreateMachineToolForMeasuringDevice(measuringDeviceObj.MachineTool, transaction, connection);
 
-                    connection.Open();
-                    command.Connection = connection;
-                    command.CommandText = @"UPDATE ""IMTE"".""MeasuringDevices"" SET ""IsDeleted"" = @IsDeleted 
+							command.Parameters.AddWithValue("@MachineToolId", measuringDeviceObj.MachineTool.Id);
+							descriptionDA.UpdateDescription(measuringDeviceObj.MachineTool.Item.Description, transaction, connection);
+						}
+						else
+							command.Parameters.AddWithValue("@MachineToolId", DBNull.Value);
+
+						command.Parameters.AddWithValue("@Id", measuringDeviceObj.Id);
+						command.ExecuteNonQuery();
+						transaction.Commit();
+					}
+					catch (Exception ex)
+					{
+						MessageBox.Show($"{ex.Message}: {ex.StackTrace}");
+						transaction.Rollback();
+					}
+				}
+			}
+		}
+
+		public void DeleteMeasuringDevice(MeasuringDevice measuringDeviceObj)
+		{
+			try
+			{
+				using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+				using (NpgsqlCommand command = new NpgsqlCommand())
+				{
+
+					connection.Open();
+					command.Connection = connection;
+					command.CommandText = @"UPDATE ""IMTE"".""MeasuringDevices"" SET ""IsDeleted"" = @IsDeleted 
                                             WHERE ""Id"" = @Id";
-                    command.Parameters.AddWithValue("@IsDeleted", true);
-                    command.Parameters.AddWithValue("@Id", measuringDeviceObj.Id);
+					command.Parameters.AddWithValue("@IsDeleted", true);
+					command.Parameters.AddWithValue("@Id", measuringDeviceObj.Id);
 
-                    command.ExecuteNonQuery();
+					command.ExecuteNonQuery();
 
-                }
-            }
-            catch (NpgsqlException npgsqlEx)
-            {
-                Debug.WriteLine(npgsqlEx.GetType().ToString());
-                Debug.WriteLine(npgsqlEx.Message);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.GetType().ToString());
-                Debug.WriteLine(ex.Message);
-            }
-        }
+				}
+			}
+			catch (NpgsqlException npgsqlEx)
+			{
+				Debug.WriteLine(npgsqlEx.GetType().ToString());
+				Debug.WriteLine(npgsqlEx.Message);
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine(ex.GetType().ToString());
+				Debug.WriteLine(ex.Message);
+			}
+		}
 
-    }
+	}
 }
