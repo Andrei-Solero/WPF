@@ -1,4 +1,9 @@
-﻿using Prism.Regions;
+﻿using IMTE.EventAggregator.Core;
+using IMTE.Models.General;
+using Prism.Commands;
+using Prism.Events;
+using Prism.Mvvm;
+using Prism.Regions;
 using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
@@ -8,16 +13,30 @@ using System.Threading.Tasks;
 
 namespace IMTE.ViewModels
 {
-    public class MDLookup_PlantConfigViewModel : IDialogAware
+    public class MDLookup_PlantConfigViewModel : BindableBase, IDialogAware
     {
-        public IRegionManager PlantRegionManager { get; set; }
+        private readonly IRegionManager plantRegionManager;
+
 
         public MDLookup_PlantConfigViewModel(IRegionManager plantRegionManager)
         {
-            PlantRegionManager = plantRegionManager;
-            
+            this.plantRegionManager = plantRegionManager;
+            plantRegionManager.RegisterViewWithRegion("PlantConfigRegion", "PlantConfigList");
+
         }
 
+        #region Full Property
+
+        private Plant _selectedPlant = new Plant();
+
+        public Plant SelectedPlant
+        {
+            get { return _selectedPlant; }
+            set { SetProperty(ref _selectedPlant, value); }
+        }
+
+
+        #endregion
 
         public string Title => "";
 
@@ -37,7 +56,6 @@ namespace IMTE.ViewModels
 
         public void OnDialogOpened(IDialogParameters parameters)
         {
-            PlantRegionManager.CreateRegionManager();
         }
     }
 }

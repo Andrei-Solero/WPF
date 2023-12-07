@@ -19,16 +19,26 @@ namespace IMTE.DataAccess
             {
                 connection.Open();
                 command.Connection = connection;
-                command.CommandText = @"SELECT * FROM ""General"".""Plant""";
+                command.CommandText = @"SELECT p.""Id"" AS ""PlantId"", p.""PlantName"", p.""Description"",
+                                        l.""Id"" AS ""LocationId"", l.""Name"" AS ""LocationName"" 
+                                        FROM ""General"".""Plant"" p
+                                        INNER JOIN ""General"".""Location"" l ON p.""LocationId"" = l.""Id""";
 
                 var data = command.ExecuteReader();
 
                 while (data.Read())
                 {
-                    var jsonObj = SerializeDataToJSON(data);
-                    var locObj = DeserializeJSONToObj(jsonObj);
-
-                    output.Add(locObj);
+                    output.Add(new Plant
+                    {
+                        Id = CheckDbNullInt(data, "PlantId"),
+                        PlantName = CheckDbNullString(data, "PlantName"),
+                        Description = CheckDbNullString(data, "Description"),
+                        Location = new Location
+                        {
+                            Id = CheckDbNullInt(data, "PlantId"),
+                            Name = CheckDbNullString(data, "LocationName")
+                        }
+                    });
                 }
             }
 

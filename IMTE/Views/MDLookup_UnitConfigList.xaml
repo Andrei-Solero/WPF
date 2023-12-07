@@ -26,7 +26,7 @@
             ColumnSizer="Star"
             GridLinesVisibility="Horizontal"
             ItemsSource="{Binding ElementName=dataPage, Path=PagedSource}"
-            SelectedItem="{Binding SelectedUnit}"
+            SelectedItem="{Binding SelectedPlant}"
             Style="{StaticResource dataGridMain}">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="CellDoubleTapped">

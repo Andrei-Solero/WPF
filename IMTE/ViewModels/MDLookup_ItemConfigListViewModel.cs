@@ -32,7 +32,7 @@ namespace IMTE.ViewModels
 
 		private void PassSelectedObjToMDForm()
 		{
-            ea.GetEvent<ItemLookupToMDForm>().Publish(SelectedItemObj);
+            ea.GetEvent<ItemLookupToMDForms>().Publish(SelectedItemObj);
 		}
 
 

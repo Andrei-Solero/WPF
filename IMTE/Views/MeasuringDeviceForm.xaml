@@ -9,12 +9,16 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
     xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+    xmlns:valueConverter="clr-namespace:IMTE.ValueConverter"
     xmlns:vm="clr-namespace:IMTE.ViewModels"
     d:DesignHeight="700"
     d:DesignWidth="1200"
     prism:ViewModelLocator.AutoWireViewModel="True"
     Background="White"
     mc:Ignorable="d">
+    <UserControl.Resources>
+        <valueConverter:InvertBoolConverter x:Key="InvertBoolean" />
+    </UserControl.Resources>
     <Grid>
         <Grid.Resources>
             <Style x:Key="ButtonLabelStyle" TargetType="TextBlock">
@@ -86,7 +90,10 @@
                     </Button.Content>
                 </Button>
 
-                <Button Command="{Binding SaveChangesCommand}" Style="{StaticResource MenuButton}">
+                <Button
+                    Command="{Binding SaveChangesCommand}"
+                    Style="{StaticResource MenuButton}"
+                    ToolTip="Check all fields">
                     <Button.Content>
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconFontAwesome
@@ -166,13 +173,13 @@
                         BorderThickness="2"
                         CornerRadius="5">
                         <Grid IsEnabled="{Binding IsDataSaving}">
-                            <StackPanel Margin="15">
+                            <StackPanel Margin="15" VerticalAlignment="Center">
 
                                 <!--  ID & serial no  -->
                                 <Grid Margin="0,0,0,6">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="auto" />
+                                        <!--<ColumnDefinition Width="auto" />-->
                                     </Grid.ColumnDefinitions>
 
                                     <TextBox
@@ -180,22 +187,26 @@
                                         Height="auto"
                                         mah:TextBoxHelper.Watermark="Serial No"
                                         BorderBrush="Gray"
+                                        IsEnabled="{Binding IsSerialNoNull, Converter={StaticResource InvertBoolean}}"
                                         Style="{StaticResource FormTextboxStyle}"
-                                        Text="{Binding SerialNo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        Text="{Binding SerialNo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" />
 
-                                    <CheckBox
+                                    <!--<CheckBox
                                         Grid.Column="2"
                                         Grid.ColumnSpan="2"
                                         Margin="4,4,0,4"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Center"
-                                        Content="N/A" />
+                                        Content="N/A"
+                                        IsChecked="{Binding IsSerialNoNull}" />-->
                                 </Grid>
 
                                 <!--  Issued to & Description  -->
-                                <Grid Margin="0,0,0,6">
+                                <!--<Grid Margin="0,0,0,6">
                                     <StackPanel Grid.Column="1">
-                                        <TextBlock Margin="0,0,0,3" Text="Issued To" />
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Margin="0,0,0,3" Text="Issued To" />
+                                        </StackPanel>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
@@ -203,6 +214,7 @@
                                             </Grid.ColumnDefinitions>
 
                                             <syncfusion:SfMultiColumnDropDownControl
+                                                x:Name="cmbIssuedToEmployee"
                                                 Grid.Column="0"
                                                 Height="25"
                                                 AllowAutoComplete="True"
@@ -210,10 +222,11 @@
                                                 AutoGenerateColumns="False"
                                                 DisplayMember="Person"
                                                 ItemsSource="{Binding Employees}"
-                                                SelectedItem="{Binding IssuedToEmployee, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                SelectedItem="{Binding IssuedToEmployee, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                                                Validation.ErrorTemplate="{StaticResource errorTemplateForComboBox}">
                                                 <syncfusion:SfMultiColumnDropDownControl.Columns>
-                                                    <syncfusion:GridTextColumn Width="200" MappingName="Person" />
-                                                    <syncfusion:GridTextColumn Width="200" MappingName="Position" />
+                                                    <syncfusion:GridTextColumn ColumnSizer="Star" MappingName="Person" />
+                                                    <syncfusion:GridTextColumn ColumnSizer="Star" MappingName="Position" />
                                                 </syncfusion:SfMultiColumnDropDownControl.Columns>
                                             </syncfusion:SfMultiColumnDropDownControl>
 
@@ -234,7 +247,7 @@
                                         </Grid>
                                     </StackPanel>
 
-                                </Grid>
+                                </Grid>-->
 
                                 <!--  Type & Department  -->
                                 <Grid Margin="0,0,0,6">
@@ -256,10 +269,11 @@
                                                 AutoGenerateColumns="False"
                                                 DisplayMember="DepartmentName"
                                                 ItemsSource="{Binding Departments}"
-                                                SelectedItem="{Binding Department, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                SelectedItem="{Binding Department, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                                                Validation.ErrorTemplate="{StaticResource errorTemplateForComboBox}">
                                                 <syncfusion:SfMultiColumnDropDownControl.Columns>
-                                                    <syncfusion:GridTextColumn Width="200" MappingName="DepartmentName" />
-                                                    <syncfusion:GridTextColumn Width="200" MappingName="Company" />
+                                                    <syncfusion:GridTextColumn ColumnSizer="Star" MappingName="DepartmentName" />
+                                                    <syncfusion:GridTextColumn ColumnSizer="Star" MappingName="Company" />
                                                 </syncfusion:SfMultiColumnDropDownControl.Columns>
                                             </syncfusion:SfMultiColumnDropDownControl>
 
@@ -282,11 +296,11 @@
                                 </Grid>
 
                                 <!--  Location  -->
-                                <Grid Margin="0,0,0,0">
+                                <Grid Margin="0,0,0,10">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="186*" />
-                                        <ColumnDefinition Width="175*" />
-                                        <ColumnDefinition Width="11*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="auto" />
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Grid.Column="0" Margin="0,0,4,0">
@@ -298,9 +312,10 @@
                                             AutoGenerateColumns="False"
                                             DisplayMember="Name"
                                             ItemsSource="{Binding Locations}"
-                                            SelectedItem="{Binding Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                            SelectedItem="{Binding Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                                            Validation.ErrorTemplate="{StaticResource errorTemplateForComboBox}">
                                             <syncfusion:SfMultiColumnDropDownControl.Columns>
-                                                <syncfusion:GridTextColumn Width="200" MappingName="Name" />
+                                                <syncfusion:GridTextColumn ColumnSizer="Star" MappingName="Name" />
                                             </syncfusion:SfMultiColumnDropDownControl.Columns>
                                         </syncfusion:SfMultiColumnDropDownControl>
                                     </StackPanel>
@@ -321,9 +336,10 @@
                                                 AutoGenerateColumns="False"
                                                 DisplayMember="PlantName"
                                                 ItemsSource="{Binding Plants}"
-                                                SelectedItem="{Binding Plant, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                SelectedItem="{Binding Plant, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                                                Validation.ErrorTemplate="{StaticResource errorTemplateForComboBox}">
                                                 <syncfusion:SfMultiColumnDropDownControl.Columns>
-                                                    <syncfusion:GridTextColumn Width="200" MappingName="PlantName" />
+                                                    <syncfusion:GridTextColumn ColumnSizer="Star" MappingName="PlantName" />
                                                 </syncfusion:SfMultiColumnDropDownControl.Columns>
                                             </syncfusion:SfMultiColumnDropDownControl>
 
@@ -345,6 +361,23 @@
 
                                 </Grid>
 
+                                <Grid>
+                                    <TextBox
+                                        Grid.Column="1"
+                                        Height="60"
+                                        Padding="4"
+                                        VerticalContentAlignment="Stretch"
+                                        mah:TextBoxHelper.Watermark="Description"
+                                        AcceptsReturn="True"
+                                        FontSize="12"
+                                        MaxLength="500"
+                                        Style="{StaticResource FormTextboxStyle}"
+                                        Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                                        TextWrapping="Wrap"
+                                        Validation.ErrorTemplate="{StaticResource errorTemplateForTextArea}"
+                                        VerticalScrollBarVisibility="Auto" />
+                                </Grid>
+
                             </StackPanel>
                         </Grid>
                     </Border>
@@ -358,13 +391,12 @@
                     Margin="0,8,15,0"
                     Padding="4"
                     mah:ControlsHelper.CornerRadius="3"
-                    Header="Calibration Details"
                     IsEnabled="{Binding IsDataSaving}">
-                    <StackPanel Margin="10" VerticalAlignment="Center">
+                    <StackPanel Margin="10">
 
                         <!--  Calibrated By  -->
 
-                        <Grid Margin="0,0,0,6">
+                        <!--<Grid Margin="0,0,0,6">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto" />
                                 <ColumnDefinition Width="*" />
@@ -390,11 +422,12 @@
                                     AllowIncrementalFiltering="True"
                                     AutoGenerateColumns="False"
                                     DisplayMember="Person"
+                                    IsEnabled="{Binding IsCalibratedByNull, Converter={StaticResource InvertBoolean}}"
                                     ItemsSource="{Binding Employees}"
                                     SelectedItem="{Binding CalibratedByEmployee, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                     <syncfusion:SfMultiColumnDropDownControl.Columns>
-                                        <syncfusion:GridTextColumn Width="200" MappingName="Person" />
-                                        <syncfusion:GridTextColumn Width="200" MappingName="Position" />
+                                        <syncfusion:GridTextColumn ColumnSizer="Star" MappingName="Person" />
+                                        <syncfusion:GridTextColumn ColumnSizer="Star" MappingName="Position" />
                                     </syncfusion:SfMultiColumnDropDownControl.Columns>
                                 </syncfusion:SfMultiColumnDropDownControl>
 
@@ -405,21 +438,25 @@
                                     Margin="4,0,0,0"
                                     Padding="0"
                                     mah:ControlsHelper.CornerRadius="50"
-                                    Command="{Binding CalibratedByEmployeeLookupCommand}">
+                                    Command="{Binding CalibratedByEmployeeLookupCommand}"
+                                    IsEnabled="{Binding IsCalibratedByNull, Converter={StaticResource InvertBoolean}}">
                                     <Button.Content>
                                         <iconPacks:PackIconModern Width="10" Kind="Magnify" />
                                     </Button.Content>
                                 </Button>
                             </Grid>
 
-                            <CheckBox
+                        -->
+                        <!--<CheckBox
                                 Grid.Column="2"
                                 Margin="4,0,0,0"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
-                                Content="N/A" />
+                                Content="N/A"
+                                IsChecked="{Binding IsCalibratedByNull}" />-->
+                        <!--
 
-                        </Grid>
+                        </Grid>-->
 
 
                         <!--  Calibration Result & Calibration Method  -->
@@ -434,21 +471,23 @@
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="4*" />
-                                        <ColumnDefinition Width="auto" />
+                                        <!--<ColumnDefinition Width="auto" />-->
                                     </Grid.ColumnDefinitions>
 
-                                    <syncfusion:SfMultiColumnDropDownControl
+                                    <syncfusion:ComboBoxAdv
                                         Grid.Column="0"
                                         Height="25"
+                                        IsEnabled="{Binding IsResultOfCalibrationNull, Converter={StaticResource InvertBoolean}}"
                                         ItemsSource="{Binding CalibrationResults}"
                                         SelectedItem="{Binding ResultOfCalibration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                                    <CheckBox
+                                    <!--<CheckBox
                                         Grid.Column="2"
                                         Margin="4,0,0,0"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Center"
-                                        Content="N/A" />
+                                        Content="N/A"
+                                        IsChecked="{Binding IsResultOfCalibrationNull}" />-->
                                 </Grid>
 
                             </StackPanel>
@@ -461,20 +500,20 @@
                                         <ColumnDefinition Width="auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <syncfusion:SfMultiColumnDropDownControl
+                                    <syncfusion:ComboBoxAdv
                                         Grid.Column="0"
                                         Height="25"
-                                        AllowAutoComplete="True"
-                                        AllowIncrementalFiltering="True"
+                                        IsEnabled="{Binding IsCalibrationMethodNull, Converter={StaticResource InvertBoolean}}"
                                         ItemsSource="{Binding CalibrationMethods}"
                                         SelectedItem="{Binding CalibrationMethod, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                                    <CheckBox
+                                    <!--<CheckBox
                                         Grid.Column="2"
                                         Margin="4,0,0,0"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Center"
-                                        Content="N/A" />
+                                        Content="N/A"
+                                        IsChecked="{Binding IsCalibrationMethodNull}" />-->
                                 </Grid>
                             </StackPanel>
 
@@ -495,20 +534,20 @@
                                         <ColumnDefinition Width="auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <syncfusion:SfMultiColumnDropDownControl
+                                    <syncfusion:ComboBoxAdv
                                         Grid.Column="0"
                                         Height="25"
-                                        AllowAutoComplete="True"
-                                        AllowIncrementalFiltering="True"
+                                        IsEnabled="{Binding IsAcceptanceCriteriaNull, Converter={StaticResource InvertBoolean}}"
                                         ItemsSource="{Binding AcceptanceCriterias}"
                                         SelectedItem="{Binding AcceptanceCriteria, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                                    <CheckBox
+                                    <!--<CheckBox
                                         Grid.Column="2"
                                         Margin="4,0,0,0"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Center"
-                                        Content="N/A" />
+                                        Content="N/A"
+                                        IsChecked="{Binding IsAcceptanceCriteriaNull}" />-->
                                 </Grid>
                             </StackPanel>
 
@@ -520,20 +559,20 @@
                                         <ColumnDefinition Width="auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <syncfusion:SfMultiColumnDropDownControl
+                                    <syncfusion:ComboBoxAdv
                                         Grid.Column="0"
                                         Height="25"
-                                        AllowAutoComplete="True"
-                                        AllowIncrementalFiltering="True"
+                                        IsEnabled="{Binding IsFrequencyOfCalibrationNull, Converter={StaticResource InvertBoolean}}"
                                         ItemsSource="{Binding FrequencyOfCalibrations}"
                                         SelectedItem="{Binding FrequencyOfCalibration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                                    <CheckBox
+                                    <!--<CheckBox
                                         Grid.Column="2"
                                         Margin="4,0,0,0"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Center"
-                                        Content="N/A" />
+                                        Content="N/A"
+                                        IsChecked="{Binding IsFrequencyOfCalibrationNull}" />-->
                                 </Grid>
                             </StackPanel>
 
@@ -542,25 +581,22 @@
                         <Grid Margin="0,0,0,6">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
 
                             <StackPanel Grid.Column="0" Margin="0,0,4,0">
-                                <TextBlock Margin="0,0,0,3" Text="Last Calibration Date" />
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="5*" />
                                         <ColumnDefinition Width="auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <DatePicker mah:ControlsHelper.CornerRadius="4" SelectedDate="{Binding LastCalibrationDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                                    <CheckBox
+                                    <!--<CheckBox
                                         Grid.Column="2"
                                         Margin="4,0,0,0"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Center"
-                                        Content="N/A" />
+                                        Content="N/A"
+                                        IsChecked="{Binding IsLastCalibrationDateNull}" />-->
                                 </Grid>
                             </StackPanel>
 
@@ -572,35 +608,24 @@
                                         <ColumnDefinition Width="auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <DatePicker mah:ControlsHelper.CornerRadius="4" SelectedDate="{Binding NextCalibrationDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    <DatePicker
+                                        mah:ControlsHelper.CornerRadius="4"
+                                        IsEnabled="{Binding IsNextCalibrationDateNull, Converter={StaticResource InvertBoolean}}"
+                                        SelectedDate="{Binding NextCalibrationDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                                    <CheckBox
+                                    <!--<CheckBox
                                         Grid.Column="2"
                                         Margin="4,0,0,0"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Center"
-                                        Content="N/A" />
+                                        Content="N/A"
+                                        IsChecked="{Binding IsNextCalibrationDateNull}" />-->
                                 </Grid>
                             </StackPanel>
 
                         </Grid>
 
-                        <Grid Margin="0,0,0,6">
-                            <TextBox
-                                Grid.Column="1"
-                                Height="80"
-                                Padding="4"
-                                VerticalContentAlignment="Top"
-                                mah:TextBoxHelper.Watermark="Calibration Remarks"
-                                AcceptsReturn="True"
-                                FontSize="12"
-                                MaxLength="500"
-                                Style="{StaticResource FormTextboxStyle}"
-                                Text="{Binding CalibrationRemarks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                TextWrapping="Wrap"
-                                VerticalScrollBarVisibility="Auto" />
-
-                        </Grid>
+                        <Grid Margin="0,0,0,6" />
 
                     </StackPanel>
                 </GroupBox>
@@ -616,29 +641,7 @@
                         IsEnabled="{Binding IsDataSaving}">
                         <StackPanel Margin="15">
 
-                            <!--  ID & serial no  -->
-                            <StackPanel
-                                Grid.Column="0"
-                                Margin="0,0,0,6"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                Orientation="Horizontal">
-                                <TextBlock
-                                    Margin="0,0,4,0"
-                                    VerticalAlignment="Center"
-                                    Text="No. of times used: " />
-                                <syncfusion:UpDown
-                                    Width="150"
-                                    Height="25"
-                                    VerticalAlignment="Center"
-                                    Value="{Binding ThreadGaugeRingGaugeUsageNo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                <CheckBox
-                                    Grid.Column="2"
-                                    Margin="4,0,0,0"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Content="N/A" />
-                            </StackPanel>
+
 
                             <!--  Type & Department  -->
                             <Grid Margin="0,0,0,0">
@@ -649,12 +652,11 @@
 
                                 <StackPanel Grid.Column="0" Margin="0,0,4,0">
                                     <TextBlock Margin="0,0,0,3" Text="Status" />
-                                    <syncfusion:SfMultiColumnDropDownControl
+                                    <syncfusion:ComboBoxAdv
                                         Height="25"
-                                        AllowAutoComplete="True"
-                                        AllowIncrementalFiltering="True"
                                         ItemsSource="{Binding StatusData}"
-                                        SelectedItem="{Binding Status, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        SelectedItem="{Binding Status, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                                        Validation.ErrorTemplate="{StaticResource errorTemplateForComboBox}" />
                                 </StackPanel>
 
                                 <TextBox
@@ -663,27 +665,45 @@
                                     VerticalAlignment="Bottom"
                                     mah:TextBoxHelper.Watermark="Barcode"
                                     Style="{StaticResource FormTextboxStyle}"
-                                    Text="{Binding Barcode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    Text="{Binding Barcode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                                    Validation.ErrorTemplate="{StaticResource errorTemplateForTextArea}" />
                             </Grid>
 
                             <!--  Issued to & Description  -->
                             <Grid Margin="0,15,0,6">
                                 <TextBox
                                     Grid.Column="1"
-                                    Height="80"
+                                    Height="100"
                                     Padding="4"
                                     VerticalContentAlignment="Stretch"
                                     mah:TextBoxHelper.Watermark="Remarks"
                                     AcceptsReturn="True"
-                                    FontSize="12"
+                                    FontSize="14"
                                     MaxLength="500"
                                     Style="{StaticResource FormTextboxStyle}"
-                                    Text="{Binding Remarks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Text="{Binding Remarks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
                                     TextWrapping="Wrap"
+                                    Validation.ErrorTemplate="{StaticResource errorTemplateForTextArea}"
                                     VerticalScrollBarVisibility="Auto" />
-
                             </Grid>
+
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Margin="0,0,0,3" Text="End of Life" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="5*" />
+                                        <ColumnDefinition Width="auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <DatePicker
+                                        mah:ControlsHelper.CornerRadius="4"
+                                        IsEnabled="{Binding IsNextCalibrationDateNull, Converter={StaticResource InvertBoolean}}"
+                                        SelectedDate="{Binding EndOfLife, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </Grid>
+                            </StackPanel>
+
                         </StackPanel>
+
                     </Border>
                 </Grid>
 
@@ -693,65 +713,10 @@
                     Margin="0,8,15,0"
                     Padding="4"
                     mah:ControlsHelper.CornerRadius="3"
-                    Header="Instrument Details"
                     IsEnabled="{Binding IsDataSaving}">
                     <StackPanel Margin="10">
 
                         <!--  Calibration Result & Calibration Method  -->
-                        <Grid Margin="0,0,0,6">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-
-                            <StackPanel Grid.Column="0" Margin="0,0,4,0">
-                                <TextBlock Margin="0,0,0,3" Text="Date" />
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="4*" />
-                                        <ColumnDefinition Width="auto" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <DatePicker mah:ControlsHelper.CornerRadius="4" SelectedDate="{Binding Date, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                                    <CheckBox
-                                        Grid.Column="2"
-                                        Margin="4,0,0,0"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Center"
-                                        Content="N/A" />
-                                </Grid>
-
-                            </StackPanel>
-
-                            <StackPanel Grid.Column="1">
-                                <TextBlock Margin="0,0,0,3" Text="Maker" />
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" />
-                                        <ColumnDefinition Width="auto" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <syncfusion:SfMultiColumnDropDownControl
-                                        Grid.Column="0"
-                                        Height="25"
-                                        AllowAutoComplete="True"
-                                        AllowIncrementalFiltering="True"
-                                        ItemsSource="{Binding Makers}"
-                                        SelectedItem="{Binding Maker, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                                    <CheckBox
-                                        Grid.Column="2"
-                                        Margin="4,0,0,0"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Center"
-                                        Content="N/A" />
-                                </Grid>
-                            </StackPanel>
-
-                        </Grid>
-
-                        <!--  Acceptance & Frequency  -->
                         <Grid Margin="0,0,0,6">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -766,50 +731,47 @@
                                         <ColumnDefinition Width="auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <syncfusion:SfMultiColumnDropDownControl
+                                    <syncfusion:ComboBoxAdv
                                         Grid.Column="0"
                                         Height="25"
-                                        AllowAutoComplete="True"
-                                        AllowIncrementalFiltering="True"
                                         ItemsSource="{Binding Resolutions}"
                                         SelectedItem="{Binding Resolution, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                                    <CheckBox
+                                    <!--<CheckBox
                                         Grid.Column="2"
                                         Margin="4,0,0,0"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Center"
-                                        Content="N/A" />
+                                        Content="N/A" />-->
                                 </Grid>
                             </StackPanel>
 
                             <StackPanel Grid.Column="1">
-                                <TextBlock Margin="0,0,0,3" Text="Range" />
+                                <TextBlock Margin="0,0,0,3" Text="Maker" />
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="5*" />
                                         <ColumnDefinition Width="auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <syncfusion:SfMultiColumnDropDownControl
+                                    <syncfusion:ComboBoxAdv
                                         Grid.Column="0"
                                         Height="25"
-                                        AllowAutoComplete="True"
-                                        AllowIncrementalFiltering="True"
-                                        ItemsSource="{Binding Range}"
-                                        SelectedItem="{Binding DeviceRange, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        ItemsSource="{Binding Makers}"
+                                        SelectedItem="{Binding Maker, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                                    <CheckBox
+                                    <!--<CheckBox
                                         Grid.Column="2"
                                         Margin="4,0,0,0"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Center"
-                                        Content="N/A" />
+                                        Content="N/A" />-->
                                 </Grid>
                             </StackPanel>
 
                         </Grid>
 
+                        <!--  Acceptance & Frequency  -->
                         <Grid Margin="0,0,0,6">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -824,22 +786,50 @@
                                         <ColumnDefinition Width="auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <syncfusion:SfMultiColumnDropDownControl
+                                    <syncfusion:ComboBoxAdv
                                         Grid.Column="0"
                                         Height="25"
-                                        AllowAutoComplete="True"
-                                        AllowIncrementalFiltering="True"
                                         ItemsSource="{Binding Accuracies}"
                                         SelectedItem="{Binding Accuracy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                                    <CheckBox
+                                    <!--<CheckBox
                                         Grid.Column="2"
                                         Margin="4,0,0,0"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Center"
-                                        Content="N/A" />
+                                        Content="N/A" />-->
                                 </Grid>
                             </StackPanel>
+
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Margin="0,0,0,3" Text="Range" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="5*" />
+                                        <ColumnDefinition Width="auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <syncfusion:ComboBoxAdv
+                                        Grid.Column="0"
+                                        Height="25"
+                                        ItemsSource="{Binding Range}"
+                                        SelectedItem="{Binding DeviceRange, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                    <!--<CheckBox
+                                        Grid.Column="2"
+                                        Margin="4,0,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Content="N/A" />-->
+                                </Grid>
+                            </StackPanel>
+
+                        </Grid>
+
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
 
                             <StackPanel Grid.Column="1">
                                 <TextBlock Margin="0,0,0,3" Text="Unit of Measurement" />
@@ -877,16 +867,33 @@
                                         </Button.Content>
                                     </Button>
 
-                                    <CheckBox
+                                    <!--<CheckBox
                                         Grid.Column="2"
                                         Margin="4,0,0,0"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Center"
-                                        Content="N/A" />
+                                        Content="N/A" />-->
                                 </Grid>
+
+
 
                             </StackPanel>
                         </Grid>
+
+                        <StackPanel Grid.Column="1">
+                            <Grid Grid.Column="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="auto" />
+                                </Grid.ColumnDefinitions>
+                            </Grid>
+
+                        </StackPanel>
+
+
+
                     </StackPanel>
                 </GroupBox>
 
@@ -904,6 +911,7 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
+                            <ColumnDefinition />
                         </Grid.ColumnDefinitions>
 
                         <RadioButton
@@ -918,12 +926,19 @@
                             Content="Machine Tool"
                             GroupName="EquipmentMachineSelection"
                             IsChecked="{Binding IsMachineTool}" />
+
+                        <RadioButton
+                            Grid.Column="2"
+                            Command="{Binding InstrumentToolSelectionCommand}"
+                            Content="Instrument"
+                            GroupName="EquipmentMachineSelection"
+                            IsChecked="{Binding IsInstrument}" />
                     </Grid>
 
                     <ContentControl
                         Grid.Row="1"
                         Height="auto"
-                        prism:RegionManager.RegionName="EquipmentMachineToolRegion"
+                        prism:RegionManager.RegionName="ToolRegion"
                         IsEnabled="{Binding IsDataSaving}" />
                 </Grid>
 

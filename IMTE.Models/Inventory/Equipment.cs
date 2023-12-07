@@ -1,5 +1,6 @@
 ﻿using IMTE.Models.General;
 using IMTE.Models.HumanResources;
+using IMTE.Models.ModelBase;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,10 +9,8 @@ using System.Threading.Tasks;
 
 namespace IMTE.Models.Inventory
 {
-    public class Equipment
+    public class Equipment : StandardModel
     {
-        public int? Id { get; set; }
-        public int? Version { get; set; }
         public int? CompanyId { get; set; }
         public Company Company { get; set; }
         public int? AssetId { get; set; }
@@ -32,8 +31,5 @@ namespace IMTE.Models.Inventory
         public bool? IsSent { get; set; }
         public bool? IsForeignCurrency { get; set; }
         public DateTime CreatedDate { get; set; }
-        public bool? IsDeleted { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public DateTime ModifiedOn { get; set; }
     }
 }

@@ -29,7 +29,7 @@ namespace IMTE.ViewModels
 
         public DelegateCommand OpenDescriptionLookupCommand { get; private set; }
         public DelegateCommand OpenItemLookupCommand { get; private set; }
-        public DelegateCommand ShowEquipmentConfigCommand { get; set; }
+        public DelegateCommand ShowEquipmentConfigCommand { get; private set; }
 
 
         public MD_EquipmentFormViewModel(IEventAggregator ea, IDialogService dialogService)
@@ -44,26 +44,17 @@ namespace IMTE.ViewModels
             OpenItemLookupCommand = new DelegateCommand(OpenItemLookup);
             ShowEquipmentConfigCommand = new DelegateCommand(OpenEquipmentConfig);
 
-            // send the data of the Equipment to the main measuring device form
-            ea.GetEvent<EquipmentToMeasuringDevice>().Publish(Equipment);
+            // send the equipment serial data to measuring device
+            ea.GetEvent<EquipmentSerialToMeasuringDevice>().Publish(EquipmentSerial);
 
             // get the data from this form's description lookup
-            ea.GetEvent<DescriptionLookupToEQMTForm>().Subscribe(SetDescriptionFromLookup);
+            ea.GetEvent<DescriptionLookupToMDForms>().Subscribe(SetDescriptionFromLookup);
 
             // get the data from this form's item lookup
-            ea.GetEvent<ItemLookupToMDForm>().Subscribe(SetItemFromLookup);
-
-            ea.GetEvent<EquipmentMachineToolWithMeasuringDeviceDataToMDForm>().Subscribe(SetEquipmentDataWithMDFromEquipmentLookup);
-
+            ea.GetEvent<ItemLookupToMDForms>().Subscribe(SetItemFromLookup);
         }
 
-        private void SetEquipmentDataWithMDFromEquipmentLookup(MeasuringDevice obj)
-        {
-            if (obj.Equipment != null)
-            {
-                
-            }
-        }
+
 
         private void OpenEquipmentConfig()
         {
@@ -78,7 +69,6 @@ namespace IMTE.ViewModels
         private void SetDescriptionFromLookup(Description obj)
         {
             Description = obj;
-
             Equipment.Item.Description = obj;
         }
 
@@ -104,6 +94,8 @@ namespace IMTE.ViewModels
             IsForeignCurrency = equipmentObj.IsForeignCurrency;
             IsSent = equipmentObj.IsSent;
             EquipmentType = equipmentObj.EquipmentType;
+            ItemEntity = equipmentObj.Item;
+            Description = equipmentObj.Item.Description;
             ItemCode = equipmentObj.Item.ItemCode;
             ItemShortDescription = equipmentObj.Item.ShortDescription;
             ItemDescriptionText = equipmentObj.Item.Description.Text;
@@ -113,6 +105,19 @@ namespace IMTE.ViewModels
 
         #region ----------------FIELD BINDING----------------
 
+        private string _serialNO;
+        public string SerialNO
+        {
+            get { return _serialNO; }
+            set 
+            {
+                SetProperty(ref _serialNO, value);
+                EquipmentSerial.SerialNo = value;
+
+            }
+        }
+
+
         private string _manufacturer;
         public string Manufacturer
         {
@@ -120,7 +125,10 @@ namespace IMTE.ViewModels
             set 
             { 
                 SetProperty(ref _manufacturer, value);
+
+                // TODO: THIS IS NOT GOOD
                 Equipment.Manufacturer = value;
+                EquipmentSerial.Equipment = Equipment;
             }
         }
 
@@ -132,6 +140,7 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _model, value);
                 Equipment.Model = value;
+                EquipmentSerial.Equipment = Equipment;
             }
         }
 
@@ -143,6 +152,8 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _hasAccessory, value);
                 Equipment.HasAccessory = value;
+                EquipmentSerial.Equipment = Equipment;
+
             }
         }
 
@@ -154,6 +165,8 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _approvalCode, value);
                 Equipment.ApprovalCode = value;
+                EquipmentSerial.Equipment = Equipment;
+
             }
         }
 
@@ -165,6 +178,8 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _isPrinted, value);
                 Equipment.IsPrinted = value;
+                EquipmentSerial.Equipment = Equipment;
+
             }
         }
 
@@ -176,6 +191,8 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _isForeignCurrency, value);
                 Equipment.IsForeignCurrency = value;
+                EquipmentSerial.Equipment = Equipment;
+
             }
         }
 
@@ -187,6 +204,8 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _isSent, value);
                 Equipment.IsSent = value;
+                EquipmentSerial.Equipment = Equipment;
+
             }
         }
 
@@ -198,6 +217,9 @@ namespace IMTE.ViewModels
             { 
                 SetProperty(ref _equipmentType, value);
                 Equipment.EquipmentType = value;
+                EquipmentSerial.Equipment = Equipment;
+
+
             }
         }
 
@@ -209,6 +231,7 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _itemCode, value);
                 ItemEntity.ItemCode = value;
+                EquipmentSerial.Equipment.Item = ItemEntity;
             }
         }
 
@@ -220,6 +243,7 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _itemShortDescription, value);
                 ItemEntity.ShortDescription = value;
+                EquipmentSerial.Equipment.Item = ItemEntity;
             }
         }
 
@@ -231,12 +255,24 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _itemDescriptiontext, value);
                 Description.Text = value;
+                EquipmentSerial.Equipment.Item = ItemEntity;
             }
         }
 
         #endregion
 
         #region Full Properties
+
+        private EquipmentSerial _equipmentSerial = new EquipmentSerial();
+        public EquipmentSerial EquipmentSerial
+        {
+            get { return _equipmentSerial; }
+            set 
+            {
+                SetProperty(ref _equipmentSerial, value);
+            }
+        }
+
 
         private Description _description = new Description();
         public Description Description
@@ -272,7 +308,6 @@ namespace IMTE.ViewModels
             set
             {
                 SetProperty(ref _equipment, value);
-                SetFieldBindingData(value);
             }
         }
 
@@ -296,7 +331,10 @@ namespace IMTE.ViewModels
             if (navigationContext.Parameters.Count != 0)
             {
                 var equipmentObj = navigationContext.Parameters["equipmentObj"] as Equipment;
-                SetFieldBindingData(equipmentObj);
+                Equipment = equipmentObj;
+
+                // send the data of the Equipment to the main measuring device form
+                ea.GetEvent<EquipmentToMeasuringDevice>().Publish(Equipment);
             }
         }
 
@@ -337,8 +375,10 @@ namespace IMTE.ViewModels
 				{
 					case "Manufacturer":
 						if (string.IsNullOrEmpty(Manufacturer))
-							result = "Description Text cannot be empty";
-						break;
+                        {
+                            result = "Description Text cannot be empty";
+                        }
+                        break;
 
 				}
 

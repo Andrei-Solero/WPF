@@ -280,6 +280,9 @@
     <Compile Include="DataAccess\EmployeeTypeDA.cs" />
     <Compile Include="DataAccess\EquipmentDA.cs" />
     <Compile Include="DataAccess\EquipmentTypeDA.cs" />
+    <Compile Include="DataAccess\InstrumentDA.cs" />
+    <Compile Include="DataAccess\InstrumentSerialDA.cs" />
+    <Compile Include="DataAccess\InstrumentTypeDA.cs" />
     <Compile Include="DataAccess\ItemDA.cs" />
     <Compile Include="DataAccess\LocationDA.cs" />
     <Compile Include="DataAccess\MachineToolDA.cs" />
@@ -293,6 +296,7 @@
     <Compile Include="IMTEModule.cs" />
     <Compile Include="Statics.cs" />
     <Compile Include="TASKLIST.cs" />
+    <Compile Include="ValueConverter\InvertBoolConverter.cs" />
     <Compile Include="ViewModels\DialogAwareBase.cs" />
     <Compile Include="ViewModels\MDLookup_DepartmentConfigCreateViewModel.cs" />
     <Compile Include="ViewModels\MDLookup_DepartmentConfigListViewModel.cs" />
@@ -305,6 +309,7 @@
     <Compile Include="ViewModels\MDLookup_ItemDescriptionConfigCreateViewModel.cs" />
     <Compile Include="ViewModels\MDLookup_ItemDescriptionConfigListViewModel.cs" />
     <Compile Include="ViewModels\MDLookup_ItemDescriptionConfigViewModel.cs" />
+    <Compile Include="ViewModels\MDLookup_PlantConfigListViewModel.cs" />
     <Compile Include="ViewModels\MDLookup_PlantConfigViewModel.cs" />
     <Compile Include="ViewModels\MDLookup_UnitConfigCreateViewModel.cs" />
     <Compile Include="ViewModels\MDLookup_UnitConfigListViewModel.cs" />
@@ -312,6 +317,7 @@
     <Compile Include="ViewModels\MD_EquipmentForLookupListViewModel.cs" />
     <Compile Include="ViewModels\MD_EquipmentFormLookupViewModel.cs" />
     <Compile Include="ViewModels\MD_EquipmentFormViewModel.cs" />
+    <Compile Include="ViewModels\MD_InstrumentFormViewModel.cs" />
     <Compile Include="ViewModels\MD_MachineToolFormLookupListViewModel.cs" />
     <Compile Include="ViewModels\MD_MachineToolFormLookupViewModel.cs" />
     <Compile Include="ViewModels\MD_MachineToolFormViewModel.cs" />
@@ -352,6 +358,12 @@
     <Compile Include="Views\MDLookup_PlantConfig.xaml.cs">
       <DependentUpon>MDLookup_PlantConfig.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\MDLookup_PlantConfigCreate.xaml.cs">
+      <DependentUpon>MDLookup_PlantConfigCreate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MDLookup_PlantConfigList.xaml.cs">
+      <DependentUpon>MDLookup_PlantConfigList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MDLookup_UnitConfig.xaml.cs">
       <DependentUpon>MDLookup_UnitConfig.xaml</DependentUpon>
     </Compile>
@@ -369,6 +381,9 @@
     </Compile>
     <Compile Include="Views\MD_EquipmentFormLookup.xaml.cs">
       <DependentUpon>MD_EquipmentFormLookup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MD_InstrumentForm.xaml.cs">
+      <DependentUpon>MD_InstrumentForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MD_MachineToolForm.xaml.cs">
       <DependentUpon>MD_MachineToolForm.xaml</DependentUpon>
@@ -476,6 +491,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\MDLookup_PlantConfigCreate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MDLookup_PlantConfigList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MDLookup_UnitConfig.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -497,6 +520,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MD_EquipmentFormLookup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MD_InstrumentForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

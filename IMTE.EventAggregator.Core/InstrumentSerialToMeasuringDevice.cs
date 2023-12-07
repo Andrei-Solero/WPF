@@ -1,4 +1,4 @@
-﻿using IMTE.Models.General;
+﻿using IMTE.Models.Inventory;
 using Prism.Events;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace IMTE.EventAggregator.Core
 {
-	public class ItemLookupToMDForm : PubSubEvent<Item>
-	{
-	}
+    public class InstrumentSerialToMeasuringDevice : PubSubEvent<InstrumentSerial>
+    {
+    }
 }

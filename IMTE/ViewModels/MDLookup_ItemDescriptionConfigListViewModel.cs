@@ -32,7 +32,7 @@ namespace IMTE.ViewModels
 
         private void PassTextToItemDescription()
         {
-            ea.GetEvent<DescriptionLookupToEQMTForm>().Publish(SelectedDescription);
+            ea.GetEvent<DescriptionLookupToMDForms>().Publish(SelectedDescription);
         }
 
 

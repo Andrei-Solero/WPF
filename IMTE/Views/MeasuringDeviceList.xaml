@@ -101,20 +101,8 @@
                     MappingName="SerialNo"
                     TextTrimming="CharacterEllipsis" />
                 <sfgrid:GridTextColumn
-                    HeaderText="Manufacturer"
-                    MappingName="Equipment.Manufacturer"
-                    TextTrimming="CharacterEllipsis" />
-                <sfgrid:GridTextColumn
-                    HeaderText="Model"
-                    MappingName="Equipment.Model"
-                    TextTrimming="CharacterEllipsis" />
-                <sfgrid:GridTextColumn
-                    HeaderText="Item Code"
-                    MappingName="Equipment.Item.ItemCode"
-                    TextTrimming="CharacterEllipsis" />
-                <sfgrid:GridTextColumn
-                    HeaderText="Short Description"
-                    MappingName="Equipment.Item.ShortDescription"
+                    HeaderText="Description"
+                    MappingName="Description"
                     TextTrimming="CharacterEllipsis" />
                 <sfgrid:GridTextColumn
                     HeaderText="Plant"

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using IMTE.ViewModels;
+using Prism.Regions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +25,11 @@ namespace IMTE.Views
         public MDLookup_PlantConfig()
         {
             InitializeComponent();
+
+            var regionManager = new RegionManager();
+
+            RegionManager.SetRegionManager(this, regionManager);
+            DataContext = new MDLookup_PlantConfigViewModel(regionManager);
         }
     }
 }

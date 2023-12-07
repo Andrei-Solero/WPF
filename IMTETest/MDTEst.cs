@@ -2,6 +2,7 @@
 using IMTE.IMTEEntity.Models;
 using IMTE.Models.General;
 using IMTE.Models.HumanResources;
+using IMTE.Models.IMTEEntity;
 using IMTE.Models.Inventory;
 using IMTE.Models.Production;
 using IMTE.ViewModels;
@@ -37,10 +38,6 @@ namespace IMTETest
             MeasuringDevice md = new MeasuringDevice
             {
                 SerialNo = "1110",
-                IssuedToEmployee = new Employee
-                {
-                    Id = 1
-                },
                 Department = new Department
                 {
                     Id = 1
@@ -53,22 +50,41 @@ namespace IMTETest
                 {
                     Id = 4
                 },
-                CalibratedByEmployee = new Employee
+                DeviceType = new DeviceType { Id = 1 },
+                EquipmentSerial = new EquipmentSerial
                 {
-                    Id = 4
+                    SerialNo = "iahsdioasd",
+                    Equipment = new Equipment
+                    {
+                        Manufacturer = "BAGONG EQUIPMENT",
+                        Model = "AHHEHASE",
+                        HasAccessory = true,
+                        ApprovalCode = "HASHDASD",
+                        EquipmentType = new EquipmentType { Id = 2 },
+                        IsForeignCurrency = true,
+                        IsPrinted = true,
+                        IsSent = true,
+                        Item = new Item
+                        {
+                            Id = 938,
+                            //ItemCode = "EKSALAMNEYO",
+                            //ShortDescription = "HAHA",
+                            Description = new Description
+                            {
+                                Id = 28
+                                //Text = "HAHAHA"
+                            }
+                        }
+                    }
                 },
-                ResultOfCalibration = "Calibration Result 1",
+                Description = "Sample Description",
                 CalibrationMethod = "Calibration Method 1",
                 AcceptanceCriteria = "Acceptance 1",
                 FrequencyOfCalibration = "Frequency of Calibration 1",
-                LastCalibrationDate = DateTime.Now,
                 NextCalibrationDate = DateTime.Now.AddMonths(1),
-                CalibrationRemarks = "TestTestTestTestTestTestTest",
-                ThreadGaugeRingGaugeUsageNo = 4,
                 Status = "Status 1",
                 Barcode = "0000022",
                 Remarks = "SAMPLESAMPLESAMPLESAMPLESAMPLESAMPLE",
-                Date = DateTime.Now.ToString(),
                 Maker = "Maker 1",
                 Resolution = "Resolution 1",
                 DeviceRange = "1",
@@ -77,31 +93,6 @@ namespace IMTETest
                 {
                     Id = 3,
                 },
-                Equipment = new IMTE.Models.Inventory.Equipment
-                {
-                    Item = new Item
-                    {
-                        Id = 960,
-                        ItemCode = "123222",
-                        ShortDescription = "samplesamplesample",
-                        Description = new Description
-                        {
-                            Id = 1808,
-                            Text = "samplesamplesamplesample"
-                        }
-                    },
-                    Manufacturer = "samplesamplesamplesample",
-                    Model = "samplesamplesamplesample",
-                    HasAccessory = true,
-                    ApprovalCode = "samplesamplesample",
-                    IsPrinted = true,
-                    IsForeignCurrency = true,
-                    IsSent = true,
-                    EquipmentTypeObj = new IMTE.Models.Inventory.EquipmentType
-                    {
-                        Id = 2
-                    }
-                }
             };
 
             MeasuringDeviceDA da = new MeasuringDeviceDA();
@@ -114,10 +105,7 @@ namespace IMTETest
             MeasuringDevice md = new MeasuringDevice
             {
                 SerialNo = "1110",
-                IssuedToEmployee = new Employee
-                {
-                    Id = 1
-                },
+
                 Department = new Department
                 {
                     Id = 1
@@ -130,22 +118,14 @@ namespace IMTETest
                 {
                     Id = 4
                 },
-                CalibratedByEmployee = new Employee
-                {
-                    Id = 4
-                },
-                ResultOfCalibration = "Calibration Result 1",
+
                 CalibrationMethod = "Calibration Method 1",
                 AcceptanceCriteria = "Acceptance 1",
                 FrequencyOfCalibration = "Frequency of Calibration 1",
-                LastCalibrationDate = DateTime.Now,
                 NextCalibrationDate = DateTime.Now.AddMonths(1),
-                CalibrationRemarks = "TestTestTestTestTestTestTest",
-                ThreadGaugeRingGaugeUsageNo = 4,
                 Status = "Status 1",
                 Barcode = "0000022",
                 Remarks = "SAMPLESAMPLESAMPLESAMPLESAMPLESAMPLE",
-                Date = DateTime.Now.ToString(),
                 Maker = "Maker 1",
                 Resolution = "Resolution 1",
                 DeviceRange = "1",
@@ -154,26 +134,7 @@ namespace IMTETest
                 {
                     Id = 3,
                 },
-                MachineTool = new IMTE.Models.Production.MachineTool
-                {
-                    Item = new Item
-                    {
-                        ItemCode = "AA222",
-                        ShortDescription = "SAMPLESAMPLESAMPLESAMPLE",
-                        Description = new Description
-                        {
-                            Text = "SAMPLESAMPLESAMPLESAMPLE"
-                        }
-                    },
-                    Note = "SAMPLESAMPLESAMPLESAMPLE",
-                    ToolName = "SAMPLESAMPLESAMPLESAMPLE",
-                    UnitCost = 2333,
-                    ToolLifeUsagePcs = 4,
-                    MachineToolType = new IMTE.Models.Production.MachineToolType
-                    {
-                        Id = 1
-                    }
-                }
+                
             };
 
             MeasuringDeviceDA da = new MeasuringDeviceDA();

@@ -61,6 +61,8 @@
     <Compile Include="EquipmentTest.cs" />
     <Compile Include="MachineToolTest.cs" />
     <Compile Include="UnitEntityTest.cs" />
+    <Compile Include="InstrumentTest.cs" />
+    <Compile Include="UnitTest1.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

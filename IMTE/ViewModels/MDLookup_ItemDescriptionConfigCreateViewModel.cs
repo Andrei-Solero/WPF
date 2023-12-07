@@ -34,7 +34,7 @@ namespace IMTE.ViewModels
 
             MessageBox.Show("Item Description Saved!");
 
-            ea.GetEvent<DescriptionLookupToEQMTForm>().Publish(Description);
+            ea.GetEvent<DescriptionLookupToMDForms>().Publish(Description);
         }
 
 

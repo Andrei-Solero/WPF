@@ -46,14 +46,14 @@ namespace IMTE.ViewModels
             NavigateToFormCommand = new DelegateCommand(Navigate);
             RefreshCommand = new DelegateCommand(Refresh);
 
-            MeasuringDeviceList = new ObservableCollection<MeasuringDevice>(measuringDeviceDA.GetAllMeasuringDevices());
+            //MeasuringDeviceList = new ObservableCollection<MeasuringDevice>(measuringDeviceDA.GetAllMeasuringDevices());
             this.dialogService = dialogService;
             this.regionManager = regionManager;
         }
 
         private void Refresh()
         {
-            MeasuringDeviceList = new ObservableCollection<MeasuringDevice>(measuringDeviceDA.GetAllMeasuringDevices());
+            //MeasuringDeviceList = new ObservableCollection<MeasuringDevice>(measuringDeviceDA.GetAllMeasuringDevices());
             SetProperty(ref _measuringDeviceList, MeasuringDeviceList);
         }
 
@@ -71,7 +71,7 @@ namespace IMTE.ViewModels
         public void OpenFormBySelectedObject()
         {
             var dialogParameters = new NavigationParameters();
-            dialogParameters.Add("measuringDeviceObj", _selectedMeasuringDevice);
+            dialogParameters.Add("measuringDeviceObj", SelectedMeasuringDevice);
 
             regionManager.RequestNavigate("MainRegion", "Create", dialogParameters);
         }

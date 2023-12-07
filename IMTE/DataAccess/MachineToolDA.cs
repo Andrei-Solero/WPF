@@ -101,6 +101,8 @@ namespace IMTE.DataAccess
 				command.Parameters.AddWithValue("@UnitCost", machineToolObj.UnitCost);
 				command.Parameters.AddWithValue("@ToolLifeUsagePcs", machineToolObj.ToolLifeUsagePcs);
 				command.Parameters.AddWithValue("@ModifiedOn", DateTime.UtcNow);
+                command.Parameters.AddWithValue("@Id", machineToolObj.Id);
+
 
 				command.ExecuteNonQuery();
 			}
