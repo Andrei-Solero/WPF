@@ -260,7 +260,7 @@ namespace IMTE.DataAccess
                             Accuracy = CheckDbNullString(data, "Accuracy"),
                             Barcode = CheckDbNullString(data, "Barcode"),
                             CalibrationMethod = CheckDbNullString(data, "CalibrationMethod"),
-                            AcceptanceCriteria = CheckDbNullString(data, "AcceptanceCriteria"),
+                            //AcceptanceCriteria = CheckDbNullString(data, "AcceptanceCriteria"),
                             SerialNo = CheckDbNullString(data, "SerialNo"),
                             Unit = new UnitEntity
                             {

@@ -1,5 +1,6 @@
 ﻿using IMTE.DataAccess;
 using IMTE.EventAggregator.Core;
+using IMTE.IMTEEntity.Models;
 using IMTE.Models.General;
 using IMTE.Models.Inventory;
 using Prism.Commands;
@@ -16,7 +17,8 @@ using System.Threading.Tasks;
 
 namespace IMTE.ViewModels
 {
-    public class MD_InstrumentFormViewModel : BindableBase, INavigationAware
+	[RegionMemberLifetime(KeepAlive = false)]
+	public class MD_InstrumentFormViewModel : BindableBase, INavigationAware
     {
         private readonly IEventAggregator ea;
         private readonly IDialogService dialogService;
@@ -34,6 +36,10 @@ namespace IMTE.ViewModels
             instrumentTypeDA = new InstrumentTypeDA();
             departmentDA = new DepartmentDA();
 
+            Instrument = new Instrument();
+            Item = new Item();
+            Description = new Description();
+
             InstrumentTypes = new ObservableCollection<InstrumentType>(instrumentTypeDA.GetAllInstrumentType());
             Departments = new ObservableCollection<Department>(departmentDA.GetAllDepartments());
 
@@ -41,17 +47,25 @@ namespace IMTE.ViewModels
             OpenItemLookupCommand = new DelegateCommand(OpenItemLookup);
             ShowEquipmentConfigCommand = new DelegateCommand(OpenEquipmentConfig);
 
-            // send the instrument data to the main measuring device form
-            ea.GetEvent<InstrumentSerialToMeasuringDevice>().Publish(InstrumentSerial);
+            //// this will trigger when the user selected an existing measuring device and that measuring device has InstrumentSerial
+            //ea.GetEvent<MeasuringDeviceToInstrumentSerial>().Subscribe(SetInstrumentSerialFromMeasuringDevice);
 
-            // get the data from this form's description lookup
-            ea.GetEvent<DescriptionLookupToMDForms>().Subscribe(SetDescriptionFromLookup);
+			// send the instrument data to the main measuring device form
+			ea.GetEvent<InstrumentSerialToMeasuringDevice>().Publish(InstrumentSerial);
+
+			// get the data from this form's description lookup
+			ea.GetEvent<DescriptionLookupToMDForms>().Subscribe(SetDescriptionFromLookup);
 
             // get the data from this form's item lookup
             ea.GetEvent<ItemLookupToMDForms>().Subscribe(SetItemFromLookup);
         }
 
-        private void OpenEquipmentConfig()
+		private void SetInstrumentSerialFromMeasuringDevice(InstrumentSerial serial)
+		{
+            InstrumentSerial = serial;
+		}
+
+		private void OpenEquipmentConfig()
         {
             dialogService.ShowDialog("EquipmentConfig");
         }
@@ -78,21 +92,23 @@ namespace IMTE.ViewModels
 
         #region Helper
 
-        private void SetFieldBindingData(Instrument instrumentObj)
+        private void SetFieldBindingData(InstrumentSerial instrumentSerialObj)
         {
-            Manufacturer = instrumentObj.Manufacturer;
-            Model = instrumentObj.Model;
-            HasAccessory = instrumentObj.HasAccessory;
-            ApprovalCode = instrumentObj.ApprovalCode;
-            IsPrinted = instrumentObj.IsPrinted;
-            IsForeignCurrency = instrumentObj.IsForeignCurrency;
-            IsSent = instrumentObj.IsSent;
-            InstrumentType = instrumentObj.InstrumentType;
-            Item = instrumentObj.Item;
-            Description = instrumentObj.Item.Description;
-            ItemCode = instrumentObj.Item.ItemCode;
-            ItemShortDescription = instrumentObj.Item.ShortDescription;
-            ItemDescriptionText = instrumentObj.Item.Description.Text;
+            SerialNO = instrumentSerialObj.SerialNo;
+            Manufacturer = instrumentSerialObj.Instrument.Manufacturer;
+            Model = instrumentSerialObj.Instrument.Model;
+            HasAccessory = instrumentSerialObj.Instrument.HasAccessory;
+            ApprovalCode = instrumentSerialObj.Instrument.ApprovalCode;
+            IsPrinted = instrumentSerialObj.Instrument.IsPrinted;
+            IsForeignCurrency = instrumentSerialObj.Instrument.IsForeignCurrency;
+            IsSent = instrumentSerialObj.Instrument.IsSent;
+            InstrumentType = instrumentSerialObj.Instrument.InstrumentType;
+            Item = instrumentSerialObj.Instrument.Item;
+            Description = instrumentSerialObj.Instrument.Item.Description;
+            Department = instrumentSerialObj.Instrument.Department;
+            ItemCode = instrumentSerialObj.Instrument.Item.ItemCode;
+            ItemShortDescription = instrumentSerialObj.Instrument.Item.ShortDescription;
+            ItemDescriptionText = instrumentSerialObj.Instrument.Item.Description.Text;
         }
 
         #endregion
@@ -106,18 +122,22 @@ namespace IMTE.ViewModels
             set 
             { 
                 SetProperty(ref _instrumentSerial, value);
+
+                Instrument = value.Instrument;
             }
         }
 
 
-        private Instrument _instrument = new Instrument();
+        private Instrument _instrument;
         public Instrument Instrument
         {
             get { return _instrument; }
             set 
             { 
                 SetProperty(ref _instrument, value);
-                SetFieldBindingData(value);
+
+                InstrumentSerial.Instrument = value;
+                Item = value.Item;
             }
         }
 
@@ -132,7 +152,7 @@ namespace IMTE.ViewModels
             }
         }
 
-        private Item _item = new Item();
+        private Item _item;
         public Item Item
         {
             get { return _item; }
@@ -141,13 +161,16 @@ namespace IMTE.ViewModels
                 SetProperty(ref _item, value);
                 Instrument.Item = value;
 
-                ItemCode = value.ItemCode;
-                ItemShortDescription = value.ShortDescription;
-                ItemDescriptionText = value.Description.Text;
+                if (value != null)
+                {
+					ItemCode = value.ItemCode;
+					ItemShortDescription = value.ShortDescription;
+                    Description = value.Description;
+				}
             }
         }
 
-        private Description _description = new Description();
+        private Description _description;
         public Description Description
         {
             get { return _description; }
@@ -155,6 +178,12 @@ namespace IMTE.ViewModels
             { 
                 SetProperty(ref _description, value);
                 Item.Description = value;
+
+                // For field binding
+                if (value != null)
+                {
+                    ItemDescriptionText = value.Text;
+                }
             }
         }
 
@@ -177,7 +206,6 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _serialNO, value);
                 InstrumentSerial.SerialNo = value;
-                InstrumentSerial.Instrument = Instrument;
             }
         }
 
@@ -190,7 +218,6 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _manufacturer, value);
                 Instrument.Manufacturer = value;
-                InstrumentSerial.Instrument = Instrument;
             }
         }
 
@@ -202,7 +229,6 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _model, value);
                 Instrument.Model = value;
-                InstrumentSerial.Instrument = Instrument;
             }
         }
 
@@ -214,7 +240,6 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _hasAccessory, value);
                 Instrument.HasAccessory = value;
-                InstrumentSerial.Instrument = Instrument;
             }
         }
 
@@ -226,7 +251,6 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _approvalCode, value);
                 Instrument.ApprovalCode = value;
-                InstrumentSerial.Instrument = Instrument;
             }
         }
 
@@ -238,7 +262,6 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _isPrinted, value);
                 Instrument.IsPrinted = value;
-                InstrumentSerial.Instrument = Instrument;
             }
         }
 
@@ -250,7 +273,6 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _isForeignCurrency, value);
                 Instrument.IsForeignCurrency = value;
-                InstrumentSerial.Instrument = Instrument;
             }
         }
 
@@ -262,7 +284,6 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _isSent, value);
                 Instrument.IsSent = value;
-                InstrumentSerial.Instrument = Instrument;
             }
         }
 
@@ -274,7 +295,6 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _itemCode, value);
                 Item.ItemCode = value;
-                InstrumentSerial.Instrument = Instrument;
             }
         }
 
@@ -286,7 +306,6 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _itemShortDescription, value);
                 Item.ShortDescription = value;
-                InstrumentSerial.Instrument = Instrument;
             }
         }
 
@@ -298,7 +317,6 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _itemDescriptiontext, value);
                 Description.Text = value;
-                InstrumentSerial.Instrument = Instrument;
             }
         }
 
@@ -314,8 +332,18 @@ namespace IMTE.ViewModels
 
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
+            if (navigationContext.Parameters.Count != 0)
+            {
+                // Getting the data from the measuring device list - measuring device form
+                InstrumentSerial = navigationContext.Parameters["instrumentObj"] as InstrumentSerial;
 
-        }
+                // set the binding fields values from the navigationcontext parameter
+                SetFieldBindingData(InstrumentSerial);
+
+                // send the data again back to measuring device form
+                ea.GetEvent<InstrumentSerialToMeasuringDevice>().Publish(InstrumentSerial);
+			}
+		}
 
         #endregion
 

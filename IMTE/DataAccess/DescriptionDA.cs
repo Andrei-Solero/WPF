@@ -68,7 +68,7 @@ namespace IMTE.DataAccess
             {
                 string query = @"UPDATE ""General"".""Description"" SET
                                     ""Text"" = @Text,
-                                    ""Version"" = @Version,
+                                    ""Version"" = ""Version"" + 1,
                                     ""ModifiedOn"" = @CreatedOn
                                     WHERE ""Id"" = @Id";
 
@@ -77,7 +77,6 @@ namespace IMTE.DataAccess
                 command.CommandText = query;
 
                 command.Parameters.AddWithValue("@Text", descriptionObj.Text);
-                command.Parameters.AddWithValue("@Version", descriptionObj.Version++);
                 command.Parameters.AddWithValue("@CreatedOn", DateTime.UtcNow);
                 command.Parameters.AddWithValue("@Id", descriptionObj.Id);
 

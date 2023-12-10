@@ -79,7 +79,6 @@ namespace IMTETest
                 },
                 Description = "Sample Description",
                 CalibrationMethod = "Calibration Method 1",
-                AcceptanceCriteria = "Acceptance 1",
                 FrequencyOfCalibration = "Frequency of Calibration 1",
                 NextCalibrationDate = DateTime.Now.AddMonths(1),
                 Status = "Status 1",
@@ -120,7 +119,6 @@ namespace IMTETest
                 },
 
                 CalibrationMethod = "Calibration Method 1",
-                AcceptanceCriteria = "Acceptance 1",
                 FrequencyOfCalibration = "Frequency of Calibration 1",
                 NextCalibrationDate = DateTime.Now.AddMonths(1),
                 Status = "Status 1",

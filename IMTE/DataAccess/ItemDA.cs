@@ -69,7 +69,6 @@ namespace IMTE.DataAccess
 				command.Transaction = transaction;
 				command.CommandText = query;
 
-				command.Parameters.AddWithValue("@Version", itemObj.Version++);
 				command.Parameters.AddWithValue("@DescriptionId", itemObj.Description.Id);
 				command.Parameters.AddWithValue("@ItemCode", itemObj.ItemCode);
 				command.Parameters.AddWithValue("@ShortDescription", itemObj.ShortDescription);

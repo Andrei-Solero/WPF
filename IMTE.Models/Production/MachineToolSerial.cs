@@ -19,6 +19,6 @@ namespace IMTE.Models.Production
         public int MachineToolSpecClassId { get; set; }
         public int Quantity { get; set; }
         public int ItemLotBinId { get; set; }
-        public int MachineToolStatusId { get; set; }
+        public MachineToolStatus MachineToolStatus { get; set; }
     }
 }

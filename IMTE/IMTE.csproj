@@ -271,6 +271,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="DataAccess\AcceptanceCriteriaDA.cs" />
     <Compile Include="DataAccess\CompanyDA.cs" />
     <Compile Include="DataAccess\CurrencyDA.cs" />
     <Compile Include="DataAccess\DataAccessFunctions.cs" />
@@ -280,16 +281,20 @@
     <Compile Include="DataAccess\EmployeeTypeDA.cs" />
     <Compile Include="DataAccess\EquipmentDA.cs" />
     <Compile Include="DataAccess\EquipmentTypeDA.cs" />
+    <Compile Include="DataAccess\FrequencyOfCalibrationDA.cs" />
     <Compile Include="DataAccess\InstrumentDA.cs" />
     <Compile Include="DataAccess\InstrumentSerialDA.cs" />
     <Compile Include="DataAccess\InstrumentTypeDA.cs" />
     <Compile Include="DataAccess\ItemDA.cs" />
     <Compile Include="DataAccess\LocationDA.cs" />
     <Compile Include="DataAccess\MachineToolDA.cs" />
+    <Compile Include="DataAccess\MachineToolSpecClassDA.cs" />
     <Compile Include="DataAccess\MachineToolTypeDA.cs" />
+    <Compile Include="DataAccess\MakerDA.cs" />
     <Compile Include="DataAccess\MeasuringDeviceDA.cs" />
     <Compile Include="DataAccess\PlantDA.cs" />
     <Compile Include="DataAccess\PositionDA.cs" />
+    <Compile Include="DataAccess\ResolutionDA.cs" />
     <Compile Include="DataAccess\SpecificationDA.cs" />
     <Compile Include="DataAccess\UnitDA.cs" />
     <Compile Include="DataValidation\EquipmentMachineToolItemValidator.cs" />

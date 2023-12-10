@@ -37,6 +37,10 @@ namespace IMTE.ViewModels
         private readonly PlantDA plantDA;
         private readonly EquipmentTypeDA equipmentTypeDA;
         private readonly InstrumentSerialDA instrumentSerialDA;
+        private readonly AcceptanceCriteriaDA acceptanceCriteriaDA;
+        private readonly FrequencyOfCalibrationDA frequencyOfCalibrationDA;
+        private readonly ResolutionDA resolutionDA;
+        private readonly MakerDA makerDA;
         private readonly IRegionManager regionManager;
         private readonly IDialogService _dialogService;
         private readonly IEventAggregator ea;
@@ -157,7 +161,29 @@ namespace IMTE.ViewModels
             set { SetProperty(ref _saveButtonColor, value); }
         }
 
-        
+        /// <summary>
+        /// Will send the tool data from the measuring device list to the tool form
+        /// </summary>
+        private void EventAggregatorPublish(MeasuringDevice tool)
+        {
+            if (tool.InstrumentSerial != null)
+            {
+                // pass the data from the measuring device to the instrument serial form
+                ea.GetEvent<MeasuringDeviceToInstrumentSerial>().Publish(tool.InstrumentSerial);
+            }
+            else if(tool.EquipmentSerial != null)
+            {
+                // pass the data from the measuring device to the equipment serial form
+                ea.GetEvent<EquipmentSerialToMeasuringDevice>().Publish(tool.EquipmentSerial);
+			}
+            else if (tool.MachineToolSerial != null)
+            {
+                // pass the data from the measuring device to the machine tool serial form
+                ea.GetEvent<MachineToolSerialToMeasuringDevice>().Publish(tool.MachineToolSerial);
+			}
+		}
+
+
         private void EventAggregatorSubscribe()
         {
             // Will receive the data from employee lookup
@@ -216,25 +242,26 @@ namespace IMTE.ViewModels
 
         private void SetFieldBindingValue(MeasuringDevice measuringDeviceObj)
         {
-            CurrentMeasuringDevice.Id = measuringDeviceObj.Id;
+            CurrentMeasuringDevice = measuringDeviceObj;
 
-            SerialNo = measuringDeviceObj.SerialNo;
-            Department = measuringDeviceObj.Department;
-            Location = measuringDeviceObj.Location;
-            Plant = measuringDeviceObj.Plant;
-            CalibrationMethod = measuringDeviceObj.CalibrationMethod;
-            AcceptanceCriteria = measuringDeviceObj.AcceptanceCriteria;
-            FrequencyOfCalibration = measuringDeviceObj.FrequencyOfCalibration;
-            NextCalibrationDate = measuringDeviceObj.NextCalibrationDate;
-            Status = measuringDeviceObj.Status;
-            Barcode = measuringDeviceObj.Barcode;
-            Remarks = measuringDeviceObj.Remarks;
-            Maker = measuringDeviceObj.Maker;
-            Resolution = measuringDeviceObj.Resolution;
-            DeviceRange = measuringDeviceObj.DeviceRange;
-            Accuracy = measuringDeviceObj.Accuracy;
-            Unit = measuringDeviceObj.Unit;
-
+            SerialNo = CurrentMeasuringDevice.SerialNo;
+            Department = CurrentMeasuringDevice.Department;
+            Location = CurrentMeasuringDevice.Location;
+            Plant = CurrentMeasuringDevice.Plant;
+            Description = CurrentMeasuringDevice.Description;
+            CalibrationMethod = CurrentMeasuringDevice.CalibrationMethod;
+            FrequencyOfCalibration = CurrentMeasuringDevice._FrequencyOfCalibration;
+            NextCalibrationDate = CurrentMeasuringDevice.NextCalibrationDate;
+            Status = CurrentMeasuringDevice.Status;
+            Barcode = CurrentMeasuringDevice.Barcode;
+            Remarks = CurrentMeasuringDevice.Remarks;
+            EndOfLife = CurrentMeasuringDevice.EndOfLife;
+            Maker = CurrentMeasuringDevice._Maker;
+            AcceptanceCriteria = CurrentMeasuringDevice.AcceptanceCriteria;
+            Resolution = CurrentMeasuringDevice._Resolution;
+            DeviceRange = CurrentMeasuringDevice.DeviceRange;
+            Accuracy = CurrentMeasuringDevice.Accuracy;
+            Unit =  CurrentMeasuringDevice.Unit;
         }
 
         #endregion
@@ -289,17 +316,6 @@ namespace IMTE.ViewModels
             }
         }
 
-        private string _resultOfCalibration;
-        public string ResultOfCalibration
-        {
-            get { return _resultOfCalibration; }
-            set
-            {
-                RaiseCanExecuteForSaveChangesCommand();
-                SetProperty(ref _resultOfCalibration, value);
-            }
-        }
-
         private string _calibrationMethod;
         public string CalibrationMethod
         {
@@ -312,8 +328,8 @@ namespace IMTE.ViewModels
             }
         }
 
-        private string _acceptanceCriteria;
-        public string AcceptanceCriteria
+        private AcceptanceCriteria _acceptanceCriteria = new AcceptanceCriteria();
+        public AcceptanceCriteria AcceptanceCriteria
         {
             get { return _acceptanceCriteria; }
             set
@@ -324,15 +340,17 @@ namespace IMTE.ViewModels
             }
         }
 
-        private string _frequencyOfCalibration;
-        public string FrequencyOfCalibration
+
+
+        private FrequencyOfCalibration _frequencyOfCalibration = new FrequencyOfCalibration();
+        public FrequencyOfCalibration FrequencyOfCalibration
         {
             get { return _frequencyOfCalibration; }
             set
             {
                 RaiseCanExecuteForSaveChangesCommand();
                 SetProperty(ref _frequencyOfCalibration, value);
-                CurrentMeasuringDevice.FrequencyOfCalibration = value;
+                CurrentMeasuringDevice._FrequencyOfCalibration = value;
             }
         }
 
@@ -344,6 +362,7 @@ namespace IMTE.ViewModels
             {
                 RaiseCanExecuteForSaveChangesCommand();
                 SetProperty(ref _nextCalibrationDate, value);
+                CurrentMeasuringDevice.NextCalibrationDate = value;
             }
         }
 
@@ -395,27 +414,27 @@ namespace IMTE.ViewModels
             }
         }
 
-        private string _maker;
-        public string Maker
+        private Maker _maker = new Maker();
+        public Maker Maker
         {
             get { return _maker; }
             set
             {
                 RaiseCanExecuteForSaveChangesCommand();
                 SetProperty(ref _maker, value);
-                CurrentMeasuringDevice.Maker = value;
+                CurrentMeasuringDevice._Maker = value;
             }
         }
 
-        private string _resolution;
-        public string Resolution
+        private Resolution _resolution = new Resolution();
+        public Resolution Resolution
         {
             get { return _resolution; }
             set
             {
                 RaiseCanExecuteForSaveChangesCommand();
                 SetProperty(ref _resolution, value);
-                CurrentMeasuringDevice.Resolution = value;
+                CurrentMeasuringDevice._Resolution = value;
             }
         }
 
@@ -463,6 +482,7 @@ namespace IMTE.ViewModels
             {
                 RaiseCanExecuteForSaveChangesCommand();
                 SetProperty(ref _endOfLife, value);
+                CurrentMeasuringDevice.EndOfLife = value;
             }
         }
 
@@ -500,8 +520,6 @@ namespace IMTE.ViewModels
             }
         }
 
-
-
         private void RaiseCanExecuteForSaveChangesCommand()
         {
             if (SaveChangesCommand != null)
@@ -519,9 +537,6 @@ namespace IMTE.ViewModels
             set
             {
                 SetProperty(ref _isEquipment, value);
-                CurrentMeasuringDevice.DeviceType = new DeviceType { Id = 1 };
-
-                
             }
         }
 
@@ -532,9 +547,8 @@ namespace IMTE.ViewModels
             set
             {
                 SetProperty(ref _isMachineTool, value);
-
-            }
-        }
+			}
+		}
 
         private bool _isInstrument;
         public bool IsInstrument 
@@ -543,11 +557,8 @@ namespace IMTE.ViewModels
             set
             {
                 SetProperty(ref _isInstrument, value);
-                CurrentMeasuringDevice.DeviceType = new DeviceType { Id = 3 };
-
             }
         }
-
 
         private void SelectMachineTool()
         {
@@ -557,7 +568,10 @@ namespace IMTE.ViewModels
 
             CurrentMeasuringDevice.EquipmentSerial = null;
             CurrentMeasuringDevice.InstrumentSerial = null;
-            EventAggregatorSubscribe();
+            CurrentMeasuringDevice.MachineToolSerial = new MachineToolSerial();
+			CurrentMeasuringDevice.DeviceType = new DeviceType { Id = 2 };
+
+			EventAggregatorSubscribe();
 
             regionManager.RequestNavigate("ToolRegion", "MachineToolForMeasuringDevice");
         }
@@ -570,7 +584,10 @@ namespace IMTE.ViewModels
 
             CurrentMeasuringDevice.MachineToolSerial = null;
             CurrentMeasuringDevice.InstrumentSerial = null;
-            EventAggregatorSubscribe();
+            CurrentMeasuringDevice.EquipmentSerial = new EquipmentSerial();
+			CurrentMeasuringDevice.DeviceType = new DeviceType { Id = 1 };
+
+			EventAggregatorSubscribe();
 
             regionManager.RequestNavigate("ToolRegion", "EquipmentFormForMeasuringDevice");
         }
@@ -583,7 +600,10 @@ namespace IMTE.ViewModels
 
             CurrentMeasuringDevice.EquipmentSerial = null;
             CurrentMeasuringDevice.MachineToolSerial = null;
-            EventAggregatorSubscribe();
+            CurrentMeasuringDevice.InstrumentSerial = new InstrumentSerial();
+			CurrentMeasuringDevice.DeviceType = new DeviceType { Id = 3 };
+
+			EventAggregatorSubscribe();
 
             regionManager.RequestNavigate("ToolRegion", "InstrumentForMeasuringDevice");
         }
@@ -674,9 +694,37 @@ namespace IMTE.ViewModels
             set { SetProperty(ref _isNextCalibrationDateNull, value); }
         }
 
-        #endregion
+		#endregion
 
-        #region Observable collection from database
+		#region Observable collection from database
+
+		private ObservableCollection<Maker> _makers;
+		public ObservableCollection<Maker> Makers
+		{
+			get { return _makers; }
+			set { SetProperty(ref _makers, value); }
+		}
+
+		private ObservableCollection<Resolution> _resolutions;
+		public ObservableCollection<Resolution> Resolutions
+		{
+			get { return _resolutions; }
+			set { SetProperty(ref _resolutions, value); }
+		}
+
+		private ObservableCollection<FrequencyOfCalibration> _frequencyOfCalibrations;
+		public ObservableCollection<FrequencyOfCalibration> FrequencyOfCalibrations
+		{
+			get { return _frequencyOfCalibrations; }
+			set { SetProperty(ref _frequencyOfCalibrations, value); }
+		}
+
+		private ObservableCollection<AcceptanceCriteria> _acceptanceCriterias;
+        public ObservableCollection<AcceptanceCriteria> AcceptanceCriterias
+        {
+            get { return _acceptanceCriterias; }
+            set { SetProperty(ref _acceptanceCriterias, value); }
+        }
 
         private ObservableCollection<Employee> _employees;
         public ObservableCollection<Employee> Employees
@@ -731,7 +779,6 @@ namespace IMTE.ViewModels
             set { SetProperty(ref _instrumentSerials, value); }
         }
 
-
         #endregion
 
         #region Custom Observable Collection
@@ -752,21 +799,7 @@ namespace IMTE.ViewModels
             set { SetProperty(ref _calibrationResults, value); }
         }
 
-        private ObservableCollection<string> _acceptanceCriterias;
-
-        public ObservableCollection<string> AcceptanceCriterias
-        {
-            get { return _acceptanceCriterias; }
-            set { SetProperty(ref _acceptanceCriterias, value); }
-        }
-
-        private ObservableCollection<string> _frequencyOfCalibrations;
-
-        public ObservableCollection<string> FrequencyOfCalibrations
-        {
-            get { return _frequencyOfCalibrations; }
-            set { SetProperty(ref _frequencyOfCalibrations, value); }
-        }
+        
 
         private ObservableCollection<string> _descriptions;
 
@@ -792,13 +825,6 @@ namespace IMTE.ViewModels
             set { SetProperty(ref _statusData, value); }
         }
 
-        private ObservableCollection<string> _makers;
-        public ObservableCollection<string> Makers
-        {
-            get { return _makers; }
-            set { SetProperty(ref _makers, value); }
-        }
-
         private ObservableCollection<string> _accuracies;
         public ObservableCollection<string> Accuracies
         {
@@ -806,12 +832,6 @@ namespace IMTE.ViewModels
             set { SetProperty(ref _accuracies, value); }
         }
 
-        private ObservableCollection<string> _resolutions;
-        public ObservableCollection<string> Resolutions
-        {
-            get { return _resolutions; }
-            set { SetProperty(ref _resolutions, value); }
-        }
 
         private ObservableCollection<string> _range;
 
@@ -827,13 +847,9 @@ namespace IMTE.ViewModels
         {
             CalibrationMethods = new ObservableCollection<string>(new List<string> { "Calibration Method 1", "Calibration Method 2", "Calibration Method 3", "Calibration Method 4", "Calibration Method 5" });
             CalibrationResults = new ObservableCollection<string>(new List<string> { "Calibration Result 1", "Calibration Result 2", "Calibration Result 3", "Calibration Result 4", "Calibration Result 5" });
-            AcceptanceCriterias = new ObservableCollection<string>(new List<string> { "Acceptance 1", "Acceptance 2", "Acceptance 3", "Acceptance 4", "Acceptance 5" });
-            FrequencyOfCalibrations = new ObservableCollection<string>(new List<string> { "Frequency of Calibration 1", "Frequency of Calibration 2", "Frequency of Calibration 3", "Frequency of Calibration 4", "Frequency of Calibration 5" });
             Descriptions = new ObservableCollection<string>(new List<string> { "Description 1", "Description 2", "Description 3", "Description 4", "Description 5" });
             Types = new ObservableCollection<string>(new List<string> { "Type 1", "Type 2", "Type 3", "Type 4", "Type 5" });
             StatusData = new ObservableCollection<string>(new List<string> { "Status 1", "Status 2", "Status 3", "Status 4", "Status 5" });
-            Makers = new ObservableCollection<string>(new List<string> { "Maker 1", "Maker 2", "Maker 3", "Maker 4", "Maker 5" });
-            Resolutions = new ObservableCollection<string>(new List<string> { "Resolution 1", "Resolution 2", "Resolution 3", "Resolution 4", "Resolution 5" });
 
             Accuracies = new ObservableCollection<string>();
             for (int i = 1; i <= 100; i += 4)
@@ -873,17 +889,28 @@ namespace IMTE.ViewModels
             plantDA = new PlantDA();
             equipmentTypeDA = new EquipmentTypeDA();
             instrumentSerialDA = new InstrumentSerialDA();
+            acceptanceCriteriaDA = new AcceptanceCriteriaDA();
+            frequencyOfCalibrationDA = new FrequencyOfCalibrationDA();
+            resolutionDA = new ResolutionDA();
+            makerDA = new MakerDA();
 
-            Employees = new ObservableCollection<Employee>(employeeDA.GetAllEmployees());
+			Employees = new ObservableCollection<Employee>(employeeDA.GetAllEmployees());
             Departments = new ObservableCollection<Department>(departmentDA.GetAllDepartments());
             Locations = new ObservableCollection<Location>(locationDA.GetAllLocations());
             Units = new ObservableCollection<UnitEntity>(unitDA.GetAllUnit());
             Plants = new ObservableCollection<Plant>(plantDA.GetAllPlant());
             EquipmentTypes = new ObservableCollection<EquipmentType>(equipmentTypeDA.GetAllEquipmentType());
             InstrumentSerials = new ObservableCollection<InstrumentSerial>(instrumentSerialDA.GetAllInstrumentSerial());
+            AcceptanceCriterias = new ObservableCollection<AcceptanceCriteria>(acceptanceCriteriaDA.GetAllAcceptanceCriteria());
+            FrequencyOfCalibrations = new ObservableCollection<FrequencyOfCalibration>(frequencyOfCalibrationDA.GetAllFrequencyOfCalibration());
+            Resolutions = new ObservableCollection<Resolution>(resolutionDA.GetAllResolutions());
+            Makers = new ObservableCollection<Maker>(makerDA.GetAllMaker());
 
-            EventAggregatorSubscribe();
+			EventAggregatorSubscribe();
+
+            //Set the default device type as equipment
             IsEquipment = true;
+            CurrentMeasuringDevice.DeviceType = new DeviceType { Id = 2 };
         }
 
 
@@ -1002,7 +1029,7 @@ namespace IMTE.ViewModels
 
         public void ExecuteSave()
         {
-            //measuringDeviceDA.CreateMeasuringDevice(CurrentMeasuringDevice);
+            measuringDeviceDA.CreateMeasuringDevice(CurrentMeasuringDevice);
         }
 
         private bool CanSave()
@@ -1078,58 +1105,30 @@ namespace IMTE.ViewModels
 
                 var navParameter = new NavigationParameters();
 
-                //if (CurrentMeasuringDevice.Equipment != null)
-                //{
-                //    navParameter.Add("equipmentObj", CurrentMeasuringDevice.Equipment);
+                // will load the instrument serial form that has data
+                if (measuringDeviceFromList.InstrumentSerial != null)
+                {
+                    navParameter.Add("instrumentObj", measuringDeviceFromList.InstrumentSerial);
+                    IsInstrument = true;
 
-                //    IsMachineTool = false;
-                //    IsEquipment = true;
-                //    IsInstrument = false;
+					regionManager.RequestNavigate("ToolRegion", "InstrumentForMeasuringDevice", navParameter);
+                }
+                else if (measuringDeviceFromList.EquipmentSerial != null)
+                {
+					navParameter.Add("equipmentObj", measuringDeviceFromList.EquipmentSerial);
+                    IsEquipment = true;
 
-                //    MachineTool = null;
-                //    Instrument = null;
+                    regionManager.RequestNavigate("ToolRegion", "EquipmentFormForMeasuringDevice", navParameter);
+				}
+                else if (measuringDeviceFromList.MachineToolSerial != null)
+                {
+					navParameter.Add("machineToolObj", measuringDeviceFromList.MachineToolSerial);
+                    IsMachineTool = true;
 
-                //    regionManager.RequestNavigate("ToolRegion", "EquipmentFormForMeasuringDevice", navParameter);
+					regionManager.RequestNavigate("ToolRegion", "MachineToolForMeasuringDevice", navParameter);
+				}
 
-                //    EventAggregatorSubscribe();
-                //}
-                //else if (CurrentMeasuringDevice.MachineTool != null)
-                //{
-                //    navParameter.Add("machineToolObj", CurrentMeasuringDevice.MachineTool);
-
-                //    IsMachineTool = true;
-                //    IsEquipment = false;
-                //    IsInstrument = false;
-
-                //    Equipment = null;
-                //    Instrument = null;                    
-
-                //    regionManager.RequestNavigate("ToolRegion", "MachineToolForMeasuringDevice", navParameter);
-
-                //    EventAggregatorSubscribe();
-                //}
-                //else if (CurrentMeasuringDevice.Instrument != null)
-                //{
-                //    navParameter.Add("instrumentObj", CurrentMeasuringDevice.Instrument);
-
-                //    IsMachineTool = false;
-                //    IsEquipment = false;
-                //    IsInstrument = true;
-
-                //    Equipment = null;
-                //    MachineTool = null;
-
-                //    regionManager.RequestNavigate("ToolRegion", "InstrumentForMeasuringDevice", navParameter);
-
-                //    EventAggregatorSubscribe();
-                //}
-                //else
-                //{
-                //    // no view will be injected to the region
-                //    IsMachineTool = false;
-                //    IsEquipment = false;
-                //}
-            }
+			}
             else
             {
                 // Set default region as Equipment

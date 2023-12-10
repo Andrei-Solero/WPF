@@ -55,6 +55,7 @@
     <Compile Include="ItemLookupToMDForms.cs" />
     <Compile Include="MachineToolSerialToMeasuringDevice.cs" />
     <Compile Include="MachineToolToMeasuringDevice.cs" />
+    <Compile Include="MeasuringDeviceToInstrumentSerial.cs" />
     <Compile Include="PlantLookupToMDForm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitToMDForm.cs" />

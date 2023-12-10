@@ -79,5 +79,46 @@ namespace IMTE.DataAccess
 
             return output;
         }
+
+        public void UpdateInstrument(Instrument instrumentObj, NpgsqlTransaction transaction, NpgsqlConnection connection)
+        {
+			using (NpgsqlCommand command = new NpgsqlCommand())
+			{
+				string query = @"UPDATE ""Inventory"".""Instrument"" SET
+									""Version"" = ""Version"" + 1,
+                                    ""InstrumentTypeId"" = @InstrumentTypeId,
+                                    ""ItemId"" = @ItemId,
+                                    ""DepartmentId"" = @DepartmentId,
+                                    ""Manufacturer"" = @Manufacturer,
+                                    ""Model"" = @Model,
+                                    ""HasAccessory"" = @HasAccessory,
+                                    ""ApprovalCode"" = @ApprovalCode,
+                                    ""IsPrinted"" = @IsPrinted,
+                                    ""IsSent"" = @IsSent,
+                                    ""IsForeignCurrency"" = @IsForeignCurrency,
+                                    ""ModifiedOn"" = @ModifiedOn
+                                    WHERE ""Id"" = @Id";
+
+				command.Connection = connection;
+				command.Transaction = transaction;
+				command.CommandText = query;
+
+				command.Parameters.AddWithValue("@InstrumentTypeId", instrumentObj.InstrumentType.Id);
+				command.Parameters.AddWithValue("@ItemId", instrumentObj.Item.Id);
+				command.Parameters.AddWithValue("@DepartmentId", instrumentObj.Department.Id);
+				command.Parameters.AddWithValue("@Manufacturer", instrumentObj.Manufacturer);
+				command.Parameters.AddWithValue("@Model", instrumentObj.Model);
+				command.Parameters.AddWithValue("@HasAccessory", instrumentObj.HasAccessory);
+				command.Parameters.AddWithValue("@ApprovalCode", instrumentObj.ApprovalCode);
+				command.Parameters.AddWithValue("@IsPrinted", instrumentObj.IsPrinted);
+				command.Parameters.AddWithValue("@IsSent", instrumentObj.IsSent);
+				command.Parameters.AddWithValue("@IsForeignCurrency", instrumentObj.IsForeignCurrency);
+				command.Parameters.AddWithValue("@ModifiedOn", DateTime.UtcNow);
+				command.Parameters.AddWithValue("@Id", instrumentObj.Id);
+
+				command.ExecuteNonQuery();
+			}
+		}
+
     }
 }

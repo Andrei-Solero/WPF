@@ -12,7 +12,45 @@ namespace IMTE.Models.Inventory
 {
     public class Instrument : StandardModel
     {
-        public Company Company { get; set; }
+        public Instrument()
+        {
+            
+        }
+		
+        public Instrument(int id, int version, bool isDeleted, DateTime createdOn, DateTime modifiedOn,
+					  Company company, int? assetId, InstrumentType instrumentType,
+					  Employee modifiedByEmployee, int approvedByUserId, Currency currency,
+					  int currencyExchangeId, Item item, Specification specification, Department department,
+					  string manufacturer, string model, bool? hasAccessory, string approvalCode,
+					  bool? isPrinted, bool? isSent, bool? isForeignCurrency, DateTime createdDate)
+		{
+			Id = id;
+			Version = version;
+			IsDeleted = isDeleted;
+			CreatedOn = createdOn;
+			ModifiedOn = modifiedOn;
+			Company = company;
+			AssetId = assetId;
+			InstrumentType = instrumentType;
+			ModifiedByEmployee = modifiedByEmployee;
+			ApprovedByUserId = approvedByUserId;
+			Currency = currency;
+			CurrencyExchangeId = currencyExchangeId;
+			Item = item;
+			Specification = specification;
+			Department = department;
+			Manufacturer = manufacturer;
+			Model = model;
+			HasAccessory = hasAccessory;
+			ApprovalCode = approvalCode;
+			IsPrinted = isPrinted;
+			IsSent = isSent;
+			IsForeignCurrency = isForeignCurrency;
+			CreatedDate = createdDate;
+		}
+
+
+		public Company Company { get; set; }
         public int? AssetId { get; set; }
         public InstrumentType InstrumentType { get; set; }
         public Employee ModifiedByEmployee { get; set; }

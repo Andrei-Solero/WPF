@@ -88,5 +88,30 @@ namespace IMTE.DataAccess
 
             return output;
         }
+
+        public void UpdateInstrumentSerial(InstrumentSerial instrumentSerialObj, NpgsqlTransaction transaction, NpgsqlConnection connection)
+        {
+			using (NpgsqlCommand command = new NpgsqlCommand())
+			{
+				string query = @"UPDATE ""Inventory"".""InstrumentSerial"" SET
+									""Version"" = ""Version"" + 1,
+                                    ""InstrumentId"" = @InstrumentId,
+                                    ""SerialNo"" = @SerialNo,
+                                    ""ModifiedOn"" = @ModifiedOn
+                                    WHERE ""Id"" = @Id";
+
+				command.Connection = connection;
+				command.Transaction = transaction;
+				command.CommandText = query;
+
+				command.Parameters.AddWithValue("@InstrumentId", instrumentSerialObj.Instrument.Id);
+				command.Parameters.AddWithValue("@SerialNo", instrumentSerialObj.SerialNo);
+                command.Parameters.AddWithValue("@ModifiedOn", DateTime.UtcNow);
+                command.Parameters.AddWithValue("@Id", instrumentSerialObj.Id);
+
+
+				command.ExecuteNonQuery();
+			}
+		}
     }
 }

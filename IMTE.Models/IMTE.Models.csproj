@@ -61,10 +61,14 @@
     <Compile Include="HumanResources\Employee.cs" />
     <Compile Include="HumanResources\EmployeeType.cs" />
     <Compile Include="HumanResources\Position.cs" />
+    <Compile Include="IMTEEntity\AcceptanceCriteria.cs" />
     <Compile Include="IMTEEntity\DeviceStatus.cs" />
     <Compile Include="IMTEEntity\DeviceType.cs" />
+    <Compile Include="IMTEEntity\FrequencyOfCalibration.cs" />
+    <Compile Include="IMTEEntity\Maker.cs" />
     <Compile Include="IMTEEntity\MeasuringDevice.cs" />
     <Compile Include="IMTEEntity\MeasuringDeviceLedger.cs" />
+    <Compile Include="IMTEEntity\Resolution.cs" />
     <Compile Include="IMTEEntity\_MeasuringDevice.cs" />
     <Compile Include="Inventory\Equipment.cs" />
     <Compile Include="Inventory\EquipmentSerial.cs" />

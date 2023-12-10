@@ -63,6 +63,7 @@
     <Compile Include="UnitEntityTest.cs" />
     <Compile Include="InstrumentTest.cs" />
     <Compile Include="UnitTest1.cs" />
+    <Compile Include="UnitTest2.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

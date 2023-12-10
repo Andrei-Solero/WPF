@@ -15,7 +15,7 @@ namespace IMTE.DataAccess
         {
             get
             {
-                return "Host=localhost;Username=postgres;Password=AMCSentinel333!;Database=VisionMain";
+                return "Host=localhost;Username=postgres;Password=admin;Database=VisionTestDB-12/07";
             }
         }
 
@@ -31,6 +31,19 @@ namespace IMTE.DataAccess
                 return data.GetInt32(columnIndex);
             }
         }
+
+        protected DateTime? CheckDbNullDateTime(NpgsqlDataReader data, string columnName)
+        {
+			int columnIndex = data.GetOrdinal(columnName);
+			if (data.IsDBNull(columnIndex))
+			{
+				return null;
+			}
+			else
+			{
+				return data.GetDateTime(columnIndex);
+			}
+		}
 
         protected string CheckDbNullString(NpgsqlDataReader data, string columnName)
         {
