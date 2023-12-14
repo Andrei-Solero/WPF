@@ -11,6 +11,7 @@ using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,16 +19,19 @@ using System.Threading.Tasks;
 namespace IMTE.ViewModels
 {
 	[RegionMemberLifetime(KeepAlive = false)]
-	public class MD_InstrumentFormViewModel : BindableBase, INavigationAware
+	public class MD_InstrumentFormViewModel : BindableBase, INavigationAware, IDataErrorInfo
     {
         private readonly IEventAggregator ea;
         private readonly IDialogService dialogService;
         private readonly InstrumentTypeDA instrumentTypeDA;
+		private readonly InstrumentSerialDA instrumentSerialDA;
         private readonly DepartmentDA departmentDA;
 
         public DelegateCommand OpenDescriptionLookupCommand { get; private set; }
         public DelegateCommand OpenItemLookupCommand { get; private set; }
-        public DelegateCommand ShowEquipmentConfigCommand { get; private set; }
+        public DelegateCommand ShowInstrumentConfigCommand { get; private set; }
+
+        public List<InstrumentSerial> ExistingInstrumentSerial { get; private set; }
 
         public MD_InstrumentFormViewModel(IEventAggregator ea, IDialogService dialogService)
         {
@@ -35,9 +39,10 @@ namespace IMTE.ViewModels
             this.dialogService = dialogService;
             instrumentTypeDA = new InstrumentTypeDA();
             departmentDA = new DepartmentDA();
+            instrumentSerialDA = new InstrumentSerialDA();
 
-            Instrument = new Instrument();
-            Item = new Item();
+			Instrument = new Instrument();
+            ItemEntity = new Item();
             Description = new Description();
 
             InstrumentTypes = new ObservableCollection<InstrumentType>(instrumentTypeDA.GetAllInstrumentType());
@@ -45,7 +50,7 @@ namespace IMTE.ViewModels
 
             OpenDescriptionLookupCommand = new DelegateCommand(OpenDescriptionLookup);
             OpenItemLookupCommand = new DelegateCommand(OpenItemLookup);
-            ShowEquipmentConfigCommand = new DelegateCommand(OpenEquipmentConfig);
+			ShowInstrumentConfigCommand = new DelegateCommand(OpenInstrumentConfig);
 
             //// this will trigger when the user selected an existing measuring device and that measuring device has InstrumentSerial
             //ea.GetEvent<MeasuringDeviceToInstrumentSerial>().Subscribe(SetInstrumentSerialFromMeasuringDevice);
@@ -58,17 +63,29 @@ namespace IMTE.ViewModels
 
             // get the data from this form's item lookup
             ea.GetEvent<ItemLookupToMDForms>().Subscribe(SetItemFromLookup);
-        }
+
+            ea.GetEvent<DataFromIsntrumentLookup>().Subscribe(SetInstrumentDetailsFromLookup);
+
+            ExistingInstrumentSerial = instrumentSerialDA.GetAllInstrumentSerial().ToList();
+
+		}
+
+		private void SetInstrumentDetailsFromLookup(Instrument instrument)
+		{
+            Instrument = instrument;
+            SetFieldBindingData(instrument);
+		}
+
+		private void OpenInstrumentConfig()
+		{
+			dialogService.ShowDialog("InstrumentConfig");
+
+		}
 
 		private void SetInstrumentSerialFromMeasuringDevice(InstrumentSerial serial)
 		{
             InstrumentSerial = serial;
 		}
-
-		private void OpenEquipmentConfig()
-        {
-            dialogService.ShowDialog("EquipmentConfig");
-        }
 
         private void OpenItemLookup()
         {
@@ -82,7 +99,7 @@ namespace IMTE.ViewModels
 
         private void SetItemFromLookup(Item itemObj)
         {
-            Item = itemObj;
+            ItemEntity = itemObj;
         }
 
         private void SetDescriptionFromLookup(Description descriptionObj)
@@ -90,9 +107,106 @@ namespace IMTE.ViewModels
             Description = descriptionObj;
         }
 
-        #region Helper
+		private Dictionary<string, string> _errorCollection = new Dictionary<string, string>();
+		public Dictionary<string, string> ErrorCollection
+		{
+			get { return _errorCollection; }
+			set { SetProperty(ref _errorCollection, value); }
+		}
 
-        private void SetFieldBindingData(InstrumentSerial instrumentSerialObj)
+        #region IDataErrorInfo - Validation
+
+        private bool FieldValidation()
+		{
+			if (string.IsNullOrEmpty(SerialNO) || string.IsNullOrEmpty(Manufacturer) || string.IsNullOrEmpty(Model) ||
+				Department.Id == null || InstrumentType.Id == null || string.IsNullOrEmpty(ApprovalCode) || string.IsNullOrEmpty(ItemCode) || string.IsNullOrEmpty(ItemShortDescription) ||
+				string.IsNullOrEmpty(ItemDescriptionText))
+			{
+				ea.GetEvent<ToolFormValidationToMeasuringDevice>().Publish(false);
+				return false;
+			}
+			else if (!string.IsNullOrEmpty(SerialNO) && ExistingInstrumentSerial.Any(x => x.SerialNo == SerialNO))
+			{
+				ea.GetEvent<ToolFormValidationToMeasuringDevice>().Publish(false);
+				return false;
+			}
+			else
+			{
+				ea.GetEvent<ToolFormValidationToMeasuringDevice>().Publish(true);
+				return true;
+			}
+
+		}
+
+		public string Error => null;
+
+		public string this[string columnName]
+		{
+			get
+			{
+				string result = null;
+				string errorTextForCmb = "Select required option...";
+				string errorTextForText = "Required...";
+
+				switch (columnName)
+				{
+                    case "SerialNO":
+                        if (string.IsNullOrEmpty(SerialNO))
+                            result = errorTextForText;
+                        else if (ExistingInstrumentSerial.Any(x => x.SerialNo == SerialNO))
+                            result = "Equipment Serial No already exists";
+                        break;
+                    case "Manufacturer":
+                        if (string.IsNullOrEmpty(Manufacturer))
+                            result = errorTextForText;
+                        break;
+                    case "Model":
+                        if (string.IsNullOrEmpty(Model))
+                            result = errorTextForText;
+                        break;
+                    case "ApprovalCode":
+                        if (string.IsNullOrEmpty(ApprovalCode))
+                            result = errorTextForText;
+                        break;
+                    case "InstrumentType":
+                        if (Instrument == null || InstrumentType.Id == null)
+                            result = errorTextForCmb;
+                        break;
+                    case "Department":
+						if (Department == null || Department.Id == null)
+							result = errorTextForCmb;
+						break;
+					case "ItemCode":
+                        if (string.IsNullOrEmpty(ItemCode))
+                            result = errorTextForText;
+                        break;
+                    case "ItemShortDescription":
+                        if (string.IsNullOrEmpty(ItemShortDescription))
+                            result = errorTextForText;
+                        break;
+                    case "ItemDescriptionText":
+                        if (string.IsNullOrEmpty(ItemDescriptionText))
+                            result = errorTextForText;
+                        break;
+
+                }
+
+				if (ErrorCollection.ContainsKey(columnName))
+					ErrorCollection[columnName] = result;
+				else if (result != null)
+					ErrorCollection.Add(columnName, result);
+
+				SetProperty(ref _errorCollection, ErrorCollection);
+
+				return result;
+			}
+		}
+
+        #endregion
+
+		#region Helper
+
+		private void SetFieldBindingData(InstrumentSerial instrumentSerialObj)
         {
             SerialNO = instrumentSerialObj.SerialNo;
             Manufacturer = instrumentSerialObj.Instrument.Manufacturer;
@@ -103,7 +217,7 @@ namespace IMTE.ViewModels
             IsForeignCurrency = instrumentSerialObj.Instrument.IsForeignCurrency;
             IsSent = instrumentSerialObj.Instrument.IsSent;
             InstrumentType = instrumentSerialObj.Instrument.InstrumentType;
-            Item = instrumentSerialObj.Instrument.Item;
+            ItemEntity = instrumentSerialObj.Instrument.Item;
             Description = instrumentSerialObj.Instrument.Item.Description;
             Department = instrumentSerialObj.Instrument.Department;
             ItemCode = instrumentSerialObj.Instrument.Item.ItemCode;
@@ -111,11 +225,29 @@ namespace IMTE.ViewModels
             ItemDescriptionText = instrumentSerialObj.Instrument.Item.Description.Text;
         }
 
-        #endregion
+		private void SetFieldBindingData(Instrument instrumentObj)
+		{
+			Manufacturer = instrumentObj.Manufacturer;
+			Model = instrumentObj.Model;
+			HasAccessory = instrumentObj.HasAccessory;
+			ApprovalCode = instrumentObj.ApprovalCode;
+			IsPrinted = instrumentObj.IsPrinted;
+			IsForeignCurrency = instrumentObj.IsForeignCurrency;
+			IsSent = instrumentObj.IsSent;
+			InstrumentType = instrumentObj.InstrumentType;
+			ItemEntity = instrumentObj.Item;
+			Description = instrumentObj.Item.Description;
+			Department = instrumentObj.Department;
+			ItemCode = instrumentObj.Item.ItemCode;
+			ItemShortDescription = instrumentObj.Item.ShortDescription;
+			ItemDescriptionText = instrumentObj.Item.Description.Text;
+		}
 
-        #region ----------------FIELD BINDING----------------
+		#endregion
 
-        private InstrumentSerial _instrumentSerial = new InstrumentSerial();
+		#region ----------------FIELD BINDING----------------
+
+		private InstrumentSerial _instrumentSerial = new InstrumentSerial();
         public InstrumentSerial InstrumentSerial
         {
             get { return _instrumentSerial; }
@@ -137,7 +269,7 @@ namespace IMTE.ViewModels
                 SetProperty(ref _instrument, value);
 
                 InstrumentSerial.Instrument = value;
-                Item = value.Item;
+                ItemEntity = value.Item;
             }
         }
 
@@ -153,7 +285,7 @@ namespace IMTE.ViewModels
         }
 
         private Item _item;
-        public Item Item
+        public Item ItemEntity
         {
             get { return _item; }
             set 
@@ -177,7 +309,7 @@ namespace IMTE.ViewModels
             set 
             { 
                 SetProperty(ref _description, value);
-                Item.Description = value;
+                ItemEntity.Description = value;
 
                 // For field binding
                 if (value != null)
@@ -195,7 +327,9 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _department, value);
                 Instrument.Department = value;
-            }
+                FieldValidation();
+
+			}
         }
 
         private string _serialNO;
@@ -206,8 +340,10 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _serialNO, value);
                 InstrumentSerial.SerialNo = value;
-            }
-        }
+				FieldValidation();
+
+			}
+		}
 
 
         private string _manufacturer;
@@ -218,8 +354,10 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _manufacturer, value);
                 Instrument.Manufacturer = value;
-            }
-        }
+				FieldValidation();
+
+			}
+		}
 
         private string _model;
         public string Model
@@ -229,8 +367,10 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _model, value);
                 Instrument.Model = value;
-            }
-        }
+				FieldValidation();
+
+			}
+		}
 
         private bool? _hasAccessory;
         public bool? HasAccessory
@@ -240,8 +380,10 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _hasAccessory, value);
                 Instrument.HasAccessory = value;
-            }
-        }
+				FieldValidation();
+
+			}
+		}
 
         private string _approvalCode;
         public string ApprovalCode
@@ -251,8 +393,10 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _approvalCode, value);
                 Instrument.ApprovalCode = value;
-            }
-        }
+				FieldValidation();
+
+			}
+		}
 
         private bool? _isPrinted;
         public bool? IsPrinted
@@ -262,8 +406,10 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _isPrinted, value);
                 Instrument.IsPrinted = value;
-            }
-        }
+				FieldValidation();
+
+			}
+		}
 
         private bool? _isForeignCurrency;
         public bool? IsForeignCurrency
@@ -273,8 +419,10 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _isForeignCurrency, value);
                 Instrument.IsForeignCurrency = value;
-            }
-        }
+				FieldValidation();
+
+			}
+		}
 
         private bool? _isSent;
         public bool? IsSent
@@ -284,8 +432,10 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _isSent, value);
                 Instrument.IsSent = value;
-            }
-        }
+				FieldValidation();
+
+			}
+		}
 
         private string _itemCode;
         public string ItemCode
@@ -294,9 +444,11 @@ namespace IMTE.ViewModels
             set
             {
                 SetProperty(ref _itemCode, value);
-                Item.ItemCode = value;
-            }
-        }
+                ItemEntity.ItemCode = value;
+				FieldValidation();
+
+			}
+		}
 
         private string _itemShortDescription;
         public string ItemShortDescription
@@ -305,9 +457,11 @@ namespace IMTE.ViewModels
             set
             {
                 SetProperty(ref _itemShortDescription, value);
-                Item.ShortDescription = value;
-            }
-        }
+                ItemEntity.ShortDescription = value;
+				FieldValidation();
+
+			}
+		}
 
         private string _itemDescriptiontext;
         public string ItemDescriptionText
@@ -317,8 +471,10 @@ namespace IMTE.ViewModels
             {
                 SetProperty(ref _itemDescriptiontext, value);
                 Description.Text = value;
-            }
-        }
+				FieldValidation();
+
+			}
+		}
 
         #endregion
 

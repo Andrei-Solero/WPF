@@ -44,6 +44,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataFromEquipmentLookup.cs" />
+    <Compile Include="DataFromIsntrumentLookup.cs" />
+    <Compile Include="DataFromMachineToolLookup.cs" />
     <Compile Include="DepartmentLookupToMDForm.cs" />
     <Compile Include="DescriptionLookupToMDForms.cs" />
     <Compile Include="EmployeeLookupToMDForm.cs" />
@@ -58,6 +61,7 @@
     <Compile Include="MeasuringDeviceToInstrumentSerial.cs" />
     <Compile Include="PlantLookupToMDForm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ToolFormValidationToMeasuringDevice.cs" />
     <Compile Include="UnitToMDForm.cs" />
   </ItemGroup>
   <ItemGroup>

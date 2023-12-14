@@ -70,15 +70,15 @@ namespace IMTE.ViewModels
                             result = errorTextForText;
                         break;
                     case "Department":
-                        if (Department.Id == null || Department.Id == 0)
+                        if (Department == null || Department.Id == null || Department.Id == 0)
                             result = errorTextForCmb;
                         break;
                     case "Location":
-                        if (Location.Id == null || Location.Id == 0)
+                        if (Location == null || Location.Id == null || Location.Id == 0)
                             result = errorTextForCmb;
                         break;
                     case "Plant":
-                        if (Plant.Id == null || Plant.Id == 0)
+                        if (Plant == null || Plant.Id == null || Plant.Id == 0)
                             result = errorTextForCmb;
                         break;
                     case "Description":
@@ -87,14 +87,14 @@ namespace IMTE.ViewModels
                         break;
                     case "CalibrationMethod":
                         if (string.IsNullOrWhiteSpace(CalibrationMethod))
-                            result = errorTextForText;
+                            result = errorTextForCmb;
                         break;
                     case "AcceptanceCriteria":
-                        if (AcceptanceCriteria.Id == null || AcceptanceCriteria.Id == 0)
+                        if (AcceptanceCriteria == null || AcceptanceCriteria.Id == null || AcceptanceCriteria.Id == 0)
                             result = errorTextForCmb;
                         break;
                     case "FrequencyOfCalibration":
-                        if (FrequencyOfCalibration.Id == null || FrequencyOfCalibration.Id == 0)
+                        if (FrequencyOfCalibration == null || FrequencyOfCalibration.Id == null || FrequencyOfCalibration.Id == 0)
                             result = errorTextForCmb;
                         break;
                     case "Remarks":
@@ -119,11 +119,11 @@ namespace IMTE.ViewModels
                         break;
                     case "Accuracy":
                         if (string.IsNullOrWhiteSpace(Accuracy))
-                            result = errorTextForCmb;
+                            result = errorTextForText;
                         break;
                     case "DeviceRange":
                         if (string.IsNullOrWhiteSpace(DeviceRange))
-                            result = errorTextForCmb;
+                            result = errorTextForText;
                         break;
                     case "Unit":
                         if (Unit.Id == null || Unit.Id == 0)
@@ -237,18 +237,31 @@ namespace IMTE.ViewModels
             // Will receive the data from machine tool in this form
             ea.GetEvent<MachineToolToMeasuringDevice>().Subscribe(SetMachineToolDetails);
 
+            // Will receive data from equipment serial form
             ea.GetEvent<EquipmentSerialToMeasuringDevice>().Subscribe(SetEquipmentSerial);
 
+            // Will receive data from instrument serial form
             ea.GetEvent<InstrumentSerialToMeasuringDevice>().Subscribe(SetInstrumentSerial);
 
-            ea.GetEvent<MachineToolSerialToMeasuringDevice>().Subscribe(SetMachineToolSerial);
+			// Will receive data from machine tool serial form
+			ea.GetEvent<MachineToolSerialToMeasuringDevice>().Subscribe(SetMachineToolSerial);
+
+            ea.GetEvent<ToolFormValidationToMeasuringDevice>().Subscribe(SetIsFormValid);
         }
 
-        /// <summary>
-        /// Set the current measuring device machine tool serial from the machine tool serial form
-        /// </summary>
-        /// <param name="obj"></param>
-        private void SetMachineToolSerial(MachineToolSerial obj)
+		private void SetIsFormValid(bool obj)
+        {
+            IsToolFormValid = obj;
+			RaiseCanExecuteForSaveChangesCommand();
+
+			RequiredValidation();
+		}
+
+		/// <summary>
+		/// Set the current measuring device machine tool serial from the machine tool serial form
+		/// </summary>
+		/// <param name="obj"></param>
+		private void SetMachineToolSerial(MachineToolSerial obj)
         {
             CurrentMeasuringDevice.MachineToolSerial = obj;
         }
@@ -555,7 +568,10 @@ namespace IMTE.ViewModels
             }
         }
 
-        private void RaiseCanExecuteForSaveChangesCommand()
+		/// <summary>
+		/// this will always check if the ExecuteMethod can be executed (this will run the validation function which is CanSave())
+		/// </summary>
+		private void RaiseCanExecuteForSaveChangesCommand()
         {
             if (SaveChangesCommand != null)
                 SaveChangesCommand.RaiseCanExecuteChanged();
@@ -646,6 +662,13 @@ namespace IMTE.ViewModels
         #endregion
 
         #region UI logic
+
+        private bool _isToolFormValid;
+        public bool IsToolFormValid
+        {
+            get { return _isToolFormValid; }
+            set { SetProperty(ref _isToolFormValid, value); }
+        }
 
         private bool _isDataSaving = true;
         public bool IsDataSaving
@@ -1067,24 +1090,33 @@ namespace IMTE.ViewModels
             measuringDeviceDA.CreateMeasuringDevice(CurrentMeasuringDevice);
         }
 
-        private bool CanSave()
+        private bool RequiredValidation()
         {
-            var output = true; 
-
-            if (string.IsNullOrEmpty(SerialNo) || string.IsNullOrEmpty(Department.DepartmentName) ||
-                string.IsNullOrEmpty(Location.Name) || string.IsNullOrEmpty(Plant.PlantName) || 
-                string.IsNullOrEmpty(Description) || string.IsNullOrEmpty(CalibrationMethod) || string.IsNullOrEmpty(AcceptanceCriteria.Title) ||
-                string.IsNullOrEmpty(FrequencyOfCalibration.Title) || NextCalibrationDate.Value == null || string.IsNullOrEmpty(Status) ||
+            var output = true;
+            if (string.IsNullOrEmpty(SerialNo) || Department.Id == null ||
+                Location == null || Plant == null ||
+                string.IsNullOrEmpty(Description) || string.IsNullOrEmpty(CalibrationMethod) || AcceptanceCriteria == null ||
+                FrequencyOfCalibration == null || NextCalibrationDate.Value == null || string.IsNullOrEmpty(Status) ||
                 string.IsNullOrEmpty(Barcode) || string.IsNullOrEmpty(Remarks) || EndOfLife.Value == null || string.IsNullOrEmpty(Resolution) ||
-                string.IsNullOrEmpty(Maker) || string.IsNullOrEmpty(Accuracy) || string.IsNullOrEmpty(DeviceRange) || string.IsNullOrEmpty(Unit.UnitVal))
-            {
-                return false;
-            }
+                string.IsNullOrEmpty(Maker) || string.IsNullOrEmpty(Accuracy) || string.IsNullOrEmpty(DeviceRange) || Unit.Id == null || IsToolFormValid == false)
+			{
+				output = false;
+			}
 
             return output;
+		}
+
+        private bool CanSave()
+        {
+            return RequiredValidation();
         }
 
-        private void ExecuteOpenDepartmentConfigLookup()
+		private bool CanUpdate()
+		{
+            return RequiredValidation();
+		}
+
+		private void ExecuteOpenDepartmentConfigLookup()
         {
             _dialogService.ShowDialog("DeptConfig");
         }
@@ -1135,11 +1167,10 @@ namespace IMTE.ViewModels
             {
                 // set the default command now as Update data
                 IsDataSaving = false;
-                SaveChangesCommand = new DelegateCommand(ExecuteUpdate);
                 var measuringDeviceFromList = navigationContext.Parameters["measuringDeviceObj"] as MeasuringDevice;
                 SetFieldBindingValue(measuringDeviceFromList);
 
-                var navParameter = new NavigationParameters();
+				var navParameter = new NavigationParameters();
 
                 // will load the instrument serial form that has data
                 if (measuringDeviceFromList.InstrumentSerial != null)
@@ -1164,17 +1195,18 @@ namespace IMTE.ViewModels
                     regionManager.RequestNavigate("ToolRegion", "MachineToolForMeasuringDevice", navParameter);
                 }
 
-            }
-            else
+				SaveChangesCommand = new DelegateCommand(ExecuteUpdate, CanUpdate);
+			}
+			else
             {
                 // Set default region as Equipment
                 regionManager.RequestNavigate("ToolRegion", "EquipmentFormForMeasuringDevice");
             }
         }
 
+		
 
-
-        public bool IsNavigationTarget(NavigationContext navigationContext)
+		public bool IsNavigationTarget(NavigationContext navigationContext)
         {
             var selectedMeasuringDeviceObj = navigationContext.Parameters["MeasuringDeviceObj"] as MeasuringDevice;
             return selectedMeasuringDeviceObj == null ? true : false;

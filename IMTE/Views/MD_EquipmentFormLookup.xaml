@@ -14,58 +14,7 @@
 	mc:Ignorable="d">
 	<GroupBox Header="Existing Equipment">
 		<Grid>
-			<Grid.Resources>
-				<Style x:Key="ButtonLabelStyle" TargetType="TextBlock">
-					<Setter Property="FontSize" Value="14" />
-					<Setter Property="VerticalAlignment" Value="Center" />
-					<Setter Property="FontWeight" Value="Regular" />
-					<Setter Property="Margin" Value="0,0,6,0" />
-				</Style>
-
-				<Style x:Key="MenuButton" TargetType="Button">
-					<Setter Property="Width" Value="auto" />
-					<Setter Property="HorizontalAlignment" Value="Left" />
-					<Setter Property="Background" Value="White" />
-					<Setter Property="BorderThickness" Value="0" />
-					<Setter Property="Padding" Value="6,5" />
-				</Style>
-
-				<Style x:Key="ButtonText" TargetType="TextBlock">
-					<Setter Property="FontSize" Value="14" />
-					<Setter Property="VerticalAlignment" Value="Center" />
-				</Style>
-
-				<Style x:Key="LookupButton" TargetType="Button">
-					<Setter Property="Height" Value="30" />
-					<Setter Property="Width" Value="30" />
-					<Setter Property="mah:ControlsHelper.CornerRadius" Value="50" />
-					<Setter Property="Padding" Value="0" />
-				</Style>
-			</Grid.Resources>
-
-			<Grid.RowDefinitions>
-				<RowDefinition Height="auto" />
-				<RowDefinition Height="auto" />
-				<RowDefinition Height="*" />
-			</Grid.RowDefinitions>
-
-			<StackPanel
-				Grid.Row="1"
-				Margin="8,0,0,0"
-				Orientation="Horizontal">
-
-				<StackPanel.Resources>
-					<Style TargetType="Button">
-						<Setter Property="Background" Value="White" />
-						<Setter Property="BorderThickness" Value="0" />
-						<Setter Property="Padding" Value="10" />
-						<Setter Property="Width" Value="100" />
-					</Style>
-				</StackPanel.Resources>
-
-			</StackPanel>
-
-			<ContentControl Grid.Row="2" prism:RegionManager.RegionName="EquipmentRegion" />
+			<ContentControl prism:RegionManager.RegionName="EquipmentRegion" />
 		</Grid>
 	</GroupBox>
 

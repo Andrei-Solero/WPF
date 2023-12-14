@@ -12,6 +12,7 @@ using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,27 +20,32 @@ using System.Threading.Tasks;
 namespace IMTE.ViewModels
 {
 	[RegionMemberLifetime(KeepAlive = false)]
-	public class MD_MachineToolFormViewModel : BindableBase, INavigationAware
+	public class MD_MachineToolFormViewModel : BindableBase, INavigationAware, IDataErrorInfo
 	{
 		private readonly IEventAggregator ea;
 		private readonly IDialogService dialogService;
 		private readonly MachineToolTypeDA machineToolTypeDA;
+		private readonly MachineToolSerialDA machineToolSerialDA;
 
 		public DelegateCommand OpenDescriptionLookupCommand { get; private set; }
 		public DelegateCommand OpenItemLookupCommand { get; private set; }
 		public DelegateCommand OpenMachineToolConfigCommand { get; private set; }
 		public DelegateCommand TestCommand { get; private set; }
 
+		public List<MachineToolSerial> ExistingMachineToolSerial { get; private set; }
+
+
 		public MD_MachineToolFormViewModel(IEventAggregator ea, IDialogService dialogService)
 		{
 			this.ea = ea;
 			this.dialogService = dialogService;
 			machineToolTypeDA = new MachineToolTypeDA();
+			machineToolSerialDA = new MachineToolSerialDA();
 
 			MachineToolTypes = new ObservableCollection<MachineToolType>(machineToolTypeDA.GetAllMachineToolType());
 
 			MachineTool = new MachineTool();
-			Item = new Item();
+			ItemEntity = new Item();
 			Description = new Description();
 
 			// send the data of the Machine Tool to the main measuring device form
@@ -58,9 +64,18 @@ namespace IMTE.ViewModels
 			OpenMachineToolConfigCommand = new DelegateCommand(OpenMachineToolConfig);
 			TestCommand = new DelegateCommand(Test);
 
+			ExistingMachineToolSerial = machineToolSerialDA.GetAllMachineToolSerial().ToList();
+
+
+			ea.GetEvent<DataFromMachineToolLookup>().Subscribe(SetMachineToolDetailsFromLookup);
 		}
 
-		
+		private void SetMachineToolDetailsFromLookup(MachineTool tool)
+		{
+			MachineTool = tool;
+			SetFieldBindingData(tool);
+		}
+
 		private void SetMachineToolDataFromMachineToolLookup(MeasuringDevice obj)
 		{
 
@@ -73,7 +88,7 @@ namespace IMTE.ViewModels
 
 		private void SetItemFromLookup(Item obj)
 		{
-			Item = obj;
+			ItemEntity = obj;
 			Description = obj.Description;
 
 			MachineTool.Item = obj;
@@ -111,9 +126,21 @@ namespace IMTE.ViewModels
 			ItemShortDescription = machineToolSerialObj.MachineTool.Item.ShortDescription;
 			ItemDescriptionText = machineToolSerialObj.MachineTool.Item.Description.Text;
 			SerialNo = machineToolSerialObj.SerialNo;
-			ToolLifeUsagePcs = machineToolSerialObj.ToolLifeUsagePcs;
 			Quantity = machineToolSerialObj.Quantity;
 
+		}
+
+		private void SetFieldBindingData(MachineTool machineToolObj)
+		{
+			Note = machineToolObj.Note;
+			MachineToolDescription = machineToolObj.Description;
+			ToolName = machineToolObj.ToolName;
+			UnitCost = machineToolObj.UnitCost;
+			ToolLifeUsagePcs = machineToolObj.ToolLifeUsagePcs;
+			MachineToolType = machineToolObj.MachineToolType;
+			ItemCode = machineToolObj.Item.ItemCode;
+			ItemShortDescription = machineToolObj.Item.ShortDescription;
+			ItemDescriptionText = machineToolObj.Item.Description.Text;
 		}
 
 		#endregion
@@ -128,6 +155,7 @@ namespace IMTE.ViewModels
 			{
 				SetProperty(ref _serialNo, value);
 				MachineToolSerial.SerialNo = value;
+				FieldValidation();
 			}
 		}
 
@@ -140,6 +168,7 @@ namespace IMTE.ViewModels
 			{
 				SetProperty(ref _note, value);
 				MachineTool.Note = value;
+				FieldValidation();
 			}
 		}
 
@@ -151,7 +180,7 @@ namespace IMTE.ViewModels
 			{
 				SetProperty(ref _machineToolDescription, value);
 				MachineTool.Description = value;
-
+				FieldValidation();
 			}
 		}
 
@@ -163,7 +192,7 @@ namespace IMTE.ViewModels
 			{
 				SetProperty(ref _toolName, value);
 				MachineTool.ToolName = value;
-
+				FieldValidation();
 			}
 		}
 
@@ -175,6 +204,7 @@ namespace IMTE.ViewModels
 			{
 				SetProperty(ref _unitCost, value);
 				MachineTool.UnitCost = value;
+				FieldValidation();
 
 			}
 		}
@@ -187,6 +217,7 @@ namespace IMTE.ViewModels
 			{
 				SetProperty(ref _toolLifeUsagePcs, value);
 				MachineTool.ToolLifeUsagePcs = value;
+				FieldValidation();
 
 			}
 		}
@@ -199,6 +230,8 @@ namespace IMTE.ViewModels
 			{
 				SetProperty(ref _machineToolType, value);
 				MachineTool.MachineToolType = value;
+				FieldValidation();
+
 			}
 		}
 
@@ -209,7 +242,8 @@ namespace IMTE.ViewModels
 			set
 			{
 				SetProperty(ref _itemCode, value);
-				Item.ItemCode = value;
+				ItemEntity.ItemCode = value;
+				FieldValidation();
 
 			}
 		}
@@ -221,7 +255,8 @@ namespace IMTE.ViewModels
 			set
 			{
 				SetProperty(ref _itemShortDescription, value);
-				Item.ShortDescription = value;
+				ItemEntity.ShortDescription = value;
+				FieldValidation();
 
 			}
 		}
@@ -234,28 +269,34 @@ namespace IMTE.ViewModels
 			{
 				SetProperty(ref _itemDescriptiontext, value);
 				Description.Text = value;
+				FieldValidation();
+
 			}
 		}
 
-		private int _toolUsageLifePcs;
-		public int ToolUsageLifePcs
+		private int? _toolUsageLifePcs;
+		public int? ToolUsageLifePcs
 		{
 			get { return _toolUsageLifePcs; }
 			set
 			{
 				SetProperty(ref _toolUsageLifePcs, value);
 				MachineToolSerial.ToolLifeUsagePcs = value;
+				FieldValidation();
+
 			}
 		}
 
-		private int _quantity;
-		public int Quantity
+		private int? _quantity;
+		public int? Quantity
 		{
 			get { return _quantity; }
 			set
 			{
 				SetProperty(ref _quantity, value);
 				MachineToolSerial.Quantity = value;
+				FieldValidation();
+
 			}
 		}
 
@@ -277,7 +318,7 @@ namespace IMTE.ViewModels
 			{
 				SetProperty(ref _description, value);
 
-				Item.Description = value;
+				ItemEntity.Description = value;
 
 				// For Field Binding
 				if (value != null)
@@ -287,13 +328,13 @@ namespace IMTE.ViewModels
 			}
 		}
 
-		private Item _item;
-		public Item Item
+		private Item _itemEntity;
+		public Item ItemEntity
 		{
-			get { return _item; }
+			get { return _itemEntity; }
 			set
 			{
-				SetProperty(ref _item, value);
+				SetProperty(ref _itemEntity, value);
 
 				MachineTool.Item = value;
 
@@ -301,7 +342,7 @@ namespace IMTE.ViewModels
 				if (value != null)
 				{
 					ItemCode = value.ItemCode;
-					ItemShortDescription = Item.ShortDescription;
+					ItemShortDescription = ItemEntity.ShortDescription;
 					Description = value.Description;
 				}
 			}
@@ -317,7 +358,7 @@ namespace IMTE.ViewModels
 				SetProperty(ref _machineTool, value);
 
 				MachineToolSerial.MachineTool = MachineTool;
-				Item = value.Item;
+				ItemEntity = value.Item;
 			}
 		}
 
@@ -354,8 +395,6 @@ namespace IMTE.ViewModels
 			}
 		}
 
-
-
 		#endregion
 
 		#region Observable Collections
@@ -365,6 +404,118 @@ namespace IMTE.ViewModels
 		{
 			get { return _machineToolTypes; }
 			set { SetProperty(ref _machineToolTypes, value); }
+		}
+
+		#endregion
+
+		#region IDataErrorInfo - Validation
+
+		private bool FieldValidation()
+		{
+			if (string.IsNullOrEmpty(Note) || string.IsNullOrEmpty(MachineToolDescription) || string.IsNullOrEmpty(ToolName) ||
+				UnitCost < 1 || ToolLifeUsagePcs < 1 || MachineToolType.Id == null || string.IsNullOrEmpty(ItemCode) || string.IsNullOrEmpty(ItemShortDescription) ||
+				string.IsNullOrEmpty(ItemDescriptionText) || string.IsNullOrEmpty(SerialNo) || ToolUsageLifePcs < 1 || Quantity < 1)
+			{
+				ea.GetEvent<ToolFormValidationToMeasuringDevice>().Publish(false);
+				return false;
+			}
+			else if (!string.IsNullOrEmpty(SerialNo) && ExistingMachineToolSerial.Any(x => x.SerialNo == SerialNo))
+			{
+				ea.GetEvent<ToolFormValidationToMeasuringDevice>().Publish(false);
+				return false;
+			}
+			else
+			{
+				ea.GetEvent<ToolFormValidationToMeasuringDevice>().Publish(true);
+				return true;
+			}
+
+		}
+
+
+		private Dictionary<string, string> _errorCollection = new Dictionary<string, string>();
+		public Dictionary<string, string> ErrorCollection
+		{
+			get { return _errorCollection; }
+			set { SetProperty(ref _errorCollection, value); }
+		}
+
+
+		public string Error => null;
+
+		public string this[string columnName]
+		{
+			get
+			{
+				string result = null;
+				string errorTextForCmb = "Select required option...";
+				string errorTextForText = "Required...";
+
+				switch (columnName)
+				{
+					case "Note":
+						if (string.IsNullOrEmpty(Note))
+							result = errorTextForText;
+						break;
+					case "MachineToolDescription":
+						if (string.IsNullOrEmpty(MachineToolDescription))
+							result = errorTextForText;
+						break;
+					case "ToolName":
+						if (string.IsNullOrEmpty(ToolName))
+							result = errorTextForText;
+						break;
+					case "UnitCost":
+						if (UnitCost < 0)
+							result = "Cannot be less than 1";
+						break;
+					case "ToolLifeUsagePcs":
+						if (ToolLifeUsagePcs < 0)
+							result = "Cannot be less than 1";
+						break;
+					case "MachineToolType":
+						if (MachineToolType.Id == null)
+							result = errorTextForCmb;
+						break;
+					case "ItemCode":
+						if (string.IsNullOrEmpty(ItemCode))
+							result = errorTextForText;
+						break;
+					case "ItemShortDescription":
+						if (string.IsNullOrEmpty(ItemShortDescription))
+							result = errorTextForText;
+						break;
+					case "ItemDescriptionText":
+						if (string.IsNullOrEmpty(ItemDescriptionText))
+							result = errorTextForText;
+						break;
+					case "SerialNo":
+						if (string.IsNullOrEmpty(SerialNo))
+							result = errorTextForText;
+						else if (ExistingMachineToolSerial.Any(x => x.SerialNo == SerialNo))
+							result = "Serial No already exists";
+						break;
+					case "ToolUsageLifePcs":
+						if (ToolUsageLifePcs < 0)
+							result = "Cannot be less than 1";
+						break;
+					
+						
+					case "Quantity":
+						if (Quantity < 0)
+							result = "Cannot be less than 1";
+						break;
+				}
+
+				if (ErrorCollection.ContainsKey(columnName))
+					ErrorCollection[columnName] = result;
+				else if (result != null)
+					ErrorCollection.Add(columnName, result);
+
+				SetProperty(ref _errorCollection, ErrorCollection);
+
+				return result;
+			}
 		}
 
 		#endregion

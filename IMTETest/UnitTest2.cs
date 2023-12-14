@@ -13,5 +13,19 @@ namespace IMTETest
 			var da = new AcceptanceCriteriaDA();
 			var a = da.GetAllAcceptanceCriteria();
 		}
+
+		[TestMethod]
+		public void GetEquipmentSerial()
+		{
+			var da = new EquipmentSerialDA();
+			var a = da.GetAllEquipmentSerial();
+		}
+
+		[TestMethod]
+		public void GetMachineToolSerial()
+		{
+			var da = new MachineToolSerialDA();
+			var a = da.GetAllMachineToolSerial();
+		}
 	}
 }

@@ -15,7 +15,7 @@ namespace IMTE.DataAccess
         {
             get
             {
-                return "Host=localhost;Username=postgres;Password=AMCSentinel333!;Database=VisionMain";
+                return "Host=localhost;Username=postgres;Password=admin;Database=VisionTestDB-12/07";
             }
         }
 
@@ -83,8 +83,6 @@ namespace IMTE.DataAccess
                 return data.GetDecimal(columnIndex);
             }
         }
-
-
 
         #region JSON
 

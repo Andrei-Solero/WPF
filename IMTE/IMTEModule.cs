@@ -30,6 +30,7 @@ namespace IMTE
             containerRegistry.RegisterDialog<MD_EquipmentFormLookup, MD_EquipmentFormLookupViewModel>("EquipmentConfig");
             containerRegistry.RegisterDialog<MD_MachineToolFormLookup, MD_MachineToolFormLookupViewModel>("MachineToolConfig");
             containerRegistry.RegisterDialog<MDLookup_UnitConfig, MDLookup_UnitConfigViewModel>("UnitConfig");
+            containerRegistry.RegisterDialog<MD_InstrumentFormLookup, MD_InstrumentFormLookupViewModel>("InstrumentConfig");
 
             // Measuring Device Form
             containerRegistry.RegisterForNavigation<MD_EquipmentForm>("EquipmentFormForMeasuringDevice");

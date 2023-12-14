@@ -53,8 +53,9 @@
 							AcceptsReturn="True"
 							FontSize="12"
 							MaxLength="500"
-							Text="{Binding SerialNO, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+							Text="{Binding SerialNO, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
 							TextWrapping="Wrap"
+							Validation.ErrorTemplate="{StaticResource errorTemplateForTextbox}"
 							VerticalScrollBarVisibility="Auto" />
 
 					</Grid>
@@ -77,7 +78,8 @@
 							mah:TextBoxHelper.UseFloatingWatermark="True"
 							mah:TextBoxHelper.Watermark="Manufacturer"
 							BorderBrush="Gray"
-							Text="{Binding Manufacturer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" />
+							Text="{Binding Manufacturer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+							Validation.ErrorTemplate="{StaticResource errorTemplateForTextbox}" />
 
 						<TextBox
 							Grid.Column="1"
@@ -90,7 +92,8 @@
 							mah:TextBoxHelper.UseFloatingWatermark="True"
 							mah:TextBoxHelper.Watermark="Model"
 							BorderBrush="Gray"
-							Text="{Binding Model, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+							Text="{Binding Model, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+							Validation.ErrorTemplate="{StaticResource errorTemplateForTextbox}" />
 
 					</Grid>
 
@@ -165,21 +168,9 @@
 							mah:TextBoxHelper.UseFloatingWatermark="True"
 							mah:TextBoxHelper.Watermark="Approval Code"
 							BorderBrush="Gray"
-							Text="{Binding ApprovalCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+							Text="{Binding ApprovalCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+							Validation.ErrorTemplate="{StaticResource errorTemplateForTextbox}" />
 					</Grid>
-
-					<Grid>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition />
-							<ColumnDefinition />
-						</Grid.ColumnDefinitions>
-
-
-
-
-					</Grid>
-
-
 
 					<Grid>
 						<Grid.ColumnDefinitions>
@@ -202,7 +193,8 @@
 									AutoGenerateColumns="False"
 									DisplayMember="DepartmentName"
 									ItemsSource="{Binding Departments}"
-									SelectedItem="{Binding Department, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+									SelectedItem="{Binding Department, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+									Validation.ErrorTemplate="{StaticResource errorTemplateForTextbox}">
 									<syncfusion:SfMultiColumnDropDownControl.Columns>
 										<syncfusion:GridTextColumn ColumnSizer="Star" MappingName="DepartmentName" />
 										<syncfusion:GridTextColumn ColumnSizer="Star" MappingName="Description" />
@@ -227,7 +219,8 @@
 									AutoGenerateColumns="False"
 									DisplayMember="Name"
 									ItemsSource="{Binding InstrumentTypes}"
-									SelectedItem="{Binding InstrumentType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+									SelectedItem="{Binding InstrumentType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+									Validation.ErrorTemplate="{StaticResource errorTemplateForTextbox}">
 									<syncfusion:SfMultiColumnDropDownControl.Columns>
 										<syncfusion:GridTextColumn ColumnSizer="Star" MappingName="Name" />
 									</syncfusion:SfMultiColumnDropDownControl.Columns>
@@ -251,7 +244,7 @@
 							HorizontalAlignment="Left"
 							VerticalAlignment="Center"
 							mah:ControlsHelper.CornerRadius="50"
-							Command="{Binding ShowEquipmentConfigCommand}">
+							Command="{Binding ShowInstrumentConfigCommand}">
 							<Button.Content>
 								<iconPacks:PackIconModern Width="10" Kind="Magnify" />
 							</Button.Content>
@@ -286,7 +279,8 @@
 							mah:TextBoxHelper.UseFloatingWatermark="True"
 							mah:TextBoxHelper.Watermark="Part Number"
 							BorderBrush="Gray"
-							Text="{Binding ItemCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+							Text="{Binding ItemCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+							Validation.ErrorTemplate="{StaticResource errorTemplateForTextbox}" />
 
 						<TextBox
 							Grid.Column="0"
@@ -300,7 +294,8 @@
 							mah:TextBoxHelper.UseFloatingWatermark="True"
 							mah:TextBoxHelper.Watermark="Short Description"
 							BorderBrush="Gray"
-							Text="{Binding ItemShortDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+							Text="{Binding ItemShortDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+							Validation.ErrorTemplate="{StaticResource errorTemplateForTextbox}" />
 
 						<Grid>
 							<Grid.ColumnDefinitions>
@@ -319,8 +314,9 @@
 								AcceptsReturn="True"
 								FontSize="12"
 								MaxLength="500"
-								Text="{Binding ItemDescriptionText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+								Text="{Binding ItemDescriptionText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
 								TextWrapping="Wrap"
+								Validation.ErrorTemplate="{StaticResource errorTemplateForTextbox}"
 								VerticalScrollBarVisibility="Auto" />
 
 							<Button

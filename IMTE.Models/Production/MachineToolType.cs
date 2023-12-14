@@ -9,7 +9,7 @@ namespace IMTE.Models.Production
 {
     public class MachineToolType
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public int Version { get; set; }
         public Employee ModifiedByEmployee { get; set; }
         public string Description { get; set; }

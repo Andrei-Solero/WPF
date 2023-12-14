@@ -323,6 +323,10 @@
     <Compile Include="ViewModels\MD_EquipmentForLookupListViewModel.cs" />
     <Compile Include="ViewModels\MD_EquipmentFormLookupViewModel.cs" />
     <Compile Include="ViewModels\MD_EquipmentFormViewModel.cs" />
+    <Compile Include="ViewModels\MD_InstrumentFormLookupViewModel.cs" />
+    <Compile Include="Views\MD_InstrumentFormLookup.xaml.cs">
+      <DependentUpon>MD_InstrumentFormLookup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\MD_InstrumentFormViewModel.cs" />
     <Compile Include="ViewModels\MD_MachineToolFormLookupListViewModel.cs" />
     <Compile Include="ViewModels\MD_MachineToolFormLookupViewModel.cs" />
@@ -391,6 +395,9 @@
     <Compile Include="Views\MD_InstrumentForm.xaml.cs">
       <DependentUpon>MD_InstrumentForm.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\MD_InstrumentFormLookupList.xaml.cs">
+      <DependentUpon>MD_InstrumentFormLookupList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MD_MachineToolForm.xaml.cs">
       <DependentUpon>MD_MachineToolForm.xaml</DependentUpon>
     </Compile>
@@ -453,6 +460,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Views\MD_InstrumentFormLookup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MDLookup_DepartmentConfig.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -530,6 +541,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MD_InstrumentForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MD_InstrumentFormLookupList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
