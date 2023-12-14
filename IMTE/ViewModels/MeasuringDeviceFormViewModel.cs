@@ -60,40 +60,74 @@ namespace IMTE.ViewModels
             get
             {
                 string result = null;
+                string errorTextForCmb = "Select required option...";
+                string errorTextForText = "Required...";
 
                 switch (columnName)
                 {
-                    //case "IssuedToEmployee":
-                    //    if (IssuedToEmployee.Id == null || IssuedToEmployee.Id == 0)
-                    //        result = "Select a required option";
-                    //    break;
+                    case "SerialNo":
+                        if (string.IsNullOrWhiteSpace(SerialNo))
+                            result = errorTextForText;
+                        break;
                     case "Department":
                         if (Department.Id == null || Department.Id == 0)
-                            result = "Select a required option";
+                            result = errorTextForCmb;
                         break;
                     case "Location":
                         if (Location.Id == null || Location.Id == 0)
-                            result = "Select a required option";
+                            result = errorTextForCmb;
                         break;
                     case "Plant":
                         if (Plant.Id == null || Plant.Id == 0)
-                            result = "Select a required option";
+                            result = errorTextForCmb;
                         break;
-                    //case "CalibrationRemarks":
-                    //    if (string.IsNullOrWhiteSpace(CalibrationRemarks))
-                    //        result = "This field is required.";
-                    //    break;
-                    case "Status":
-                        if (string.IsNullOrWhiteSpace(Status))
-                            result = "Select a required option";
+                    case "Description":
+                        if (string.IsNullOrWhiteSpace(Description))
+                            result = errorTextForText;
                         break;
-                    case "Barcode":
-                        if (string.IsNullOrWhiteSpace(Barcode))
-                            result = "Required...";
+                    case "CalibrationMethod":
+                        if (string.IsNullOrWhiteSpace(CalibrationMethod))
+                            result = errorTextForText;
+                        break;
+                    case "AcceptanceCriteria":
+                        if (AcceptanceCriteria.Id == null || AcceptanceCriteria.Id == 0)
+                            result = errorTextForCmb;
+                        break;
+                    case "FrequencyOfCalibration":
+                        if (FrequencyOfCalibration.Id == null || FrequencyOfCalibration.Id == 0)
+                            result = errorTextForCmb;
                         break;
                     case "Remarks":
                         if (string.IsNullOrWhiteSpace(Remarks))
-                            result = "This field is required.";
+                            result = errorTextForText;
+                        break;
+                    case "Barcode":
+                        if (string.IsNullOrWhiteSpace(Barcode))
+                            result = errorTextForText;
+                        break;
+                    case "Status":
+                        if (string.IsNullOrWhiteSpace(Status))
+                            result = errorTextForCmb;
+                        break;
+                    case "Resolution":
+                        if (string.IsNullOrWhiteSpace(Resolution))
+                            result = errorTextForText;
+                        break;
+                    case "Maker":
+                        if (string.IsNullOrWhiteSpace(Maker))
+                            result = errorTextForText;
+                        break;
+                    case "Accuracy":
+                        if (string.IsNullOrWhiteSpace(Accuracy))
+                            result = errorTextForCmb;
+                        break;
+                    case "DeviceRange":
+                        if (string.IsNullOrWhiteSpace(DeviceRange))
+                            result = errorTextForCmb;
+                        break;
+                    case "Unit":
+                        if (Unit.Id == null || Unit.Id == 0)
+                            result = errorTextForCmb;
                         break;
 
                 }
@@ -171,17 +205,17 @@ namespace IMTE.ViewModels
                 // pass the data from the measuring device to the instrument serial form
                 ea.GetEvent<MeasuringDeviceToInstrumentSerial>().Publish(tool.InstrumentSerial);
             }
-            else if(tool.EquipmentSerial != null)
+            else if (tool.EquipmentSerial != null)
             {
                 // pass the data from the measuring device to the equipment serial form
                 ea.GetEvent<EquipmentSerialToMeasuringDevice>().Publish(tool.EquipmentSerial);
-			}
+            }
             else if (tool.MachineToolSerial != null)
             {
                 // pass the data from the measuring device to the machine tool serial form
                 ea.GetEvent<MachineToolSerialToMeasuringDevice>().Publish(tool.MachineToolSerial);
-			}
-		}
+            }
+        }
 
 
         private void EventAggregatorSubscribe()
@@ -256,12 +290,12 @@ namespace IMTE.ViewModels
             Barcode = CurrentMeasuringDevice.Barcode;
             Remarks = CurrentMeasuringDevice.Remarks;
             EndOfLife = CurrentMeasuringDevice.EndOfLife;
-            Maker = CurrentMeasuringDevice._Maker;
+            Maker = CurrentMeasuringDevice.Maker;
             AcceptanceCriteria = CurrentMeasuringDevice.AcceptanceCriteria;
-            Resolution = CurrentMeasuringDevice._Resolution;
+            Resolution = CurrentMeasuringDevice.Resolution;
             DeviceRange = CurrentMeasuringDevice.DeviceRange;
             Accuracy = CurrentMeasuringDevice.Accuracy;
-            Unit =  CurrentMeasuringDevice.Unit;
+            Unit = CurrentMeasuringDevice.Unit;
         }
 
         #endregion
@@ -414,29 +448,30 @@ namespace IMTE.ViewModels
             }
         }
 
-        private Maker _maker = new Maker();
-        public Maker Maker
-        {
-            get { return _maker; }
-            set
-            {
-                RaiseCanExecuteForSaveChangesCommand();
-                SetProperty(ref _maker, value);
-                CurrentMeasuringDevice._Maker = value;
-            }
-        }
-
-        private Resolution _resolution = new Resolution();
-        public Resolution Resolution
+        private string _resolution;
+        public string Resolution
         {
             get { return _resolution; }
             set
             {
                 RaiseCanExecuteForSaveChangesCommand();
                 SetProperty(ref _resolution, value);
-                CurrentMeasuringDevice._Resolution = value;
+                CurrentMeasuringDevice.Resolution = value;
             }
         }
+
+        private string _maker;
+        public string Maker
+        {
+            get { return _maker; }
+            set
+            {
+                RaiseCanExecuteForSaveChangesCommand();
+                SetProperty(ref _maker, value);
+                CurrentMeasuringDevice.Maker = value;
+            }
+        }
+
 
         private string _deviceRange;
         public string DeviceRange
@@ -462,7 +497,7 @@ namespace IMTE.ViewModels
             }
         }
 
-        private UnitEntity _unit;
+        private UnitEntity _unit = new UnitEntity();
         public UnitEntity Unit
         {
             get { return _unit; }
@@ -490,7 +525,7 @@ namespace IMTE.ViewModels
         public EquipmentSerial EquipmentSerial
         {
             get { return _equipmentSerial; }
-            set 
+            set
             {
                 SetProperty(ref _equipmentSerial, value);
                 CurrentMeasuringDevice.EquipmentSerial = value;
@@ -502,7 +537,7 @@ namespace IMTE.ViewModels
         public InstrumentSerial InstrumentSerial
         {
             get { return _instrumentSerial; }
-            set 
+            set
             {
                 SetProperty(ref _instrumentSerial, value);
                 CurrentMeasuringDevice.InstrumentSerial = value;
@@ -513,7 +548,7 @@ namespace IMTE.ViewModels
         public MachineToolSerial MachineToolSerial
         {
             get { return _machineToolSerial; }
-            set 
+            set
             {
                 SetProperty(ref _machineToolSerial, value);
                 CurrentMeasuringDevice.MachineToolSerial = value;
@@ -547,12 +582,12 @@ namespace IMTE.ViewModels
             set
             {
                 SetProperty(ref _isMachineTool, value);
-			}
-		}
+            }
+        }
 
         private bool _isInstrument;
-        public bool IsInstrument 
-        { 
+        public bool IsInstrument
+        {
             get { return _isInstrument; }
             set
             {
@@ -569,9 +604,9 @@ namespace IMTE.ViewModels
             CurrentMeasuringDevice.EquipmentSerial = null;
             CurrentMeasuringDevice.InstrumentSerial = null;
             CurrentMeasuringDevice.MachineToolSerial = new MachineToolSerial();
-			CurrentMeasuringDevice.DeviceType = new DeviceType { Id = 2 };
+            CurrentMeasuringDevice.DeviceType = new DeviceType { Id = 2 };
 
-			EventAggregatorSubscribe();
+            EventAggregatorSubscribe();
 
             regionManager.RequestNavigate("ToolRegion", "MachineToolForMeasuringDevice");
         }
@@ -585,9 +620,9 @@ namespace IMTE.ViewModels
             CurrentMeasuringDevice.MachineToolSerial = null;
             CurrentMeasuringDevice.InstrumentSerial = null;
             CurrentMeasuringDevice.EquipmentSerial = new EquipmentSerial();
-			CurrentMeasuringDevice.DeviceType = new DeviceType { Id = 1 };
+            CurrentMeasuringDevice.DeviceType = new DeviceType { Id = 1 };
 
-			EventAggregatorSubscribe();
+            EventAggregatorSubscribe();
 
             regionManager.RequestNavigate("ToolRegion", "EquipmentFormForMeasuringDevice");
         }
@@ -601,9 +636,9 @@ namespace IMTE.ViewModels
             CurrentMeasuringDevice.EquipmentSerial = null;
             CurrentMeasuringDevice.MachineToolSerial = null;
             CurrentMeasuringDevice.InstrumentSerial = new InstrumentSerial();
-			CurrentMeasuringDevice.DeviceType = new DeviceType { Id = 3 };
+            CurrentMeasuringDevice.DeviceType = new DeviceType { Id = 3 };
 
-			EventAggregatorSubscribe();
+            EventAggregatorSubscribe();
 
             regionManager.RequestNavigate("ToolRegion", "InstrumentForMeasuringDevice");
         }
@@ -637,10 +672,10 @@ namespace IMTE.ViewModels
         public bool IsSerialNoNull
         {
             get { return _isSerialNoNull; }
-            set 
+            set
             {
                 RaiseCanExecuteForSaveChangesCommand();
-                SetProperty(ref _isSerialNoNull, value); 
+                SetProperty(ref _isSerialNoNull, value);
             }
         }
 
@@ -694,32 +729,32 @@ namespace IMTE.ViewModels
             set { SetProperty(ref _isNextCalibrationDateNull, value); }
         }
 
-		#endregion
+        #endregion
 
-		#region Observable collection from database
+        #region Observable collection from database
 
-		private ObservableCollection<Maker> _makers;
-		public ObservableCollection<Maker> Makers
-		{
-			get { return _makers; }
-			set { SetProperty(ref _makers, value); }
-		}
+        private ObservableCollection<Maker> _makers;
+        public ObservableCollection<Maker> Makers
+        {
+            get { return _makers; }
+            set { SetProperty(ref _makers, value); }
+        }
 
-		private ObservableCollection<Resolution> _resolutions;
-		public ObservableCollection<Resolution> Resolutions
-		{
-			get { return _resolutions; }
-			set { SetProperty(ref _resolutions, value); }
-		}
+        private ObservableCollection<Resolution> _resolutions;
+        public ObservableCollection<Resolution> Resolutions
+        {
+            get { return _resolutions; }
+            set { SetProperty(ref _resolutions, value); }
+        }
 
-		private ObservableCollection<FrequencyOfCalibration> _frequencyOfCalibrations;
-		public ObservableCollection<FrequencyOfCalibration> FrequencyOfCalibrations
-		{
-			get { return _frequencyOfCalibrations; }
-			set { SetProperty(ref _frequencyOfCalibrations, value); }
-		}
+        private ObservableCollection<FrequencyOfCalibration> _frequencyOfCalibrations;
+        public ObservableCollection<FrequencyOfCalibration> FrequencyOfCalibrations
+        {
+            get { return _frequencyOfCalibrations; }
+            set { SetProperty(ref _frequencyOfCalibrations, value); }
+        }
 
-		private ObservableCollection<AcceptanceCriteria> _acceptanceCriterias;
+        private ObservableCollection<AcceptanceCriteria> _acceptanceCriterias;
         public ObservableCollection<AcceptanceCriteria> AcceptanceCriterias
         {
             get { return _acceptanceCriterias; }
@@ -799,7 +834,7 @@ namespace IMTE.ViewModels
             set { SetProperty(ref _calibrationResults, value); }
         }
 
-        
+
 
         private ObservableCollection<string> _descriptions;
 
@@ -894,7 +929,7 @@ namespace IMTE.ViewModels
             resolutionDA = new ResolutionDA();
             makerDA = new MakerDA();
 
-			Employees = new ObservableCollection<Employee>(employeeDA.GetAllEmployees());
+            Employees = new ObservableCollection<Employee>(employeeDA.GetAllEmployees());
             Departments = new ObservableCollection<Department>(departmentDA.GetAllDepartments());
             Locations = new ObservableCollection<Location>(locationDA.GetAllLocations());
             Units = new ObservableCollection<UnitEntity>(unitDA.GetAllUnit());
@@ -906,7 +941,7 @@ namespace IMTE.ViewModels
             Resolutions = new ObservableCollection<Resolution>(resolutionDA.GetAllResolutions());
             Makers = new ObservableCollection<Maker>(makerDA.GetAllMaker());
 
-			EventAggregatorSubscribe();
+            EventAggregatorSubscribe();
 
             //Set the default device type as equipment
             IsEquipment = true;
@@ -957,7 +992,7 @@ namespace IMTE.ViewModels
 
         private void SetEmployeeDataFromLookup(Employee empObj)
         {
-            
+
         }
 
         public MeasuringDeviceFormViewModel()
@@ -1006,7 +1041,7 @@ namespace IMTE.ViewModels
 
         public void ExecuteDelete()
         {
-            if (CurrentMeasuringDevice.Id == 0 || CurrentMeasuringDevice == null)
+            if (CurrentMeasuringDevice.Id != 0 && CurrentMeasuringDevice != null)
             {
                 var delete = MessageBox.Show("Are you sure you want to delete this measuring device?", "Delete", MessageBoxButton.YesNo);
                 if (delete == MessageBoxResult.Yes)
@@ -1034,26 +1069,27 @@ namespace IMTE.ViewModels
 
         private bool CanSave()
         {
-            //if (Department.Id == null || Location.Id == null || Plant.Id == null
-            //    || CalibratedByEmployee.Id == null)
-            //{
-            //    SaveButtonColor = Brushes.DarkGray;
-            //    return false;
-            //}
-            //else
-            //{
-            //    SaveButtonColor = Brushes.DarkTurquoise;
-            //    return true;
-            //}
+            var output = true; 
 
-            return true;
+            if (string.IsNullOrEmpty(SerialNo) || string.IsNullOrEmpty(Department.DepartmentName) ||
+                string.IsNullOrEmpty(Location.Name) || string.IsNullOrEmpty(Plant.PlantName) || 
+                string.IsNullOrEmpty(Description) || string.IsNullOrEmpty(CalibrationMethod) || string.IsNullOrEmpty(AcceptanceCriteria.Title) ||
+                string.IsNullOrEmpty(FrequencyOfCalibration.Title) || NextCalibrationDate.Value == null || string.IsNullOrEmpty(Status) ||
+                string.IsNullOrEmpty(Barcode) || string.IsNullOrEmpty(Remarks) || EndOfLife.Value == null || string.IsNullOrEmpty(Resolution) ||
+                string.IsNullOrEmpty(Maker) || string.IsNullOrEmpty(Accuracy) || string.IsNullOrEmpty(DeviceRange) || string.IsNullOrEmpty(Unit.UnitVal))
+            {
+                return false;
+            }
+
+            return output;
         }
+
         private void ExecuteOpenDepartmentConfigLookup()
         {
             _dialogService.ShowDialog("DeptConfig");
         }
 
-        
+
 
         private void ExecuteOpenLookupForIssuedToEmployee()
         {
@@ -1111,24 +1147,24 @@ namespace IMTE.ViewModels
                     navParameter.Add("instrumentObj", measuringDeviceFromList.InstrumentSerial);
                     IsInstrument = true;
 
-					regionManager.RequestNavigate("ToolRegion", "InstrumentForMeasuringDevice", navParameter);
+                    regionManager.RequestNavigate("ToolRegion", "InstrumentForMeasuringDevice", navParameter);
                 }
                 else if (measuringDeviceFromList.EquipmentSerial != null)
                 {
-					navParameter.Add("equipmentObj", measuringDeviceFromList.EquipmentSerial);
+                    navParameter.Add("equipmentObj", measuringDeviceFromList.EquipmentSerial);
                     IsEquipment = true;
 
                     regionManager.RequestNavigate("ToolRegion", "EquipmentFormForMeasuringDevice", navParameter);
-				}
+                }
                 else if (measuringDeviceFromList.MachineToolSerial != null)
                 {
-					navParameter.Add("machineToolObj", measuringDeviceFromList.MachineToolSerial);
+                    navParameter.Add("machineToolObj", measuringDeviceFromList.MachineToolSerial);
                     IsMachineTool = true;
 
-					regionManager.RequestNavigate("ToolRegion", "MachineToolForMeasuringDevice", navParameter);
-				}
+                    regionManager.RequestNavigate("ToolRegion", "MachineToolForMeasuringDevice", navParameter);
+                }
 
-			}
+            }
             else
             {
                 // Set default region as Equipment
@@ -1136,7 +1172,7 @@ namespace IMTE.ViewModels
             }
         }
 
-        
+
 
         public bool IsNavigationTarget(NavigationContext navigationContext)
         {

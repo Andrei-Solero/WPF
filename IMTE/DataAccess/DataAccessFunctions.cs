@@ -15,7 +15,7 @@ namespace IMTE.DataAccess
         {
             get
             {
-                return "Host=localhost;Username=postgres;Password=admin;Database=VisionTestDB-12/07";
+                return "Host=localhost;Username=postgres;Password=AMCSentinel333!;Database=VisionMain";
             }
         }
 

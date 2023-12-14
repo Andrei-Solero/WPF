@@ -27,6 +27,8 @@ namespace IMTE.DataAccess
 		private readonly MachineToolDA machineToolDA;
 		private readonly InstrumentDA instrumentDA;
 		private readonly InstrumentSerialDA instrumentSerialDA;
+		private readonly EquipmentSerialDA equipmentSerialDA;
+		private readonly MachineToolSerialDA machineToolSerialDA;
 
 		public MeasuringDeviceDA()
 		{
@@ -36,6 +38,8 @@ namespace IMTE.DataAccess
 			machineToolDA = new MachineToolDA();
 			instrumentDA = new InstrumentDA();
 			instrumentSerialDA = new InstrumentSerialDA();
+			equipmentSerialDA = new EquipmentSerialDA();
+			machineToolSerialDA = new MachineToolSerialDA();
 		}
 
 		public IEnumerable<MeasuringDevice> GetAllMeasuringDevices()
@@ -298,10 +302,10 @@ namespace IMTE.DataAccess
 								Equipment = CheckDbNullInt(data, "EquipmentSerialEquipmentId").Equals(objectCheckerValue) ? null : new Equipment
 								{
 									Id = CheckDbNullInt(data, "EquipmentSerialEquipmentId"),
-									EquipmentType = CheckDbNullInt(data, "InstrumentTypeId").Equals(objectCheckerValue) ? null : new EquipmentType
+									EquipmentType = CheckDbNullInt(data, "EquipmentTypeId").Equals(objectCheckerValue) ? null : new EquipmentType
 									{
-										Id = CheckDbNullInt(data, "InstrumentTypeId"),
-										Name = CheckDbNullString(data, "InstrumentTypeName")
+										Id = CheckDbNullInt(data, "EquipmentTypeId"),
+										Name = CheckDbNullString(data, "EquipmentTypeName")
 									},
 									Item = CheckDbNullInt(data, "EquipmentItemId").Equals(objectCheckerValue) ? null : new Item
 									{
@@ -544,6 +548,8 @@ namespace IMTE.DataAccess
 				command.Dispose();
 			}
 		}
+
+		// 10 night shift
 
 		public MeasuringDevice GetMeasuringDeviceBySelectedEquipment(Equipment equipmentObj)
 		{
@@ -846,7 +852,7 @@ namespace IMTE.DataAccess
 
 					command.Parameters.AddWithValue("@ItemId", machineTool.Item.Id);
 					command.Parameters.AddWithValue("@MachineToolTypeId", machineTool.MachineToolType.Id);
-					command.Parameters.AddWithValue("@Description", machineTool.Item.Description.Text);
+					command.Parameters.AddWithValue("@Description", machineTool.Description);
 					command.Parameters.AddWithValue("@Note", machineTool.Note);
 					command.Parameters.AddWithValue("@ToolName", machineTool.ToolName);
 					command.Parameters.AddWithValue("@UnitCost", machineTool.UnitCost);
@@ -998,7 +1004,7 @@ namespace IMTE.DataAccess
 										""Remarks"", ""Maker"", ""Resolution"", ""DeviceRange"", ""Accuracy"", ""Barcode"",
 										""CalibrationMethod"", ""AcceptanceCriteria"", ""CreatedOn"", ""Description"",
 										""SerialNo"", ""DeviceTypeId"", ""EquipmentSerialId"", ""MachineToolSerialId"",
-										""EndOfLife"", ""AcceptanceCriteriaId"", ""ResolutionId"", ""MakerId"", ""FrequencyOfCalibrationId""
+										""EndOfLife"", ""AcceptanceCriteriaId"", ""FrequencyOfCalibrationId""
 									)
 									VALUES (
 										1, @PlantId, @DepartmentId, @LocationId,
@@ -1006,7 +1012,7 @@ namespace IMTE.DataAccess
 										@Remarks, @Maker, @Resolution, @DeviceRange, @Accuracy, @Barcode,
 										@CalibrationMethod, @AcceptanceCriteria, @CreatedOn, @Description,
 										@SerialNo, @DeviceTypeId, @EquipmentSerialId, @MachineToolSerialId,
-										@EndOfLife, @AcceptanceCriteriaId, @ResolutionId, @MakerId, @FrequencyOfCalibrationId
+										@EndOfLife, @AcceptanceCriteriaId, @FrequencyOfCalibrationId
 									);";
 
 						command.Connection = connection;
@@ -1021,8 +1027,8 @@ namespace IMTE.DataAccess
 						command.Parameters.AddWithValue("@NextCalibrationDate", measuringDevice.NextCalibrationDate);
 						command.Parameters.AddWithValue("@Status", measuringDevice.Status);
 						command.Parameters.AddWithValue("@Remarks", measuringDevice.Remarks);
-						command.Parameters.AddWithValue("@Maker", measuringDevice._Maker.Name);
-						command.Parameters.AddWithValue("@Resolution", measuringDevice._Resolution.Title);
+						command.Parameters.AddWithValue("@Maker", measuringDevice.Maker);
+						command.Parameters.AddWithValue("@Resolution", measuringDevice.Resolution);
 						command.Parameters.AddWithValue("@DeviceRange", measuringDevice.DeviceRange);
 						command.Parameters.AddWithValue("@Accuracy", measuringDevice.Accuracy);
 						command.Parameters.AddWithValue("@Barcode", measuringDevice.Barcode);
@@ -1120,8 +1126,6 @@ namespace IMTE.DataAccess
 
 						command.Parameters.AddWithValue("@EndOfLife", measuringDeviceObj.EndOfLife);
 						command.Parameters.AddWithValue("@AcceptanceCriteriaId", measuringDeviceObj.AcceptanceCriteria.Id);
-						command.Parameters.AddWithValue("@ResolutionId", measuringDeviceObj._Resolution.Id);
-						command.Parameters.AddWithValue("@MakerId", measuringDeviceObj._Maker.Id);
 						command.Parameters.AddWithValue("@FrequencyOfCalibrationId", measuringDeviceObj._FrequencyOfCalibration.Id);
 
 						command.ExecuteNonQuery();
@@ -1155,31 +1159,27 @@ namespace IMTE.DataAccess
                             ""PlantId"" = @PlantId,
                             ""DepartmentId"" = @DepartmentId,
                             ""LocationId"" = @LocationId,
-                            ""InstrumentSerialId"" = @InstrumentSerial
-                            
+                            ""InstrumentSerialId"" = @InstrumentSerial,
+                            ""UnitId"" = @UnitId,
+                            ""NextCalibrationDate"" = @NextCalibrationDate,
+                            ""Status"" = @Status,
+                            ""Remarks"" = @Remarks,
+                            ""DeviceRange"" = @DeviceRange,
+                            ""Accuracy"" = @Accuracy,
+                            ""Barcode"" = @Barcode,
+                            ""CalibrationMethod"" = @CalibrationMethod,
+                            ""ModifiedOn"" = @ModifiedOn,
+                            ""Description"" = @Description,
+                            ""SerialNo"" = @SerialNo,
+                            ""DeviceTypeId"" = @DeviceTypeId,
+                            ""EquipmentSerialId"" = @EquipmentSerialId,
+                            ""MachineToolSerialId"" = @MachineToolSerialId,
+                            ""EndOfLife"" = @EndOfLife,
+                            ""AcceptanceCriteriaId"" = @AcceptanceCriteriaId,
+                            ""Maker"" = @Maker,
+                            ""Resolution"" = @Resolution,
+                            ""FrequencyOfCalibrationId"" = @FrequencyOfCalibrationId                         
                             WHERE ""Id"" = @Id";
-
-						// TODO: ===================PRIORITY  DEVELOPED THE LOGIC FOR UPDATING================
-
-						//""UnitId"" = @UnitId,
-      //                      ""NextCalibrationDate"" = @NextCalibrationDate,
-      //                      ""Status"" = @Status,
-      //                      ""Remarks"" = @Remarks,
-      //                      ""DeviceRange"" = @DeviceRange,
-      //                      ""Accuracy"" = @Accuracy,
-      //                      ""Barcode"" = @Barcode,
-      //                      ""CalibrationMethod"" = @CalibrationMethod,
-      //                      ""ModifiedOn"" = @ModifiedOn,
-      //                      ""Description"" = @Description,
-      //                      ""SerialNo"" = @SerialNo,
-      //                      ""DeviceTypeId"" = @DeviceTypeId,
-      //                      ""EquipmentSerialId"" = @EquipmentSerialId,
-      //                      ""MachineToolSerialId"" = @MachineToolSerialId,
-      //                      ""EndOfLife"" = @EndOfLife,
-      //                      ""AcceptanceCriteriaId"" = @AcceptanceCriteriaId,
-      //                      ""ResolutionId"" = @ResolutionId,
-      //                      ""MakerId"" = @MakerId,
-      //                      ""FrequencyOfCalibrationId"" = @FrequencyOfCalibrationId
 
 						command.CommandText = sql;
 
@@ -1187,6 +1187,23 @@ namespace IMTE.DataAccess
 						command.Parameters.AddWithValue("@SerialNo", measuringDeviceObj.SerialNo);
 						command.Parameters.AddWithValue("@DepartmentId", measuringDeviceObj.Department.Id);
 						command.Parameters.AddWithValue("@LocationId", measuringDeviceObj.Location.Id);
+						command.Parameters.AddWithValue("@UnitId", measuringDeviceObj.Unit.Id);
+						command.Parameters.AddWithValue("@NextCalibrationDate", measuringDeviceObj.NextCalibrationDate);
+						command.Parameters.AddWithValue("@Status", measuringDeviceObj.Status);
+						command.Parameters.AddWithValue("@Remarks", measuringDeviceObj.Remarks);
+						command.Parameters.AddWithValue("@DeviceRange", measuringDeviceObj.DeviceRange);
+						command.Parameters.AddWithValue("@Accuracy", measuringDeviceObj.Accuracy);
+						command.Parameters.AddWithValue("@Barcode", measuringDeviceObj.Barcode);
+						command.Parameters.AddWithValue("@CalibrationMethod", measuringDeviceObj.CalibrationMethod);
+						command.Parameters.AddWithValue("@ModifiedOn", DateTime.UtcNow);
+						command.Parameters.AddWithValue("@Description", measuringDeviceObj.Description);
+						command.Parameters.AddWithValue("@SerialNo", measuringDeviceObj.SerialNo);
+						command.Parameters.AddWithValue("@DeviceTypeId", measuringDeviceObj.DeviceType.Id);
+						command.Parameters.AddWithValue("@EndOfLife", measuringDeviceObj.EndOfLife);
+						command.Parameters.AddWithValue("@AcceptanceCriteriaId", measuringDeviceObj.AcceptanceCriteria.Id);
+						command.Parameters.AddWithValue("@Maker", measuringDeviceObj.Maker);
+						command.Parameters.AddWithValue("@Resolution", measuringDeviceObj.Resolution);
+						command.Parameters.AddWithValue("@FrequencyOfCalibrationId", measuringDeviceObj._FrequencyOfCalibration.Id);
 
 						// updating logic for istrumentserial's instrument, item, and description
 						var instrumentSerial = measuringDeviceObj.InstrumentSerial;
@@ -1211,67 +1228,103 @@ namespace IMTE.DataAccess
 
 							// check if the user created a new Instrument
 							var instrumentSerialInstrument = measuringDeviceObj.InstrumentSerial.Instrument;
-							if (instrumentSerialInstrument.Id != 0)
+							if (instrumentSerialInstrument.Id != 0 && instrumentSerialInstrument.Id != null)
 								instrumentDA.UpdateInstrument(instrumentSerialInstrument, transaction, connection);
+							
 							else
 								measuringDeviceObj.InstrumentSerial.Instrument = CreateInstrumentForMeasuringDevice(instrumentSerialInstrument, transaction, connection);
 
+							// this will trigger if the user change the device type of the measuring device
+							// will create a new instrument serial
+							if (instrumentSerial.Id != 0 && instrumentSerial.Id != null)
+								instrumentSerialDA.UpdateInstrumentSerial(measuringDeviceObj.InstrumentSerial, transaction, connection);
+							else
+								measuringDeviceObj.InstrumentSerial = CreateInstrumentSerialForMeasuringDevice(measuringDeviceObj.InstrumentSerial, transaction, connection);
 
-							instrumentSerialDA.UpdateInstrumentSerial(measuringDeviceObj.InstrumentSerial, transaction, connection);
 							command.Parameters.AddWithValue("@InstrumentSerial", measuringDeviceObj.InstrumentSerial.Id);
 						}
+						else
+							command.Parameters.AddWithValue("@InstrumentSerial", DBNull.Value);
 
 
-						// Check if equipment
-						//if (measuringDeviceObj.Equipment != null)
-						//{
-						//	// will check if the user created a new Equipment's Item's Description(Equipment.Item.Description.Id==0 = created new)
-						//	if (measuringDeviceObj.Equipment.Item.Description.Id != 0)
-						//		descriptionDA.UpdateDescription(measuringDeviceObj.Equipment.Item.Description, transaction, connection);
-						//	else
-						//		measuringDeviceObj.Equipment.Item.Description = CreateDescriptionForItemMeasuringDevice(measuringDeviceObj.Equipment.Item.Description, transaction, connection);
+						var equipmentSerial = measuringDeviceObj.EquipmentSerial;
+						if (equipmentSerial != null)
+                        {
+							// check if equipment serial's equipment's item's description has changed
+							// if the id is 0, then the user created a new description, else, user updated the existing item's description or selected a new description
+							var equipmentSerialItemDescription = equipmentSerial.Equipment.Item.Description;
+							if (equipmentSerialItemDescription.Id != 0)
+								descriptionDA.UpdateDescription(equipmentSerialItemDescription, transaction, connection);
+							else
+								measuringDeviceObj.EquipmentSerial.Equipment.Item.Description = CreateDescriptionForItemMeasuringDevice(equipmentSerialItemDescription, transaction, connection);
 
-						//	// will check if the user created a new Equipment's Item(Equipment.Item.Id==0 = created new)
-						//	if (measuringDeviceObj.Equipment.Item.Id != 0)
-						//		itemDA.UpdateItem(measuringDeviceObj.Equipment.Item, transaction, connection);
-						//	else
-						//		measuringDeviceObj.Equipment.Item = CreateItemEquipmentForMeasuringDevice(measuringDeviceObj.Equipment.Item, transaction, connection);
+							// check if equipment serial's instrument's item has changed
+							// if the id is 0, then the user created a new item, else, user updated the existing item's description or selected a new description
+							var equipmentSerialEquipmentItem = measuringDeviceObj.EquipmentSerial.Equipment.Item;
+							if (equipmentSerialEquipmentItem.Id != 0)
+								itemDA.UpdateItem(equipmentSerialEquipmentItem, transaction, connection);
+							else
+								measuringDeviceObj.EquipmentSerial.Equipment.Item = CreateItemEquipmentForMeasuringDevice(equipmentSerialEquipmentItem, transaction, connection);
 
-						//	// will check if the user created a new Equipment(Equipment.Id==0 = created new)
-						//	if (measuringDeviceObj.Equipment.Id != 0 && measuringDeviceObj.Equipment.Id != null)
-						//		equipmentDA.UpdateEquipment(measuringDeviceObj.Equipment, transaction, connection);
-						//	else
-						//		measuringDeviceObj.Equipment = CreateEquipmentForMeasuringDevice(measuringDeviceObj.Equipment, transaction, connection);
+							// chef if the user created a new equipment
+							var equipmentSerialEquipment = measuringDeviceObj.EquipmentSerial.Equipment;
+							if (equipmentSerialEquipment.Id != 0 && equipmentSerialEquipment.Id != null)
+								equipmentDA.UpdateEquipment(equipmentSerialEquipment, transaction, connection);
+							else
+								measuringDeviceObj.EquipmentSerial.Equipment = CreateEquipmentForMeasuringDevice(equipmentSerialEquipment, transaction, connection);
 
-						//	command.Parameters.AddWithValue("@EquipmentId", measuringDeviceObj.Equipment.Id);
-						//}
-						//else
-						//	command.Parameters.AddWithValue("@EquipmentId", DBNull.Value);
+							// this will trigger if the user change the device type of the measuring device
+							// will create a new equipment serial
+							if (equipmentSerial.Id != 0 && equipmentSerial.Id != null)
+								equipmentSerialDA.UdpateEquipmentSerial(measuringDeviceObj.EquipmentSerial, transaction, connection);
+							else
+								measuringDeviceObj.EquipmentSerial = CreateEquipmentSerialForMeasuringDevice(measuringDeviceObj.EquipmentSerial, transaction, connection);
 
-						//// Check if machine tool
-						//if (measuringDeviceObj.MachineTool != null)
-						//{
-						//	var machineTool = measuringDeviceObj.MachineTool;
+							equipmentSerialDA.UdpateEquipmentSerial(measuringDeviceObj.EquipmentSerial, transaction, connection);
+							command.Parameters.AddWithValue("@EquipmentSerialId", measuringDeviceObj.EquipmentSerial.Id);
+						}
+						else
+							command.Parameters.AddWithValue("@EquipmentSerialId", DBNull.Value);
 
-						//	if (machineTool.Item.Description.Id != 0)
-						//		descriptionDA.UpdateDescription(machineTool.Item.Description, transaction, connection);
-						//	else
-						//		machineTool.Item.Description = CreateDescriptionForItemMeasuringDevice(machineTool.Item.Description, transaction, connection);
 
-						//	if (machineTool.Item.Id != 0)
-						//		itemDA.UpdateItem(machineTool.Item, transaction, connection);
-						//	else
-						//		machineTool.Item = CreateItemEquipmentForMeasuringDevice(machineTool.Item, transaction, connection);
+						var machineToolSerial = measuringDeviceObj.MachineToolSerial;
+						if (machineToolSerial != null)
+						{
+							// check if machine tool serial's equipment's item's description has changed
+							// if the id is 0, then the user created a new description, else, user updated the existing item's description or selected a new description
+							var machineToolSerialItemDescription = machineToolSerial.MachineTool.Item.Description;
+							if (machineToolSerialItemDescription.Id != 0)
+								descriptionDA.UpdateDescription(machineToolSerialItemDescription, transaction, connection);
+							else
+								measuringDeviceObj.MachineToolSerial.MachineTool.Item.Description = CreateDescriptionForItemMeasuringDevice(machineToolSerialItemDescription, transaction, connection);
 
-						//	if (machineTool.Id != 0 && machineTool.Id != null)
-						//		machineToolDA.UpdateMachineTool(machineTool, transaction, connection);
-						//	else
-						//		machineTool = CreateMachineToolForMeasuringDevice(measuringDeviceObj.MachineTool, transaction, connection);
+							// check if machine tool serial's machine tool's item has changed
+							// if the id is 0, then the user created a new item, else, user updated the existing item's description or selected a new description
+							var machineToolSerialItem = measuringDeviceObj.MachineToolSerial.MachineTool.Item;
+							if (machineToolSerialItem.Id != 0)
+								itemDA.UpdateItem(machineToolSerialItem, transaction, connection);
+							else
+								measuringDeviceObj.MachineToolSerial.MachineTool.Item = CreateItemEquipmentForMeasuringDevice(machineToolSerialItem, transaction, connection);
 
-						//	command.Parameters.AddWithValue("@MachineToolId", measuringDeviceObj.MachineTool.Id);
-						//}
-						//else
-						//	command.Parameters.AddWithValue("@MachineToolId", DBNull.Value);
+							// check if user created a new machine tool
+							var machineToolSerialMachineTool = measuringDeviceObj.MachineToolSerial.MachineTool;
+							if (machineToolSerialMachineTool.Id != 0 && machineToolSerialMachineTool.Id != null)
+								machineToolDA.UpdateMachineTool(machineToolSerialMachineTool, transaction, connection);
+							else
+								measuringDeviceObj.MachineToolSerial.MachineTool = CreateMachineToolForMeasuringDevice(machineToolSerialMachineTool, transaction, connection);
+
+							// this will trigger if the user change the device type of the measuring device
+							// will create a new machinetool serial
+							if (machineToolSerial.Id != 0 && machineToolSerial.Id != null)
+								machineToolSerialDA.UpdateMachineToolSerial(measuringDeviceObj.MachineToolSerial, transaction, connection);
+							else
+								measuringDeviceObj.MachineToolSerial = CreateMachineTooLSerialForMeasuringDevice(measuringDeviceObj.MachineToolSerial, transaction, connection);
+
+							machineToolSerialDA.UpdateMachineToolSerial(measuringDeviceObj.MachineToolSerial, transaction, connection);
+							command.Parameters.AddWithValue("@MachineToolSerialId", measuringDeviceObj.MachineToolSerial.Id);
+						}
+						else
+							command.Parameters.AddWithValue("@MachineToolSerialId", DBNull.Value);
 
 						command.Parameters.AddWithValue("@Id", measuringDeviceObj.Id);
 						command.ExecuteNonQuery();

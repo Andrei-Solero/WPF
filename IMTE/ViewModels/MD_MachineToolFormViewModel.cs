@@ -43,7 +43,7 @@ namespace IMTE.ViewModels
 			Description = new Description();
 
 			// send the data of the Machine Tool to the main measuring device form
-			ea.GetEvent<MachineToolToMeasuringDevice>().Publish(MachineTool);
+			//ea.GetEvent<MachineToolToMeasuringDevice>().Publish(MachineTool);
 
 			// get the data from this form's description lookup
 			ea.GetEvent<DescriptionLookupToMDForms>().Subscribe(SetDescriptionFromLookup);
@@ -113,6 +113,7 @@ namespace IMTE.ViewModels
 			SerialNo = machineToolSerialObj.SerialNo;
 			ToolLifeUsagePcs = machineToolSerialObj.ToolLifeUsagePcs;
 			Quantity = machineToolSerialObj.Quantity;
+
 		}
 
 		#endregion
@@ -139,7 +140,6 @@ namespace IMTE.ViewModels
 			{
 				SetProperty(ref _note, value);
 				MachineTool.Note = value;
-
 			}
 		}
 
@@ -308,7 +308,7 @@ namespace IMTE.ViewModels
 		}
 
 
-		private MachineTool _machineTool;
+		private MachineTool _machineTool = new MachineTool();
 		public MachineTool MachineTool
 		{
 			get { return _machineTool; }
@@ -316,7 +316,8 @@ namespace IMTE.ViewModels
 			{
 				SetProperty(ref _machineTool, value);
 
-				MachineToolSerial.MachineTool = value;
+				MachineToolSerial.MachineTool = MachineTool;
+				Item = value.Item;
 			}
 		}
 
@@ -328,6 +329,8 @@ namespace IMTE.ViewModels
 			set
 			{
 				SetProperty(ref _machineToolSerial, value);
+
+				MachineTool = value.MachineTool;
 			}
 		}
 
@@ -378,9 +381,10 @@ namespace IMTE.ViewModels
 				// set the binding fields values from the navigationcontext parameter
 				SetFieldBindingData(MachineToolSerial);
 
-				// send the data again back to measuring device form
-				ea.GetEvent<MachineToolSerialToMeasuringDevice>().Publish(MachineToolSerial);
-			}
+                //// send the data again back to measuring device form
+                ea.GetEvent<MachineToolSerialToMeasuringDevice>().Publish(MachineToolSerial);
+            }
+
 		}
 
 		public bool IsNavigationTarget(NavigationContext navigationContext)

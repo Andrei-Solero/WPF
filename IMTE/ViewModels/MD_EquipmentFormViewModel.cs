@@ -264,6 +264,8 @@ namespace IMTE.ViewModels
             set 
             {
                 SetProperty(ref _equipmentSerial, value);
+
+                Equipment = value.Equipment;
             }
         }
 
@@ -316,6 +318,7 @@ namespace IMTE.ViewModels
                 SetProperty(ref _equipment, value);
 
                 EquipmentSerial.Equipment = value;
+                ItemEntity = value.Item;
             }
         }
 
