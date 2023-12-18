@@ -14,9 +14,15 @@ namespace IMTE
 {
     public class IMTEModule : IModule
     {
+		private readonly IRegionManager regionManager;
+
+		public IMTEModule(IRegionManager regionManager)
+        {
+			this.regionManager = regionManager;
+		}
+
         public void OnInitialized(IContainerProvider containerProvider)
         {
-
         }
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
@@ -53,6 +59,9 @@ namespace IMTE
             containerRegistry.RegisterForNavigation<MDLookup_UnitConfigCreate>("UnitConfigCreate");
             containerRegistry.RegisterForNavigation<MDLookup_PlantConfigList>("PlantConfigList");
 
-        }
+			//menu
+			containerRegistry.RegisterForNavigation<MainWindowMenu>("MainMenu");
+
+		}
     }
 }

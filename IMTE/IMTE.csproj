@@ -324,6 +324,9 @@
     <Compile Include="ViewModels\MD_EquipmentFormLookupViewModel.cs" />
     <Compile Include="ViewModels\MD_EquipmentFormViewModel.cs" />
     <Compile Include="ViewModels\MD_InstrumentFormLookupViewModel.cs" />
+    <Compile Include="Views\MainWindowMenu.xaml.cs">
+      <DependentUpon>MainWindowMenu.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MD_InstrumentFormLookup.xaml.cs">
       <DependentUpon>MD_InstrumentFormLookup.xaml</DependentUpon>
     </Compile>
@@ -460,6 +463,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Views\MainWindowMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MD_InstrumentFormLookup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

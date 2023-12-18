@@ -16,7 +16,6 @@ namespace IMTE
     {
         protected override DependencyObject CreateShell()
         {
-
             return Container.Resolve<MainWindow>();
         }
 

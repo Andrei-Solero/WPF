@@ -1,5 +1,4 @@
-﻿using MahApps.Metro.Controls;
-using Prism.Regions;
+﻿using Prism.Regions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,18 +11,19 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace IMTE.Views
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow
-    {
-		public MainWindow()
+	/// <summary>
+	/// Interaction logic for MainWindowMenu.xaml
+	/// </summary>
+	public partial class MainWindowMenu : UserControl
+	{
+        public MainWindowMenu()
         {
             InitializeComponent();
-		}
+        }
     }
 }

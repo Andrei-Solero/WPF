@@ -1,4 +1,5 @@
 ﻿using IMTE.IMTEEntity.Models;
+using IMTE.Views;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
@@ -13,26 +14,14 @@ namespace IMTE.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
-        public DelegateCommand<string> NavigateCommand { get; set; }
+		private readonly IRegionManager regionManager;
 
-        private MeasuringDevice _measuringDevice;
-        private readonly IRegionManager regionManager;
-
-        public MeasuringDevice MeasuringDevice
+		public MainWindowViewModel(IRegionManager regionManager)
         {
-            get { return _measuringDevice; }
-            set { SetProperty(ref _measuringDevice, value); }
-        }
+			this.regionManager = regionManager;
 
-        public MainWindowViewModel(IRegionManager regionManager)
-        {
-            this.regionManager = regionManager;
-            NavigateCommand = new DelegateCommand<string>(Navigate);
-        }
+			regionManager.RegisterViewWithRegion("MainWindowRegion", typeof(MainWindowMenu));
+		}
 
-        private void Navigate(string uriKey)
-        {
-            regionManager.RequestNavigate("MainRegion", uriKey);
-        }
-    }
+	}
 }
