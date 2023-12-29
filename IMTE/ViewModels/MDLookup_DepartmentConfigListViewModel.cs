@@ -25,9 +25,15 @@ namespace IMTE.ViewModels
         public MDLookup_DepartmentConfigListViewModel(IEventAggregator ea)
         {
             departmentDA = new DepartmentDA();
-            Departments = new ObservableCollection<Department>(departmentDA.GetAllDepartments());
 			PassSelectedObjToMDFormCommand = new DelegateCommand(PassSelectedObjToMDForm);
             this.ea = ea;
+
+            Task.Run(async () => await LoadDepartmentsToList());
+        }
+
+        private async Task LoadDepartmentsToList()
+        {
+            Departments = new ObservableCollection<Department>(await departmentDA.GetDepartments());
         }
 
         private void PassSelectedObjToMDForm()

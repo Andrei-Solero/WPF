@@ -10,20 +10,20 @@ namespace IMTE.DataAccess
 {
 	public class FrequencyOfCalibrationDA : DataAccessFunctions<FrequencyOfCalibration>
 	{
-		public IEnumerable<FrequencyOfCalibration> GetAllFrequencyOfCalibration()
+		public async Task<IEnumerable<FrequencyOfCalibration>> GetFrequencyOfCalibrationsAsync()
 		{
 			var output = new List<FrequencyOfCalibration>();
 
 			using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
 			using (NpgsqlCommand command = new NpgsqlCommand())
 			{
-				connection.Open();
+				await connection.OpenAsync();
 				command.Connection = connection;
 				command.CommandText = @"SELECT * FROM ""IMTE"".""FrequencyOfCalibration""";
 
-				var data = command.ExecuteReader();
+				var data = await command.ExecuteReaderAsync();
 
-				while (data.Read())
+				while (await data.ReadAsync())
 				{
 					var jsonData = SerializeDataToJSON(data);
 					var jsonToObj = DeserializeJSONToObj(jsonData);

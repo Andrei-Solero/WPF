@@ -10,20 +10,20 @@ namespace IMTE.DataAccess
 {
 	public class AcceptanceCriteriaDA : DataAccessFunctions<AcceptanceCriteria>
 	{
-		public IEnumerable<AcceptanceCriteria> GetAllAcceptanceCriteria()
+		public async Task<IEnumerable<AcceptanceCriteria>> GetAcceptanceCriteriasAsync()
 		{
 			var output = new List<AcceptanceCriteria>();
 
 			using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
 			using (NpgsqlCommand command = new NpgsqlCommand())
 			{
-				connection.Open();
+				await connection.OpenAsync();
 				command.Connection = connection;
 				command.CommandText = @"SELECT * FROM ""IMTE"".""AcceptanceCriteria""";
 
-				var data = command.ExecuteReader();
+				var data = await command.ExecuteReaderAsync();
 
-				while (data.Read())
+				while (await data.ReadAsync())
 				{
 					var jsonObj = SerializeDataToJSON(data);
 					var jsonToObj = DeserializeJSONToObj(jsonObj);

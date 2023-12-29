@@ -55,6 +55,9 @@
     <Reference Include="ControlzEx, Version=4.0.0.0, Culture=neutral, PublicKeyToken=69f1c32f803d307e, processorArchitecture=MSIL">
       <HintPath>..\packages\ControlzEx.4.4.0\lib\net462\ControlzEx.dll</HintPath>
     </Reference>
+    <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.2.1.24\lib\net461\Dapper.dll</HintPath>
+    </Reference>
     <Reference Include="MahApps.Metro, Version=2.0.0.0, Culture=neutral, PublicKeyToken=51482d6f650b2b3f, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.2.4.10\lib\net47\MahApps.Metro.dll</HintPath>
     </Reference>
@@ -157,6 +160,12 @@
     <Reference Include="MahApps.Metro.IconPacks.Zondicons, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0c0d510f9915137a, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.IconPacks.4.11.0\lib\net47\MahApps.Metro.IconPacks.Zondicons.dll</HintPath>
     </Reference>
+    <Reference Include="MaterialDesignColors, Version=2.1.4.0, Culture=neutral, PublicKeyToken=df2a72020bd7962a, processorArchitecture=MSIL">
+      <HintPath>..\packages\MaterialDesignColors.2.1.4\lib\net462\MaterialDesignColors.dll</HintPath>
+    </Reference>
+    <Reference Include="MaterialDesignThemes.Wpf, Version=4.9.0.0, Culture=neutral, PublicKeyToken=df2a72020bd7962a, processorArchitecture=MSIL">
+      <HintPath>..\packages\MaterialDesignThemes.4.9.0\lib\net462\MaterialDesignThemes.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.7.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
@@ -167,7 +176,7 @@
       <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.6.0.0\lib\net461\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.31\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
+      <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.39\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -277,6 +286,7 @@
     <Compile Include="DataAccess\DataAccessFunctions.cs" />
     <Compile Include="DataAccess\DepartmentDA.cs" />
     <Compile Include="DataAccess\DescriptionDA.cs" />
+    <Compile Include="DataAccess\DeviceStatusDA.cs" />
     <Compile Include="DataAccess\EmployeeDA.cs" />
     <Compile Include="DataAccess\EmployeeTypeDA.cs" />
     <Compile Include="DataAccess\EquipmentDA.cs" />
@@ -291,19 +301,30 @@
     <Compile Include="DataAccess\MachineToolDA.cs" />
     <Compile Include="DataAccess\MachineToolSerialDA.cs" />
     <Compile Include="DataAccess\MachineToolSpecClassDA.cs" />
+    <Compile Include="DataAccess\MachineToolStatusDA.cs" />
     <Compile Include="DataAccess\MachineToolTypeDA.cs" />
-    <Compile Include="DataAccess\MakerDA.cs" />
+    <Compile Include="DataAccess\MeasuringDeviceCertificateDA.cs" />
     <Compile Include="DataAccess\MeasuringDeviceDA.cs" />
+    <Compile Include="DataAccess\MeasuringDeviceLedgerDA.cs" />
     <Compile Include="DataAccess\PlantDA.cs" />
     <Compile Include="DataAccess\PositionDA.cs" />
-    <Compile Include="DataAccess\ResolutionDA.cs" />
     <Compile Include="DataAccess\SpecificationDA.cs" />
     <Compile Include="DataAccess\UnitDA.cs" />
     <Compile Include="IMTEModule.cs" />
     <Compile Include="Statics.cs" />
     <Compile Include="TASKLIST.cs" />
     <Compile Include="ValueConverter\InvertBoolConverter.cs" />
+    <Compile Include="ValueConverter\NullCheckConverter.cs" />
+    <Compile Include="ValueConverter\SelectedMeasuringDevicesConverter.cs" />
     <Compile Include="ViewModels\DialogAwareBase.cs" />
+    <Compile Include="ViewModels\FieldBindings\EquipmentFieldBinding.cs" />
+    <Compile Include="ViewModels\FieldBindings\EquipmentFieldBindingNavigationAware.cs" />
+    <Compile Include="ViewModels\FieldBindings\InstrumentFieldBinding.cs" />
+    <Compile Include="ViewModels\FieldBindings\InstrumentFieldBindingNavigationAware.cs" />
+    <Compile Include="ViewModels\FieldBindings\MeasuringDeviceCertificatesFieldBindingDialog.cs" />
+    <Compile Include="ViewModels\FieldBindings\MeasuringDeviceFieldBinding.cs" />
+    <Compile Include="ViewModels\FieldBindings\MeasuringDeviceFieldBindingDialog.cs" />
+    <Compile Include="ViewModels\MainWindowMenuViewModel.cs" />
     <Compile Include="ViewModels\MDLookup_DepartmentConfigCreateViewModel.cs" />
     <Compile Include="ViewModels\MDLookup_DepartmentConfigListViewModel.cs" />
     <Compile Include="ViewModels\MDLookup_DepartmentConfigViewModel.cs" />
@@ -315,17 +336,51 @@
     <Compile Include="ViewModels\MDLookup_ItemDescriptionConfigCreateViewModel.cs" />
     <Compile Include="ViewModels\MDLookup_ItemDescriptionConfigListViewModel.cs" />
     <Compile Include="ViewModels\MDLookup_ItemDescriptionConfigViewModel.cs" />
+    <Compile Include="ViewModels\MDLookup_PlantConfigCreateViewModel.cs" />
     <Compile Include="ViewModels\MDLookup_PlantConfigListViewModel.cs" />
     <Compile Include="ViewModels\MDLookup_PlantConfigViewModel.cs" />
     <Compile Include="ViewModels\MDLookup_UnitConfigCreateViewModel.cs" />
     <Compile Include="ViewModels\MDLookup_UnitConfigListViewModel.cs" />
     <Compile Include="ViewModels\MDLookup_UnitConfigViewModel.cs" />
+    <Compile Include="ViewModels\MD_BorrowFormViewModel.cs" />
+    <Compile Include="ViewModels\MD_BorrowListViewModel.cs" />
+    <Compile Include="ViewModels\MD_BorrowViewModel.cs" />
+    <Compile Include="ViewModels\MD_Borrow_LedgerTransactionEquipmentViewModel.cs" />
+    <Compile Include="ViewModels\MD_Borrow_LedgerTransactionInstrumentViewModel.cs" />
+    <Compile Include="ViewModels\MD_Borrow_LedgerTransactionViewModel.cs" />
     <Compile Include="ViewModels\MD_EquipmentForLookupListViewModel.cs" />
     <Compile Include="ViewModels\MD_EquipmentFormLookupViewModel.cs" />
     <Compile Include="ViewModels\MD_EquipmentFormViewModel.cs" />
     <Compile Include="ViewModels\MD_InstrumentFormLookupViewModel.cs" />
+    <Compile Include="ViewModels\MeasuringDeviceCertificateFormViewModel.cs" />
+    <Compile Include="ViewModels\FieldBindings\MeasuringDeviceCertificatesFieldBinding.cs" />
+    <Compile Include="ViewModels\MeasuringDeviceCertificateListsViewModel.cs" />
     <Compile Include="Views\MainWindowMenu.xaml.cs">
       <DependentUpon>MainWindowMenu.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MD_Borrow.xaml.cs">
+      <DependentUpon>MD_Borrow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MD_BorrowForm.xaml.cs">
+      <DependentUpon>MD_BorrowForm.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MD_BorrowLedger_Equipment.xaml.cs">
+      <DependentUpon>MD_BorrowLedger_Equipment.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MD_BorrowList.xaml.cs">
+      <DependentUpon>MD_BorrowList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MD_Borrow_LedgerTransaction.xaml.cs">
+      <DependentUpon>MD_Borrow_LedgerTransaction.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MD_Borrow_LedgerTransactionEquipment.xaml.cs">
+      <DependentUpon>MD_Borrow_LedgerTransactionEquipment.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MD_Borrow_LedgerTransactionInstrument.xaml.cs">
+      <DependentUpon>MD_Borrow_LedgerTransactionInstrument.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MD_Borrow_LedgerTransactionMachineTool.xaml.cs">
+      <DependentUpon>MD_Borrow_LedgerTransactionMachineTool.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MD_InstrumentFormLookup.xaml.cs">
       <DependentUpon>MD_InstrumentFormLookup.xaml</DependentUpon>
@@ -410,6 +465,12 @@
     <Compile Include="Views\MD_MachineToolFormLookupList.xaml.cs">
       <DependentUpon>MD_MachineToolFormLookupList.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\MeasuringDeviceCertificateForm.xaml.cs">
+      <DependentUpon>MeasuringDeviceCertificateForm.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MeasuringDeviceCertificateLists.xaml.cs">
+      <DependentUpon>MeasuringDeviceCertificateLists.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MeasuringDeviceForm.xaml.cs">
       <DependentUpon>MeasuringDeviceForm.xaml</DependentUpon>
     </Compile>
@@ -464,6 +525,38 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\MainWindowMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MD_Borrow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MD_BorrowForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MD_BorrowLedger_Equipment.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MD_BorrowList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MD_Borrow_LedgerTransaction.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MD_Borrow_LedgerTransactionEquipment.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MD_Borrow_LedgerTransactionInstrument.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MD_Borrow_LedgerTransactionMachineTool.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -567,6 +660,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\MeasuringDeviceCertificateForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MeasuringDeviceCertificateLists.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MeasuringDeviceForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -601,5 +702,7 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.Extensions.Logging.Abstractions.6.0.0\build\Microsoft.Extensions.Logging.Abstractions.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Extensions.Logging.Abstractions.6.0.0\build\Microsoft.Extensions.Logging.Abstractions.targets'))" />
+    <Error Condition="!Exists('..\packages\MaterialDesignThemes.4.9.0\build\MaterialDesignThemes.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MaterialDesignThemes.4.9.0\build\MaterialDesignThemes.targets'))" />
   </Target>
+  <Import Project="..\packages\MaterialDesignThemes.4.9.0\build\MaterialDesignThemes.targets" Condition="Exists('..\packages\MaterialDesignThemes.4.9.0\build\MaterialDesignThemes.targets')" />
 </Project>

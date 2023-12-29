@@ -23,11 +23,17 @@ namespace IMTE.ViewModels
         public MDLookup_ItemDescriptionConfigListViewModel(IEventAggregator ea)
         {
             descriptionDA = new DescriptionDA();
-
-            Descriptions = new ObservableCollection<Description>(descriptionDA.GetAllDescriptions());
             this.ea = ea;
 
             PassTextToItemDescriptionCommand = new DelegateCommand(PassTextToItemDescription);
+
+            Task.Run(async () => await LoadDataToListAsync());
+        }
+
+        private async Task LoadDataToListAsync()
+        {
+            Descriptions = new ObservableCollection<Description>(await descriptionDA.GetDescriptionsAsync());
+
         }
 
         private void PassTextToItemDescription()

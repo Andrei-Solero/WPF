@@ -12,5 +12,12 @@ namespace IMTE.Models.IMTEEntity
     {
         public string DeviceTypeName { get; set; }
         public Employee ModifiedByEmployeeId { get; set; }
+
+
+        public override string ToString()
+        {
+            return DeviceTypeName;
+        }
+
     }
 }

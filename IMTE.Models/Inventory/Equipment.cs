@@ -27,6 +27,7 @@ namespace IMTE.Models.Inventory
         public string Model { get; set; }
         public bool? HasAccessory { get; set; }
         public string ApprovalCode { get; set; }
+        public Department Department { get; set; }
         public bool? IsPrinted { get; set; }
         public bool? IsSent { get; set; }
         public bool? IsForeignCurrency { get; set; }

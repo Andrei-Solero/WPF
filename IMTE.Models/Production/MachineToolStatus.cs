@@ -15,7 +15,12 @@ namespace IMTE.Models.Production
         public Company Company { get; set; }
         public Employee ModifiedByEmployee { get; set; }
         public string Status { get; set; }
-        public bool IsAvailable { get; set; }
+        public bool? IsAvailable { get; set; }
+
+        public override string ToString()
+        {
+            return Status;
+        }
 
     }
 }

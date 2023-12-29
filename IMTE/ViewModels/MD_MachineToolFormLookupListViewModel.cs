@@ -28,10 +28,16 @@ namespace IMTE.ViewModels
 			machineToolDA = new MachineToolDA();
 			measuringDeviceDA = new MeasuringDeviceDA();
 
-			MachineTools = new ObservableCollection<MachineTool>(machineToolDA.GetAllMachineTool());
 			this.ea = ea;
 
 			PassSelectedObjToFormCommand = new DelegateCommand(PassSelectedObjToForm);
+
+			Task.Run(async () => await LoadDataToFormAsync());
+		}
+
+		private async Task LoadDataToFormAsync()
+        {
+			MachineTools = new ObservableCollection<MachineTool>(await machineToolDA.GetAllMachineTool());
 		}
 
 		private void PassSelectedObjToForm()

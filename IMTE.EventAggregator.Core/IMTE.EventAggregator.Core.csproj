@@ -53,6 +53,7 @@
     <Compile Include="EquipmentSerialToMeasuringDevice.cs" />
     <Compile Include="EquipmentToMeasuringDevice.cs" />
     <Compile Include="EquipmentMachineToolWithMeasuringDeviceDataToMDForm.cs" />
+    <Compile Include="Events.cs" />
     <Compile Include="InstrumentSerialToMeasuringDevice.cs" />
     <Compile Include="InstrumentToMeasuringDevice.cs" />
     <Compile Include="ItemLookupToMDForms.cs" />

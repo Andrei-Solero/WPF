@@ -21,7 +21,7 @@ namespace IMTE.DataAccess
         }
 
 
-        public IEnumerable<Equipment> GetAllEquipment()
+        public async Task<IEnumerable<Equipment>> GetAllEquipment()
         {
             var output = new List<Equipment>();
 
@@ -41,13 +41,13 @@ namespace IMTE.DataAccess
                                     INNER JOIN ""General"".""Description"" des ON it.""DescriptionId"" = des.""Id""";
 
 
-                connection.Open();
+                await connection.OpenAsync();
                 command.Connection = connection;
                 command.CommandText = query;
 
-                var data = command.ExecuteReader();
+                var data = await command.ExecuteReaderAsync();
 
-                while (data.Read())
+                while (await data.ReadAsync())
                 {
                     output.Add(new Equipment
                     {
@@ -303,7 +303,8 @@ namespace IMTE.DataAccess
                                     ""IsPrinted"" = @IsPrinted,
                                     ""IsSent"" = @IsSent,
                                     ""IsForeignCurrency"" = @IsForeignCurrency,
-                                    ""ModifiedOn"" = @ModifiedOn
+                                    ""ModifiedOn"" = @ModifiedOn,
+                                    ""DepartmentId"" = @DepartmentId
                                     WHERE ""Id"" = @Id";
 
                 command.Connection = connection;
@@ -320,6 +321,7 @@ namespace IMTE.DataAccess
                 command.Parameters.AddWithValue("@IsSent", equipmentObj.IsSent);
                 command.Parameters.AddWithValue("@IsForeignCurrency", equipmentObj.IsForeignCurrency);
                 command.Parameters.AddWithValue("@ModifiedOn", DateTime.UtcNow);
+                command.Parameters.AddWithValue("@DepartmentId", equipmentObj.Department.Id);
                 command.Parameters.AddWithValue("@Id", equipmentObj.Id);
 
                 command.ExecuteNonQuery();

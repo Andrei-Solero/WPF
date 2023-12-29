@@ -11,14 +11,14 @@ namespace IMTE.DataAccess
 {
     public class InstrumentTypeDA : DataAccessFunctions<InstrumentType>
     {
-        public IEnumerable<InstrumentType> GetAllInstrumentType()
+        public async Task<IEnumerable<InstrumentType>> GetAllInstrumentType()
         {
             var output = new List<InstrumentType>();
 
             using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
             using (NpgsqlCommand command = new NpgsqlCommand())
             {
-                connection.Open();
+                await connection .OpenAsync();
                 string query = @"SELECT 
                                     instType.""Id"" AS ""InstrumentTypeId"",
                                     c.""Id"" as ""CompanyId"", c.""CompanyName"",
@@ -30,9 +30,9 @@ namespace IMTE.DataAccess
                 command.Connection = connection;
                 command.CommandText = query;
 
-                var data = command.ExecuteReader();
+                var data = await command.ExecuteReaderAsync();
 
-                while (data.Read())
+                while (await data.ReadAsync())
                 {
                     output.Add(new InstrumentType
                     {

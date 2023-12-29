@@ -42,7 +42,7 @@ namespace IMTE.DataAccess
 			machineToolSerialDA = new MachineToolSerialDA();
 		}
 
-		public IEnumerable<MeasuringDevice> GetAllMeasuringDevices()
+		public async Task<IEnumerable<MeasuringDevice>> GetAllMeasuringDevices()
 		{
 			NpgsqlConnection connection = null;
 			NpgsqlCommand command = null;
@@ -204,15 +204,13 @@ namespace IMTE.DataAccess
 								WHERE md.""IsDeleted"" = FALSE;
 								";
 
-
-
 					command.CommandText = query;
 
 					object objectCheckerValue = 0;
 
-					var data = command.ExecuteReader();
+					var data = await command.ExecuteReaderAsync();
 
-					while (data.Read())
+					while (await data.ReadAsync())
 					{
 						output.Add(new MeasuringDevice 
 						{ 
@@ -374,18 +372,6 @@ namespace IMTE.DataAccess
 								Id = CheckDbNullInt(data, "AcceptanceCriteriaId"),
 								Title = CheckDbNullString(data, "AcceptanceCriteriaTitle"),
 								Description = CheckDbNullString(data, "AcceptanceCriteriaDescription")
-							},
-							_Maker = CheckDbNullInt(data, "MakerId").Equals(objectCheckerValue) ? null : new Maker
-							{
-								Id = CheckDbNullInt(data, "MakerId"),
-								Name = CheckDbNullString(data, "MakerName")
-							},
-							_Resolution = CheckDbNullInt(data, "ResolutionId").Equals(objectCheckerValue) ? null : new Resolution
-							{
-								Id = CheckDbNullInt(data, "ResolutionId"),
-								Title = CheckDbNullString(data, "ResolutionTitle"),
-								Description = CheckDbNullString(data, "ResolutionDescription"),
-								ResolutionValue = CheckDbNullString(data, "ResolutionValue"),
 							},
 							_FrequencyOfCalibration = CheckDbNullInt(data, "FrequencyOfCalibrationId").Equals(objectCheckerValue) ? null : new FrequencyOfCalibration
 							{
@@ -799,9 +785,9 @@ namespace IMTE.DataAccess
 				{
 					string query = @"INSERT INTO ""Inventory"".""Equipment"" (""CompanyId"", ""ItemId"", ""Manufacturer"", ""Model"",
                                     ""HasAccessory"", ""ApprovalCode"", ""IsPrinted"", ""IsSent"", ""IsForeignCurrency"",
-                                    ""EquipmentTypeId"", ""CreatedOn"")
+                                    ""EquipmentTypeId"", ""CreatedOn"", ""DepartmentId"")
                                     VALUES(2, @ItemId, @Manufacturer, @Model, @HasAccessory, @ApprovalCode, @IsPrinted, @IsSent, @IsForeignCurrency,
-                                    @EquipmentTypeId, @CreatedOn)
+                                    @EquipmentTypeId, @CreatedOn, @DepartmentId)
                                     RETURNING ""Id""";
 
 					command.Connection = connection;
@@ -818,6 +804,7 @@ namespace IMTE.DataAccess
 					command.Parameters.AddWithValue("@IsForeignCurrency", equipmentObj.IsForeignCurrency);
 					command.Parameters.AddWithValue("@EquipmentTypeId", equipmentObj.EquipmentType.Id);
 					command.Parameters.AddWithValue("@CreatedOn", DateTime.UtcNow);
+					command.Parameters.AddWithValue("@DepartmentId", equipmentObj.Department.Id);
 
 					equipment.Id = Convert.ToInt32(command.ExecuteScalar());
 				}
@@ -879,8 +866,8 @@ namespace IMTE.DataAccess
 				try
 				{
 					string query = @"INSERT INTO ""Production"".""MachineToolSerial"" (""MachineToolId"", ""SerialNo"",
-									""ToolUsageLifePcs"", ""Quantity"", ""CreatedOn"") VALUES
-									(@MachineToolId, @SerialNo, @ToolUsageLifePcs, @Quantity, @CreatedOn) RETURNING ""Id""";
+									""ToolUsageLifePcs"", ""Quantity"", ""CreatedOn"", ""MachineToolStatusId"") VALUES
+									(@MachineToolId, @SerialNo, @ToolUsageLifePcs, @Quantity, @CreatedOn, @MachineToolStatusId) RETURNING ""Id""";
 
 					command.Connection = connection;
 					command.Transaction = transaction;
@@ -891,6 +878,7 @@ namespace IMTE.DataAccess
 					command.Parameters.AddWithValue("@ToolUsageLifePcs", machineToolSerial.ToolLifeUsagePcs);
 					command.Parameters.AddWithValue("@Quantity", machineToolSerial.Quantity);
 					command.Parameters.AddWithValue("@CreatedOn", DateTime.UtcNow);
+					command.Parameters.AddWithValue("@MachineToolStatusId", machineToolSerial.MachineToolStatus.Id);
 
 					machineToolSerial.Id = Convert.ToInt32(command.ExecuteScalar());
 				}
@@ -1013,7 +1001,7 @@ namespace IMTE.DataAccess
 										@CalibrationMethod, @AcceptanceCriteria, @CreatedOn, @Description,
 										@SerialNo, @DeviceTypeId, @EquipmentSerialId, @MachineToolSerialId,
 										@EndOfLife, @AcceptanceCriteriaId, @FrequencyOfCalibrationId
-									);";
+									) RETURNING ""Id""";
 
 						command.Connection = connection;
 						command.CommandText = query;
@@ -1128,7 +1116,7 @@ namespace IMTE.DataAccess
 						command.Parameters.AddWithValue("@AcceptanceCriteriaId", measuringDeviceObj.AcceptanceCriteria.Id);
 						command.Parameters.AddWithValue("@FrequencyOfCalibrationId", measuringDeviceObj._FrequencyOfCalibration.Id);
 
-						command.ExecuteNonQuery();
+						measuringDevice.Id = Convert.ToInt32(command.ExecuteScalar());
 						transaction.Commit();
 					}
 					catch (Exception ex)

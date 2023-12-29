@@ -10,21 +10,21 @@ namespace IMTE.DataAccess
 {
     public class MachineToolTypeDA : DataAccessFunctions<MachineToolType>
     {
-        public IEnumerable<MachineToolType> GetAllMachineToolType()
+        public async Task<IEnumerable<MachineToolType>> GetAllMachineToolType()
         {
             var output = new List<MachineToolType>();
 
             using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
             using (NpgsqlCommand command = new NpgsqlCommand())
             {
-                connection.Open();
+                await connection.OpenAsync();
                 command.Connection = connection;
                 command.CommandText = @"SELECT *
                                         FROM ""Production"".""MachineToolType""";
 
-                var data = command.ExecuteReader();
+                var data = await command.ExecuteReaderAsync();
 
-                while (data.Read())
+                while (await data.ReadAsync())
                 {
                     output.Add(new MachineToolType
                     {

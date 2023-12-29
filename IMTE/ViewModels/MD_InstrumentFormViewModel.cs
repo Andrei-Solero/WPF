@@ -41,16 +41,16 @@ namespace IMTE.ViewModels
             departmentDA = new DepartmentDA();
             instrumentSerialDA = new InstrumentSerialDA();
 
-			Instrument = new Instrument();
+            Instrument = new Instrument();
             ItemEntity = new Item();
             Description = new Description();
 
-            InstrumentTypes = new ObservableCollection<InstrumentType>(instrumentTypeDA.GetAllInstrumentType());
-            Departments = new ObservableCollection<Department>(departmentDA.GetAllDepartments());
 
             OpenDescriptionLookupCommand = new DelegateCommand(OpenDescriptionLookup);
             OpenItemLookupCommand = new DelegateCommand(OpenItemLookup);
 			ShowInstrumentConfigCommand = new DelegateCommand(OpenInstrumentConfig);
+
+            Task.Run(async () => await LoadDataToFormAsync());
 
             //// this will trigger when the user selected an existing measuring device and that measuring device has InstrumentSerial
             //ea.GetEvent<MeasuringDeviceToInstrumentSerial>().Subscribe(SetInstrumentSerialFromMeasuringDevice);
@@ -66,11 +66,20 @@ namespace IMTE.ViewModels
 
             ea.GetEvent<DataFromIsntrumentLookup>().Subscribe(SetInstrumentDetailsFromLookup);
 
-            ExistingInstrumentSerial = instrumentSerialDA.GetAllInstrumentSerial().ToList();
-
 		}
 
-		private void SetInstrumentDetailsFromLookup(Instrument instrument)
+
+        private async Task LoadDataToFormAsync()
+        {
+            var existingInstrumentSerial = await instrumentSerialDA.GetAllInstrumentSerial();
+            ExistingInstrumentSerial = existingInstrumentSerial.ToList();
+
+            InstrumentTypes = new ObservableCollection<InstrumentType>(await instrumentTypeDA.GetAllInstrumentType());
+
+            Departments = new ObservableCollection<Department>(await departmentDA.GetDepartments());
+        }
+
+        private void SetInstrumentDetailsFromLookup(Instrument instrument)
 		{
             Instrument = instrument;
             SetFieldBindingData(instrument);
@@ -100,11 +109,13 @@ namespace IMTE.ViewModels
         private void SetItemFromLookup(Item itemObj)
         {
             ItemEntity = itemObj;
+            FieldValidation();
         }
 
         private void SetDescriptionFromLookup(Description descriptionObj)
         {
             Description = descriptionObj;
+            FieldValidation();
         }
 
 		private Dictionary<string, string> _errorCollection = new Dictionary<string, string>();
@@ -117,25 +128,33 @@ namespace IMTE.ViewModels
         #region IDataErrorInfo - Validation
 
         private bool FieldValidation()
-		{
-			if (string.IsNullOrEmpty(SerialNO) || string.IsNullOrEmpty(Manufacturer) || string.IsNullOrEmpty(Model) ||
-				Department.Id == null || InstrumentType.Id == null || string.IsNullOrEmpty(ApprovalCode) || string.IsNullOrEmpty(ItemCode) || string.IsNullOrEmpty(ItemShortDescription) ||
-				string.IsNullOrEmpty(ItemDescriptionText))
-			{
-				ea.GetEvent<ToolFormValidationToMeasuringDevice>().Publish(false);
-				return false;
-			}
-			else if (!string.IsNullOrEmpty(SerialNO) && ExistingInstrumentSerial.Any(x => x.SerialNo == SerialNO))
-			{
-				ea.GetEvent<ToolFormValidationToMeasuringDevice>().Publish(false);
-				return false;
-			}
-			else
-			{
-				ea.GetEvent<ToolFormValidationToMeasuringDevice>().Publish(true);
-				return true;
-			}
+        {
+            var output = true;
 
+            if (string.IsNullOrEmpty(SerialNO) ||
+                string.IsNullOrEmpty(Manufacturer) ||
+                string.IsNullOrEmpty(Model) ||
+                Department.Id == null ||
+                InstrumentType.Id == null ||
+                string.IsNullOrEmpty(ApprovalCode) ||
+                string.IsNullOrEmpty(ItemEntity.ItemCode) ||
+                string.IsNullOrEmpty(ItemEntity.ShortDescription) ||
+                string.IsNullOrEmpty(ItemEntity.Description.Text))
+            {
+                ea.GetEvent<ToolFormValidationToMeasuringDevice>().Publish(false);
+                output = false;
+            }
+            else if (InstrumentSerial == null || InstrumentSerial.Id == 0 || InstrumentSerial.Id == null)
+            {
+                if (ExistingInstrumentSerial.Any(x => x.SerialNo == SerialNO))
+                {
+                    ea.GetEvent<ToolFormValidationToMeasuringDevice>().Publish(false);
+                    output = false;
+                }
+            }
+
+            ea.GetEvent<ToolFormValidationToMeasuringDevice>().Publish(output);
+            return output;
 		}
 
 		public string Error => null;
@@ -153,8 +172,11 @@ namespace IMTE.ViewModels
                     case "SerialNO":
                         if (string.IsNullOrEmpty(SerialNO))
                             result = errorTextForText;
-                        else if (ExistingInstrumentSerial.Any(x => x.SerialNo == SerialNO))
-                            result = "Equipment Serial No already exists";
+                        if (InstrumentSerial == null || InstrumentSerial.Id == 0 || InstrumentSerial.Id == null)
+                        {
+                            if (ExistingInstrumentSerial != null && ExistingInstrumentSerial.Any(x => x.SerialNo == SerialNO))
+                                result = "Serial No already exists";
+                        }
                         break;
                     case "Manufacturer":
                         if (string.IsNullOrEmpty(Manufacturer))
@@ -256,6 +278,8 @@ namespace IMTE.ViewModels
                 SetProperty(ref _instrumentSerial, value);
 
                 Instrument = value.Instrument;
+                FieldValidation();
+
             }
         }
 
@@ -270,6 +294,8 @@ namespace IMTE.ViewModels
 
                 InstrumentSerial.Instrument = value;
                 ItemEntity = value.Item;
+                FieldValidation();
+
             }
         }
 
@@ -281,6 +307,9 @@ namespace IMTE.ViewModels
             { 
                 SetProperty(ref _instrumentType, value);
                 Instrument.InstrumentType = value;
+
+                FieldValidation();
+
             }
         }
 
@@ -299,6 +328,9 @@ namespace IMTE.ViewModels
 					ItemShortDescription = value.ShortDescription;
                     Description = value.Description;
 				}
+
+                FieldValidation();
+
             }
         }
 
@@ -316,6 +348,9 @@ namespace IMTE.ViewModels
                 {
                     ItemDescriptionText = value.Text;
                 }
+
+                FieldValidation();
+
             }
         }
 
@@ -328,7 +363,6 @@ namespace IMTE.ViewModels
                 SetProperty(ref _department, value);
                 Instrument.Department = value;
                 FieldValidation();
-
 			}
         }
 
@@ -341,7 +375,6 @@ namespace IMTE.ViewModels
                 SetProperty(ref _serialNO, value);
                 InstrumentSerial.SerialNo = value;
 				FieldValidation();
-
 			}
 		}
 

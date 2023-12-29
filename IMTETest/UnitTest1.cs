@@ -11,7 +11,16 @@ namespace IMTETest
         public void GetAllPlant()
         {
             PlantDA da = new PlantDA();
-            var a = da.GetAllPlant();
+            var a = da.GetPlant();
+        }
+
+
+        [TestMethod]
+        public void GetAllCertificates()
+        {
+            //MeasuringDeviceCertificateDA da = new MeasuringDeviceCertificateDA();
+            //var a = da.GetMeasuringDeviceCertificatesAsync();
+            //var b = a.Result;
         }
     }
 }

@@ -25,12 +25,16 @@ namespace IMTE.ViewModels
 		public MD_EquipmentForLookupListViewModel(IEventAggregator ea)
 		{
 			equipmentDA = new EquipmentDA();
-
-			Equipments = new ObservableCollection<Equipment>(equipmentDA.GetAllEquipment());
-
-			PassSelectedObjToMDFormCommand = new DelegateCommand(PassSelectedObjToForm);
 			this.ea = ea;
 
+			PassSelectedObjToMDFormCommand = new DelegateCommand(PassSelectedObjToForm);
+
+			Task.Run(async () => await LoadDataToList());
+		}
+
+		private async Task LoadDataToList()
+        {
+			Equipments = new ObservableCollection<Equipment>(await equipmentDA .GetAllEquipment());
 		}
 
 		private void PassSelectedObjToForm()

@@ -23,12 +23,16 @@ namespace IMTE.ViewModels
         public MDLookup_PlantConfigListViewModel(IEventAggregator ea)
         {
             plantDA = new PlantDA();
-
-            Plants = new ObservableCollection<Plant>(plantDA.GetAllPlant());
             this.ea = ea;
 
             PassSelectedObjToMDFormCommand = new DelegateCommand(PassSelectedObjToMDForm);
 
+            Task.Run(async () => await LoadDataToListAsync());
+        }
+
+        private async Task LoadDataToListAsync()
+        {
+            Plants = new ObservableCollection<Plant>(await plantDA.GetPlant());
         }
 
         private void PassSelectedObjToMDForm()

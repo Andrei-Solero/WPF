@@ -11,14 +11,14 @@ namespace IMTE.DataAccess
 {
     public class InstrumentDA : DataAccessFunctions<Instrument>
     {
-        public IEnumerable<Instrument> GetAllInstruments()
+        public async Task<IEnumerable<Instrument>> GetAllInstruments()
         {
             var output = new List<Instrument>();
 
             using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
             using (NpgsqlCommand command = new NpgsqlCommand())
             {
-                connection.Open();
+                await connection .OpenAsync();
                 string query = @"
                                     SELECT 
                                         instrument.""Id"" as ""InstrumentId"", instrument.""Manufacturer"", instrument.""Model"", instrument.""HasAccessory"", 
@@ -30,16 +30,16 @@ namespace IMTE.DataAccess
                                     FROM ""Inventory"".""Instrument"" instrument
                                     LEFT OUTER JOIN ""Inventory"".""InstrumentType"" instType ON instrument.""InstrumentTypeId"" = instType.""Id""
                                     LEFT OUTER JOIN ""General"".""Item"" it ON instrument.""ItemId"" = it.""Id""
-                                    LEFT OUTER JOIN ""General"".""Department"" dept ON instrument.""ItemId"" = dept.""Id""
+                                    LEFT OUTER JOIN ""General"".""Department"" dept ON instrument.""DepartmentId"" = dept.""Id""
                                     INNER JOIN ""General"".""Description"" des ON it.""DescriptionId"" = des.""Id""";
 
 
                 command.Connection = connection;
                 command.CommandText = query;
 
-                var data = command.ExecuteReader();
+                var data = await command.ExecuteReaderAsync();
 
-                while (data.Read())
+                while (await data.ReadAsync())
                 {
                     output.Add(new Instrument
                     {

@@ -1,6 +1,7 @@
 ﻿using IMTE.DataAccess;
 using IMTE.IMTEEntity.Models;
 using IMTE.Views;
+using MaterialDesignThemes.Wpf;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
@@ -46,19 +47,25 @@ namespace IMTE.ViewModels
             NavigateToFormCommand = new DelegateCommand(Navigate);
             RefreshCommand = new DelegateCommand(Refresh);
 
-            MeasuringDeviceList = new ObservableCollection<MeasuringDevice>(measuringDeviceDA.GetAllMeasuringDevices());
             this.dialogService = dialogService;
             this.regionManager = regionManager;
+
+            Task.Run(async () => await LoadMDToListAsync());
+        }
+
+        private async Task LoadMDToListAsync()
+        {
+            MeasuringDeviceList = new ObservableCollection<MeasuringDevice>(await measuringDeviceDA.GetAllMeasuringDevices());
         }
 
         private void Refresh()
         {
-            MeasuringDeviceList = new ObservableCollection<MeasuringDevice>(measuringDeviceDA.GetAllMeasuringDevices());
+            Task.Run(async () => await LoadMDToListAsync());
         }
 
         private void Navigate()
         {
-            regionManager.RequestNavigate("MainRegion", "Create");
+            regionManager.RequestNavigate("MainIMTERegion", "Create");
         }
 
         public void OpenFormBySelectedObject()
@@ -66,7 +73,7 @@ namespace IMTE.ViewModels
             var dialogParameters = new NavigationParameters();
             dialogParameters.Add("measuringDeviceObj", SelectedMeasuringDevice);
 
-            regionManager.RequestNavigate("MainRegion", "Create", dialogParameters);
+            regionManager.RequestNavigate("MainIMTERegion", "Create", dialogParameters);
         }
     }
 }

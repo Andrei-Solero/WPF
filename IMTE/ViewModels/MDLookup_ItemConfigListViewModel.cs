@@ -27,10 +27,16 @@ namespace IMTE.ViewModels
             itemDA = new ItemDA();
 
 			PassSelectedObjToMDFormCommand = new DelegateCommand(PassSelectedObjToMDForm);
-			Items = new ObservableCollection<Item>(itemDA.GetAllItems());
+
+            Task.Run(async () => await LoadDataToListAsync());
 		}
 
-		private void PassSelectedObjToMDForm()
+        private async Task LoadDataToListAsync()
+        {
+            Items = new ObservableCollection<Item>(await itemDA.GetItemsAsync());
+        }
+
+        private void PassSelectedObjToMDForm()
 		{
             ea.GetEvent<ItemLookupToMDForms>().Publish(SelectedItemObj);
 		}
@@ -55,8 +61,11 @@ namespace IMTE.ViewModels
             get { return _description; }
             set 
             { 
-                SetProperty(ref _description, value);
-                SelectedItemObj.Description = value;
+                if (value != null)
+                {
+                    SetProperty(ref _description, value);
+                    SelectedItemObj.Description = value;
+                }
             }
         }
 
@@ -67,8 +76,12 @@ namespace IMTE.ViewModels
             get { return _selectedItemObj; }
             set 
             { 
-                SetProperty(ref _selectedItemObj, value);
-                Description = value.Description;
+                if (value != null)
+                {
+                    SetProperty(ref _selectedItemObj, value);
+                    Description = value.Description;
+                }
+                
             }
         }
 

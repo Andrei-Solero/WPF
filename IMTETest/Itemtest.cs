@@ -16,7 +16,7 @@ namespace IMTETest
 		public void GetAllItems()
 		{
 			ItemDA itemDA = new ItemDA();
-			var a = itemDA.GetAllItems();
+			var a = itemDA.GetItemsAsync();
 		}
 
 	}

@@ -11,22 +11,22 @@ namespace IMTE.DataAccess
 {
     public class EquipmentTypeDA : DataAccessFunctions<EquipmentType>
     {
-        public IEnumerable<EquipmentType> GetAllEquipmentType()
+        public async Task<IEnumerable<EquipmentType>> GetAllEquipmentType()
         {
             var output = new List<EquipmentType>();
 
             using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
             using (NpgsqlCommand command = new NpgsqlCommand())
             {
-                connection.Open();
+                await connection.OpenAsync();
                 command.Connection = connection;
                 command.CommandText = @"SELECT ""et"".*, ""c"".""Id"" as CompanyId, ""c"".""CompanyName""
                                         FROM ""Inventory"".""EquipmentType"" et
                                         INNER JOIN ""General"".""Company"" c ON ""et"".""CompanyId"" = ""c"".""Id""";
 
-                var data = command.ExecuteReader();
+                var data = await command.ExecuteReaderAsync();
 
-                while (data.Read())
+                while (await data.ReadAsync())
                 {
                     output.Add(new EquipmentType
                     {

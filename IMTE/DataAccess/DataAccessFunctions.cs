@@ -11,11 +11,32 @@ namespace IMTE.DataAccess
 {
     public abstract class DataAccessFunctions<T> where T : class
     {
+        //protected string ConnectionString
+        //{
+        //    get
+        //    {
+        //        return "Host=localhost;Username=postgres;Password=admin;Database=VisionTestDB-12/07";
+        //    }
+        //}
+
         protected string ConnectionString
         {
             get
             {
-                return "Host=localhost;Username=postgres;Password=admin;Database=VisionTestDB-12/07";
+                return "Host=localhost;Username=postgres;Password=AMCSentinel333!;Database=VisionMain";
+            }
+        }
+
+        protected object CheckDbNullObject(NpgsqlDataReader data, string columnName)
+        {
+            int columnIndex = data.GetOrdinal(columnName);
+            if (data.IsDBNull(columnIndex))
+            {
+                return null;
+            }
+            else
+            {
+                return data.GetValue(columnIndex);
             }
         }
 

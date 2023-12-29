@@ -10,20 +10,20 @@ namespace IMTE.DataAccess
 {
     public class LocationDA : DataAccessFunctions<Location>
     {
-        public IEnumerable<Location> GetAllLocations()
+        public async Task<IEnumerable<Location>> GetAllLocations()
         {
             var output = new List<Location>();
 
             using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
             using (NpgsqlCommand command = new NpgsqlCommand())
             {
-                connection.Open();
+                await connection.OpenAsync();
                 command.Connection = connection;
                 command.CommandText = @"SELECT * FROM ""General"".""Location""";
 
-                var data = command.ExecuteReader();
+                var data = await command.ExecuteReaderAsync();
 
-                while (data.Read())
+                while (await data.ReadAsync())
                 {
                     var jsonObj = SerializeDataToJSON(data);
                     var locObj = DeserializeJSONToObj(jsonObj);

@@ -10,7 +10,12 @@ namespace IMTE.DataAccess
 {
     public class DepartmentDA : DataAccessFunctions<Department>
     {
-        public IEnumerable<Department> GetAllDepartments()
+
+        /// <summary>
+        /// Will return all the departments
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<Department>> GetDepartments()
         {
             var output = new List<Department>();
 
@@ -23,9 +28,9 @@ namespace IMTE.DataAccess
                                         FROM ""General"".""Department"" dep
                                         INNER JOIN ""General"".""Company"" com ON ""dep"".""CompanyId"" = ""com"".""Id""";
 
-                var data = command.ExecuteReader();
+                var data = await command.ExecuteReaderAsync();
 
-                while (data.Read())
+                while (await data.ReadAsync())
                 {
                     output.Add(new Department 
                     {
@@ -37,6 +42,46 @@ namespace IMTE.DataAccess
                         },
                         Description = CheckDbNullString(data, "Description")
                     });
+                }
+            }
+
+            return output;
+        }
+
+        /// <summary>
+        /// Will return the department by Id
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Department> GetDepartments(Department departmentObj)
+        {
+            var output = new Department();
+
+            using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
+            using (NpgsqlCommand command = new NpgsqlCommand())
+            {
+                connection.Open();
+                command.Connection = connection;
+                command.CommandText = @"SELECT ""dep"".*, ""com"".""CompanyName"" 
+                                        FROM ""General"".""Department"" dep
+                                        INNER JOIN ""General"".""Company"" com ON ""dep"".""CompanyId"" = ""com"".""Id""
+                                        WHERE dep.""IsDeleted"" = false AND dep.""Id"" = @Id";
+
+                command.Parameters.AddWithValue("@Id", departmentObj.Id);
+
+                var data = await command.ExecuteReaderAsync();
+
+                if (await data.ReadAsync())
+                {
+                    output = new Department
+                    {
+                        Id = CheckDbNullInt(data, "Id"),
+                        DepartmentName = CheckDbNullString(data, "DepartmentName"),
+                        Company = new Company
+                        {
+                            CompanyName = CheckDbNullString(data, "CompanyName")
+                        },
+                        Description = CheckDbNullString(data, "Description")
+                    };
                 }
             }
 

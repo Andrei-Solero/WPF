@@ -12,7 +12,7 @@ namespace IMTE.DataAccess
 {
     public class MachineToolSerialDA : DataAccessFunctions<MachineToolSerial>
     {
-		public IEnumerable<MachineToolSerial> GetAllMachineToolSerial()
+		public async Task<IEnumerable<MachineToolSerial>> GetAllMachineToolSerial()
 		{
 			var output = new List<MachineToolSerial>();
 
@@ -33,13 +33,13 @@ namespace IMTE.DataAccess
                                 LEFT OUTER JOIN ""General"".""Department"" dept ON mt.""ItemId"" = dept.""Id""
 								INNER JOIN ""General"".""Description"" des ON it.""DescriptionId"" = des.""Id"";";
 
-				connection.Open();
+				await connection .OpenAsync();
 				command.Connection = connection;
 				command.CommandText = query;
 
-				var data = command.ExecuteReader();
+				var data = await command.ExecuteReaderAsync();
 
-				while (data.Read())
+				while (await data.ReadAsync())
 				{
 					output.Add(new MachineToolSerial
 					{

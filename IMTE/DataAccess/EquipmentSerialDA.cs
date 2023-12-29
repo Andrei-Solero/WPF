@@ -11,7 +11,7 @@ namespace IMTE.DataAccess
 {
     public class EquipmentSerialDA : DataAccessFunctions<EquipmentSerial>
     {
-        public IEnumerable<EquipmentSerial> GetAllEquipmentSerial()
+        public async  Task<IEnumerable<EquipmentSerial>> GetEquipmentSerialAsync()
         {
 			var output = new List<EquipmentSerial>();
 
@@ -33,13 +33,13 @@ namespace IMTE.DataAccess
                             INNER JOIN ""General"".""Description"" des ON it.""DescriptionId"" = des.""Id"";
                             ";
 
-				connection.Open();
+				await connection.OpenAsync();
 				command.Connection = connection;
 				command.CommandText = query;
 
-				var data = command.ExecuteReader();
+				var data = await command.ExecuteReaderAsync();
 
-				while (data.Read())
+				while (await data.ReadAsync())
 				{
 					output.Add(new EquipmentSerial
 					{

@@ -10,22 +10,22 @@ namespace IMTE.DataAccess
 {
     public class EmployeeTypeDA : DataAccessFunctions<EmployeeType>
     {
-        public IEnumerable<EmployeeType> GetAllEmployeeTypes()
+        public async Task<IEnumerable<EmployeeType>> GetAllEmployeeTypes()
         {
             var output = new List<EmployeeType>();
 
             using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
             using (NpgsqlCommand command = new NpgsqlCommand())
             {
-                connection.Open();
+                await connection .OpenAsync();
                 string query = @"SELECT * FROM ""HumanResources"".""EmployeeType""";
 
                 command.Connection = connection;
                 command.CommandText = query;
 
-                var data = command.ExecuteReader();
+                var data = await command .ExecuteReaderAsync();
 
-                while (data.Read())
+                while (await data.ReadAsync())
                 {
                     var jsonOutput = SerializeDataToJSON(data);
                     var empTypeObj = DeserializeJSONToObj(jsonOutput);

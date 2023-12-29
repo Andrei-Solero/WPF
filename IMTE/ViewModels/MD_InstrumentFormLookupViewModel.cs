@@ -23,12 +23,16 @@ namespace IMTE.ViewModels
 		public MD_InstrumentFormLookupViewModel(IEventAggregator ea)
         {
 			this.ea = ea;
-
 			instrumentDA = new InstrumentDA();
 
-			Instruments = new ObservableCollection<Models.Inventory.Instrument>(instrumentDA.GetAllInstruments());
 			PassSelectedObjToMDFormCommand = new DelegateCommand(PassSelectedObjToForm);
 
+			Task.Run(async () => await LoadDataAsync());
+		}
+
+		private async Task LoadDataAsync()
+        {
+			Instruments = new ObservableCollection<Models.Inventory.Instrument>(await instrumentDA .GetAllInstruments());
 		}
 
 		private void PassSelectedObjToForm()

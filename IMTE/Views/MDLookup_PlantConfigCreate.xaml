@@ -7,9 +7,11 @@
     xmlns:local="clr-namespace:IMTE.Views"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prism="http://prismlibrary.com/"
     xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
     d:DesignHeight="450"
     d:DesignWidth="800"
+    prism:ViewModelLocator.AutoWireViewModel="True"
     Background="White"
     mc:Ignorable="d">
     <Grid>
@@ -71,25 +73,13 @@
                 </Style>
             </StackPanel.Resources>
 
-            <Button Command="{Binding SaveDepartmentCommand}" Style="{StaticResource MenuButton}">
+            <Button Command="{Binding CreatePlantCommand}" Style="{StaticResource MenuButton}">
                 <Button.Content>
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:PackIconFontAwesome
                             Grid.Column="0"
                             Foreground="DarkTurquoise"
                             Kind="SaveSolid"
-                            Style="{StaticResource packIcon}" />
-                    </StackPanel>
-                </Button.Content>
-            </Button>
-
-            <Button Command="{Binding DeleteMeasuringDeviceCommand}" Style="{StaticResource MenuButton}">
-                <Button.Content>
-                    <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconFontAwesome
-                            Grid.Column="0"
-                            Foreground="DarkTurquoise"
-                            Kind="TrashSolid"
                             Style="{StaticResource packIcon}" />
                     </StackPanel>
                 </Button.Content>
@@ -119,7 +109,7 @@
                 Margin="0,0,8,10"
                 mah:TextBoxHelper.Watermark="Plant Name"
                 Style="{StaticResource EmpConfigFormTextBoxStyle}"
-                Text="{Binding Department.DepartmentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                Text="{Binding PlantName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
             <TextBox
                 Grid.Row="1"
@@ -129,7 +119,7 @@
                 mah:TextBoxHelper.Watermark="Description"
                 AcceptsReturn="True"
                 Style="{StaticResource EmpConfigFormTextBoxStyle}"
-                Text="{Binding Department.Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
             <StackPanel
                 Grid.Row="3"
@@ -153,11 +143,10 @@
                         AllowAutoComplete="True"
                         AllowIncrementalFiltering="True"
                         AutoGenerateColumns="False"
-                        ItemsSource="{Binding Departments}"
-                        SelectedItem="{Binding Department, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        ItemsSource="{Binding Locations}"
+                        SelectedItem="{Binding Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                         <syncfusion:SfMultiColumnDropDownControl.Columns>
-                            <syncfusion:GridTextColumn Width="200" MappingName="DepartmentName" />
-                            <syncfusion:GridTextColumn Width="200" MappingName="Description" />
+                            <syncfusion:GridTextColumn ColumnSizer="Star" MappingName="Name" />
                         </syncfusion:SfMultiColumnDropDownControl.Columns>
                     </syncfusion:SfMultiColumnDropDownControl>
                 </Grid>

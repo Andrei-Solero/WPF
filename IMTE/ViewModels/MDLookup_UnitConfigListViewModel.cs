@@ -25,9 +25,14 @@ namespace IMTE.ViewModels
             unitDA = new UnitDA();
             this.ea = ea;
 
-            Units = new ObservableCollection<UnitEntity>(unitDA.GetAllUnit());
-
             PassSelectedObjToMDFormCommand = new DelegateCommand(PassSelectedObjToMDForm);
+
+            Task.Run(async () => await LoadUnitsToListAsync());
+        }
+
+        private async Task LoadUnitsToListAsync()
+        {
+            Units = new ObservableCollection<UnitEntity>(await unitDA.GetUnitsAsync());
         }
 
         private void PassSelectedObjToMDForm()

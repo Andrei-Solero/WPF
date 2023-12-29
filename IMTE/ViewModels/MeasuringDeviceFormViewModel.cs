@@ -1,5 +1,6 @@
 ﻿using IMTE.DataAccess;
 using IMTE.EventAggregator.Core;
+using IMTE.EventAggregator.Core.EventAggregators;
 using IMTE.IMTEEntity.Models;
 using IMTE.Models.Definition;
 using IMTE.Models.General;
@@ -29,6 +30,8 @@ namespace IMTE.ViewModels
     [RegionMemberLifetime(KeepAlive = false)]
     public class MeasuringDeviceFormViewModel : BindableBase, INavigationAware, IDataErrorInfo
     {
+        #region Private Fields
+
         private readonly MeasuringDeviceDA measuringDeviceDA;
         private readonly EmployeeDA employeeDA;
         private readonly DepartmentDA departmentDA;
@@ -39,11 +42,13 @@ namespace IMTE.ViewModels
         private readonly InstrumentSerialDA instrumentSerialDA;
         private readonly AcceptanceCriteriaDA acceptanceCriteriaDA;
         private readonly FrequencyOfCalibrationDA frequencyOfCalibrationDA;
-        private readonly ResolutionDA resolutionDA;
-        private readonly MakerDA makerDA;
+        private readonly MeasuringDeviceCertificateDA measuringDeviceCertificateDA;
+
         private readonly IRegionManager regionManager;
         private readonly IDialogService _dialogService;
         private readonly IEventAggregator ea;
+
+        #endregion
 
         #region IDataErrorInfo
 
@@ -170,8 +175,18 @@ namespace IMTE.ViewModels
         public DelegateCommand InstrumentSelectionCommand { get; private set; }
         public DelegateCommand OpenUnitConfigLookupCommand { get; private set; }
         public DelegateCommand InstrumentToolSelectionCommand { get; private set; }
+        public DelegateCommand OpenCertificateFormCommand { get; private set; }
+        public DelegateCommand OpenCertificateListCommand { get; private set; }
 
         #endregion
+
+        private MeasuringDeviceCertificates _measuringDeviceCertificate = new MeasuringDeviceCertificates();
+        public MeasuringDeviceCertificates MeasuringDeviceCertificate
+        {
+            get { return _measuringDeviceCertificate; }
+            set { SetProperty(ref _measuringDeviceCertificate, value); }
+        }
+
 
         private MeasuringDevice _currentMeasuringDevice = new MeasuringDevice();
         public MeasuringDevice CurrentMeasuringDevice
@@ -179,12 +194,15 @@ namespace IMTE.ViewModels
             get { return _currentMeasuringDevice; }
             set
             {
-                SetProperty(ref _currentMeasuringDevice, value);
+                if (value != null)
+                {
+                    SetProperty(ref _currentMeasuringDevice, value);
 
-                Department = value.Department;
-                Location = value.Location;
-                Plant = value.Plant;
-                Unit = value.Unit;
+                    Department = value.Department;
+                    Location = value.Location;
+                    Plant = value.Plant;
+                    Unit = value.Unit;
+                }
             }
         }
 
@@ -216,7 +234,6 @@ namespace IMTE.ViewModels
                 ea.GetEvent<MachineToolSerialToMeasuringDevice>().Publish(tool.MachineToolSerial);
             }
         }
-
 
         private void EventAggregatorSubscribe()
         {
@@ -401,7 +418,7 @@ namespace IMTE.ViewModels
             }
         }
 
-        private DateTime? _nextCalibrationDate = DateTime.UtcNow;
+        private DateTime? _nextCalibrationDate = DateTime.Now;
         public DateTime? NextCalibrationDate
         {
             get { return _nextCalibrationDate; }
@@ -522,7 +539,7 @@ namespace IMTE.ViewModels
             }
         }
 
-        private DateTime? _endOfLife = DateTime.UtcNow;
+        private DateTime? _endOfLife = DateTime.Now;
         public DateTime? EndOfLife
         {
             get { return _endOfLife; }
@@ -756,19 +773,6 @@ namespace IMTE.ViewModels
 
         #region Observable collection from database
 
-        private ObservableCollection<Maker> _makers;
-        public ObservableCollection<Maker> Makers
-        {
-            get { return _makers; }
-            set { SetProperty(ref _makers, value); }
-        }
-
-        private ObservableCollection<Resolution> _resolutions;
-        public ObservableCollection<Resolution> Resolutions
-        {
-            get { return _resolutions; }
-            set { SetProperty(ref _resolutions, value); }
-        }
 
         private ObservableCollection<FrequencyOfCalibration> _frequencyOfCalibrations;
         public ObservableCollection<FrequencyOfCalibration> FrequencyOfCalibrations
@@ -909,21 +913,11 @@ namespace IMTE.ViewModels
             Types = new ObservableCollection<string>(new List<string> { "Type 1", "Type 2", "Type 3", "Type 4", "Type 5" });
             StatusData = new ObservableCollection<string>(new List<string> { "Status 1", "Status 2", "Status 3", "Status 4", "Status 5" });
 
-            Accuracies = new ObservableCollection<string>();
-            for (int i = 1; i <= 100; i += 4)
-            {
-                Accuracies.Add(i.ToString());
-            }
-
-            Range = new ObservableCollection<string>();
-            for (int i = 1; i <= 100; i += 9)
-            {
-                Range.Add(i.ToString());
-            }
 
             this.regionManager = regionManager;
             _dialogService = dialogService;
             this.ea = ea;
+
             UpdateMeasuringDeviceCommand = new DelegateCommand(ExecuteUpdate);
             DeleteMeasuringDeviceCommand = new DelegateCommand(ExecuteDelete);
             CreateNewMeasuringDevice = new DelegateCommand(ExecuteCreateNew);
@@ -938,6 +932,8 @@ namespace IMTE.ViewModels
             InstrumentSelectionCommand = new DelegateCommand(SelectInstrument);
             NavigateBackToList = new DelegateCommand<string>(Navigate);
             OpenUnitConfigLookupCommand = new DelegateCommand(OpenUnitConfigLookup);
+            OpenCertificateFormCommand = new DelegateCommand(OpenCertificateForm);
+            OpenCertificateListCommand = new DelegateCommand(OpenCertificateList);
 
             measuringDeviceDA = new MeasuringDeviceDA();
             employeeDA = new EmployeeDA();
@@ -949,20 +945,9 @@ namespace IMTE.ViewModels
             instrumentSerialDA = new InstrumentSerialDA();
             acceptanceCriteriaDA = new AcceptanceCriteriaDA();
             frequencyOfCalibrationDA = new FrequencyOfCalibrationDA();
-            resolutionDA = new ResolutionDA();
-            makerDA = new MakerDA();
+            measuringDeviceCertificateDA = new MeasuringDeviceCertificateDA();
 
-            Employees = new ObservableCollection<Employee>(employeeDA.GetAllEmployees());
-            Departments = new ObservableCollection<Department>(departmentDA.GetAllDepartments());
-            Locations = new ObservableCollection<Location>(locationDA.GetAllLocations());
-            Units = new ObservableCollection<UnitEntity>(unitDA.GetAllUnit());
-            Plants = new ObservableCollection<Plant>(plantDA.GetAllPlant());
-            EquipmentTypes = new ObservableCollection<EquipmentType>(equipmentTypeDA.GetAllEquipmentType());
-            InstrumentSerials = new ObservableCollection<InstrumentSerial>(instrumentSerialDA.GetAllInstrumentSerial());
-            AcceptanceCriterias = new ObservableCollection<AcceptanceCriteria>(acceptanceCriteriaDA.GetAllAcceptanceCriteria());
-            FrequencyOfCalibrations = new ObservableCollection<FrequencyOfCalibration>(frequencyOfCalibrationDA.GetAllFrequencyOfCalibration());
-            Resolutions = new ObservableCollection<Resolution>(resolutionDA.GetAllResolutions());
-            Makers = new ObservableCollection<Maker>(makerDA.GetAllMaker());
+            Task.Run(async () => await LoadDataForComboBoxAsync());
 
             EventAggregatorSubscribe();
 
@@ -971,10 +956,45 @@ namespace IMTE.ViewModels
             CurrentMeasuringDevice.DeviceType = new DeviceType { Id = 2 };
         }
 
+        
+
+        private async Task LoadDataForComboBoxAsync()
+        {
+            Employees = new ObservableCollection<Employee>(await employeeDA.GetEmployees());
+            Departments = new ObservableCollection<Department>(await departmentDA.GetDepartments());
+            Plants = new ObservableCollection<Plant>(await plantDA.GetPlant());
+            Locations = new ObservableCollection<Location>(await locationDA.GetAllLocations());
+            AcceptanceCriterias = new ObservableCollection<AcceptanceCriteria>(await acceptanceCriteriaDA.GetAcceptanceCriteriasAsync());
+            Units = new ObservableCollection<UnitEntity>(await unitDA.GetUnitsAsync());
+            FrequencyOfCalibrations = new ObservableCollection<FrequencyOfCalibration>(await frequencyOfCalibrationDA.GetFrequencyOfCalibrationsAsync());
+        }
 
         private void SetItemDetailsFromItemLookup(Item obj)
         {
 
+        }
+
+        private void OpenCertificateList()
+        {
+            _dialogService.ShowDialog("MeasuringDeviceCertificateList");
+        }
+
+        private void OpenCertificateForm()
+        {
+            if (CurrentMeasuringDevice.Id != null || CurrentMeasuringDevice.Id != 0)
+            {
+                var parameters = new DialogParameters();
+                parameters.Add("MeasuringDeviceObj", CurrentMeasuringDevice);
+
+                ea.GetEvent<SaveMeasuringDeviceCertificateDirectlyToForm>().Publish(true);
+
+                _dialogService.ShowDialog("MeasuringDeviceCertificateForm", parameters, null);
+            }
+            else
+            {
+                ea.GetEvent<SaveMeasuringDeviceCertificateDirectlyToForm>().Publish(false);
+                _dialogService.ShowDialog("MeasuringDeviceCertificateForm");
+            }
         }
 
         private void SetPlantFromLookup(Plant obj)
@@ -1079,29 +1099,84 @@ namespace IMTE.ViewModels
             }
         }
 
-        public void ExecuteUpdate()
+        public async void ExecuteUpdate()
         {
-            measuringDeviceDA.UpdateMeasuringDevice(CurrentMeasuringDevice);
+            try
+            {
+                measuringDeviceDA.UpdateMeasuringDevice(CurrentMeasuringDevice);
+                ea.GetEvent<SaveMeasuringDeviceCertificate>().Subscribe(WillSaveMeasuringDeviceCertificate);
 
+                if (IsSavingMeasuringDeviceCertificate)
+                {
+                    ea.GetEvent<MeasuringDeviceCertificatesData>().Subscribe(SetMeasuringDeviceCertificate);
+
+                    MeasuringDeviceCertificate.MeasuringDevice = CurrentMeasuringDevice;
+                    await measuringDeviceCertificateDA.CreateMeasuringDeviceCertificateAsync(MeasuringDeviceCertificate);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Source + " " + ex.StackTrace, ex.Message);
+            }
         }
 
-        public void ExecuteSave()
+        
+
+        public async void ExecuteSave()
         {
-            measuringDeviceDA.CreateMeasuringDevice(CurrentMeasuringDevice);
+            try
+            {
+                CurrentMeasuringDevice = measuringDeviceDA.CreateMeasuringDevice(CurrentMeasuringDevice);
+                ea.GetEvent<SaveMeasuringDeviceCertificate>().Subscribe(WillSaveMeasuringDeviceCertificate);
+
+                if (IsSavingMeasuringDeviceCertificate)
+                {
+                    ea.GetEvent<MeasuringDeviceCertificatesData>().Subscribe(SetMeasuringDeviceCertificate);
+
+                    MeasuringDeviceCertificate.MeasuringDevice = CurrentMeasuringDevice;
+                    await measuringDeviceCertificateDA.CreateMeasuringDeviceCertificateAsync(MeasuringDeviceCertificate);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Source + " " + ex.StackTrace, ex.Message);
+            }
+        }
+
+
+        private bool _isSavingMeasuringDeviceCertificate = false;
+        public bool IsSavingMeasuringDeviceCertificate
+        {
+            get { return _isSavingMeasuringDeviceCertificate; }
+            set { SetProperty(ref _isSavingMeasuringDeviceCertificate, value); }
+        }
+
+        private void WillSaveMeasuringDeviceCertificate(bool obj)
+        {
+            IsSavingMeasuringDeviceCertificate = obj;
+        }
+
+        private void SetMeasuringDeviceCertificate(MeasuringDeviceCertificates obj)
+        {
+            MeasuringDeviceCertificate = obj;
         }
 
         private bool RequiredValidation()
         {
-            var output = true;
-            if (string.IsNullOrEmpty(SerialNo) || Department.Id == null ||
-                Location == null || Plant == null ||
-                string.IsNullOrEmpty(Description) || string.IsNullOrEmpty(CalibrationMethod) || AcceptanceCriteria == null ||
-                FrequencyOfCalibration == null || NextCalibrationDate.Value == null || string.IsNullOrEmpty(Status) ||
-                string.IsNullOrEmpty(Barcode) || string.IsNullOrEmpty(Remarks) || EndOfLife.Value == null || string.IsNullOrEmpty(Resolution) ||
-                string.IsNullOrEmpty(Maker) || string.IsNullOrEmpty(Accuracy) || string.IsNullOrEmpty(DeviceRange) || Unit.Id == null || IsToolFormValid == false)
+            var output = false;
+            if (/*string.IsNullOrEmpty(SerialNo) || Department.Id == null ||*/
+                //Location == null || Plant == null ||
+                //string.IsNullOrEmpty(Description) || string.IsNullOrEmpty(CalibrationMethod) || AcceptanceCriteria == null ||
+                //FrequencyOfCalibration == null || NextCalibrationDate.Value == null || string.IsNullOrEmpty(Status) ||
+                //string.IsNullOrEmpty(Barcode) || string.IsNullOrEmpty(Remarks) || EndOfLife.Value == null || string.IsNullOrEmpty(Resolution) ||
+                /*string.IsNullOrEmpty(Maker) || string.IsNullOrEmpty(Accuracy) || string.IsNullOrEmpty(DeviceRange) || Unit.Id == null ||*/ IsToolFormValid == false)
 			{
 				output = false;
 			}
+            else
+            {
+                output = true;
+            }
 
             return output;
 		}
@@ -1154,7 +1229,7 @@ namespace IMTE.ViewModels
 
         private void Navigate(string uri)
         {
-            regionManager.RequestNavigate("MainRegion", uri);
+            regionManager.RequestNavigate("MainIMTERegion", uri);
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext)

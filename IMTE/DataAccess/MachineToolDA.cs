@@ -11,7 +11,7 @@ namespace IMTE.DataAccess
 {
     public class MachineToolDA : DataAccessFunctions<MachineTool>
     {
-        public IEnumerable<MachineTool> GetAllMachineTool()
+        public async Task<IEnumerable<MachineTool>> GetAllMachineTool()
         {
             var output = new List<MachineTool>();
 
@@ -33,13 +33,13 @@ namespace IMTE.DataAccess
 
 
 
-                connection.Open();
+                await connection .OpenAsync();
                 command.Connection = connection;
                 command.CommandText = query;
 
-                var data = command.ExecuteReader();
+                var data = await command.ExecuteReaderAsync();
 
-                while (data.Read())
+                while (await data.ReadAsync())
                 {
                     output.Add(new MachineTool
                     {

@@ -11,7 +11,7 @@ namespace IMTE.DataAccess
 {
 	public class ItemDA : DataAccessFunctions<Item>
 	{
-		public IEnumerable<Item> GetAllItems()
+		public async Task<IEnumerable<Item>> GetItemsAsync()
 		{
 			var output = new List<Item>();
 
@@ -26,13 +26,13 @@ namespace IMTE.DataAccess
 								LEFT OUTER JOIN ""General"".""Description"" des ON item.""DescriptionId"" = des.""Id""";
 
 
-				connection.Open();
+				await connection.OpenAsync();
 				command.Connection = connection;
 				command.CommandText = query;
 
-				var data = command.ExecuteReader();
+				var data = await command.ExecuteReaderAsync();
 
-				while (data.Read())
+				while (await data.ReadAsync())
 				{
 					output.Add(new Item
 					{

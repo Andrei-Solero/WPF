@@ -11,7 +11,7 @@ namespace IMTE.DataAccess
 {
     public class InstrumentSerialDA : DataAccessFunctions<InstrumentSerial>
     {
-        public IEnumerable<InstrumentSerial> GetAllInstrumentSerial()
+        public async  Task<IEnumerable<InstrumentSerial>> GetAllInstrumentSerial()
         {
             var output = new List<InstrumentSerial>();
 
@@ -36,13 +36,13 @@ namespace IMTE.DataAccess
 
 
 
-                connection.Open();
+                await connection .OpenAsync();
                 command.Connection = connection;
                 command.CommandText = query;
 
-                var data = command.ExecuteReader();
+                var data = await command.ExecuteReaderAsync();
 
-                while (data.Read())
+                while (await data.ReadAsync())
                 {
                     output.Add(new InstrumentSerial
                     {

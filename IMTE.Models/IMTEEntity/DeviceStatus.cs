@@ -1,4 +1,5 @@
-﻿using IMTE.Models.ModelBase;
+﻿using IMTE.Models.HumanResources;
+using IMTE.Models.ModelBase;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace IMTE.Models.IMTEEntity
 {
     public class DeviceStatus : StandardModel
     {
-        public string _DeviceStatus { get; set; }
+        public Employee ModifiedByEmployee { get; set; }
+        public string Status { get; set; }
     }
 }

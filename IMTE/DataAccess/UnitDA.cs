@@ -11,21 +11,21 @@ namespace IMTE.DataAccess
 {
     public class UnitDA : DataAccessFunctions<Models.Definition.UnitEntity>
     {
-        public IEnumerable<UnitEntity> GetAllUnit()
+        public async Task<IEnumerable<UnitEntity>> GetUnitsAsync()
         {
             var output = new List<Models.Definition.UnitEntity>();
 
             using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
             using (NpgsqlCommand command = new NpgsqlCommand())
             {
-                connection.Open();
+                await connection.OpenAsync();
                 command.Connection = connection;
                 command.CommandText = @"SELECT * FROM ""Definition"".""Unit""
                                         WHERE ""IsDeleted"" = false";
 
-                var data = command.ExecuteReader();
+                var data = await command.ExecuteReaderAsync();
 
-                while (data.Read())
+                while (await data.ReadAsync())
                 {
                     output.Add(new Models.Definition.UnitEntity
                     {

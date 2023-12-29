@@ -15,5 +15,10 @@ namespace IMTE.Models.IMTEEntity
         public string Frequency { get; set; }
         public string Description { get; set; }
 
+        public override string ToString()
+        {
+            return Title; 
+        }
+
     }
 }

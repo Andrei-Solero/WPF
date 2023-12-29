@@ -54,5 +54,13 @@ namespace IMTETest
             EmployeeTypeDA empTypeDa = new EmployeeTypeDA();
             var a = empTypeDa.GetAllEmployeeTypes();
         }
+
+
+        [TestMethod]
+        public void GetAllEmployee()
+        {
+            EmployeeDA da = new EmployeeDA();
+            var a = da.GetEmployeesAsync().Result;
+        }
     }
 }

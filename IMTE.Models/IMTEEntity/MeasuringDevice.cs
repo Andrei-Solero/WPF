@@ -73,9 +73,7 @@ namespace IMTE.IMTEEntity.Models
         public string Status { get; set; }
         public string Remarks { get; set; }
         public string Maker { get; set; }
-        public Maker _Maker { get; set; }
         public string Resolution { get; set; }
-        public Resolution _Resolution { get; set; }
         public string DeviceRange { get; set; }
         public string Accuracy { get; set; }
         public string Barcode { get; set; }

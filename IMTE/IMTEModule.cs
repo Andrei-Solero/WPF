@@ -37,11 +37,18 @@ namespace IMTE
             containerRegistry.RegisterDialog<MD_MachineToolFormLookup, MD_MachineToolFormLookupViewModel>("MachineToolConfig");
             containerRegistry.RegisterDialog<MDLookup_UnitConfig, MDLookup_UnitConfigViewModel>("UnitConfig");
             containerRegistry.RegisterDialog<MD_InstrumentFormLookup, MD_InstrumentFormLookupViewModel>("InstrumentConfig");
+            containerRegistry.RegisterDialog<MD_Borrow_LedgerTransaction, MD_Borrow_LedgerTransactionViewModel>("MD_Borrow_LedgerTransaction");
+            containerRegistry.RegisterDialog<MeasuringDeviceCertificateForm, MeasuringDeviceCertificateFormViewModel>("MeasuringDeviceCertificateForm");
+            containerRegistry.RegisterDialog<MeasuringDeviceCertificateLists, MeasuringDeviceCertificateListsViewModel>("MeasuringDeviceCertificateList");
 
             // Measuring Device Form
             containerRegistry.RegisterForNavigation<MD_EquipmentForm>("EquipmentFormForMeasuringDevice");
             containerRegistry.RegisterForNavigation<MD_MachineToolForm>("MachineToolForMeasuringDevice");
             containerRegistry.RegisterForNavigation<MD_InstrumentForm>("InstrumentForMeasuringDevice");
+
+            containerRegistry.RegisterForNavigation<MD_Borrow>("Borrow");
+            containerRegistry.RegisterForNavigation<MD_BorrowForm>("BorrowForm");
+            containerRegistry.RegisterForNavigation<MD_BorrowList>("BorrowList");
 
             // Config's List and Create form
             containerRegistry.RegisterForNavigation<SplashScreen>("");
@@ -58,9 +65,17 @@ namespace IMTE
             containerRegistry.RegisterForNavigation<MDLookup_UnitConfigList>("UnitConfigList");
             containerRegistry.RegisterForNavigation<MDLookup_UnitConfigCreate>("UnitConfigCreate");
             containerRegistry.RegisterForNavigation<MDLookup_PlantConfigList>("PlantConfigList");
+            containerRegistry.RegisterForNavigation<MDLookup_PlantConfigCreate>("PlantConfigCreate");
 
-			//menu
-			containerRegistry.RegisterForNavigation<MainWindowMenu>("MainMenu");
+
+            // Ledgers/Transactions
+            containerRegistry.RegisterForNavigation<MD_Borrow_LedgerTransactionEquipment>("LedgerEquipment");
+            containerRegistry.RegisterForNavigation<MD_Borrow_LedgerTransactionInstrument>("LedgerInstrument");
+
+            //menu
+            containerRegistry.RegisterForNavigation<MainWindowMenu>("MainMenu");
+
+
 
 		}
     }

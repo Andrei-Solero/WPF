@@ -10,22 +10,22 @@ namespace IMTE.DataAccess
 {
     public class PositionDA : DataAccessFunctions<Position>
     {
-        public IEnumerable<Position> GetAllJobPosition()
+        public async Task<IEnumerable<Position>> GetAllJobPosition()
         {
             var output = new List<Position>();
 
             using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
             using (NpgsqlCommand command = new NpgsqlCommand())
             {
-                connection.Open();
+                await connection .OpenAsync();
                 string query = @"SELECT * FROM ""HumanResources"".""Position""";
 
                 command.Connection = connection;
                 command.CommandText = query;
 
-                var data = command.ExecuteReader();
+                var data = await command.ExecuteReaderAsync();
 
-                while (data.Read())
+                while (await data.ReadAsync())
                 {
                     var jsonOutput = SerializeDataToJSON(data);
                     var empTypeObj = DeserializeJSONToObj(jsonOutput);

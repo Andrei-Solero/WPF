@@ -18,5 +18,10 @@ namespace IMTE.Models.General
         public bool IsDeleted { get; set; }
         public DateTime? CreatedOn { get; set; }
         public DateTime? ModifiedOn { get; set; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

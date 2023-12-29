@@ -13,16 +13,31 @@ using System.Threading.Tasks;
 
 namespace IMTE.ViewModels
 {
-    public class MDLookup_PlantConfigViewModel : BindableBase, IDialogAware
+    public class MDLookup_PlantConfigViewModel : DialogAwareBase
     {
-        private readonly IRegionManager plantRegionManager;
+        private readonly IRegionManager regionManager;
 
+        public DelegateCommand OpenCreateCommand { get; private set; }
+        public DelegateCommand OpenListCommand { get; private set; }
 
         public MDLookup_PlantConfigViewModel(IRegionManager plantRegionManager)
         {
-            this.plantRegionManager = plantRegionManager;
+            this.regionManager = plantRegionManager;
             plantRegionManager.RegisterViewWithRegion("PlantConfigRegion", "PlantConfigList");
 
+            OpenCreateCommand = new DelegateCommand(OpenCreate);
+            OpenListCommand = new DelegateCommand(OpenList);
+
+        }
+
+        private void OpenList()
+        {
+            regionManager.RequestNavigate("PlantConfigRegion", "PlantConfigList");
+        }
+
+        private void OpenCreate()
+        {
+            regionManager.RequestNavigate("PlantConfigRegion", "PlantConfigCreate");
         }
 
         #region Full Property
@@ -38,24 +53,5 @@ namespace IMTE.ViewModels
 
         #endregion
 
-        public string Title => "";
-
-        public event Action<IDialogResult> RequestClose;
-
-        public bool CanCloseDialog() => true;
-
-        public void OnDialogClosed()
-        {
-            
-        }
-
-        private void OpenDialog()
-        {
-
-        }
-
-        public void OnDialogOpened(IDialogParameters parameters)
-        {
-        }
     }
 }

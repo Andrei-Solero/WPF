@@ -26,6 +26,7 @@ namespace IMTE.ViewModels
 		private readonly IDialogService dialogService;
 		private readonly MachineToolTypeDA machineToolTypeDA;
 		private readonly MachineToolSerialDA machineToolSerialDA;
+		private readonly MachineToolStatusDA machineToolStatusDA;
 
 		public DelegateCommand OpenDescriptionLookupCommand { get; private set; }
 		public DelegateCommand OpenItemLookupCommand { get; private set; }
@@ -41,12 +42,21 @@ namespace IMTE.ViewModels
 			this.dialogService = dialogService;
 			machineToolTypeDA = new MachineToolTypeDA();
 			machineToolSerialDA = new MachineToolSerialDA();
-
-			MachineToolTypes = new ObservableCollection<MachineToolType>(machineToolTypeDA.GetAllMachineToolType());
+			machineToolStatusDA = new MachineToolStatusDA();
 
 			MachineTool = new MachineTool();
 			ItemEntity = new Item();
 			Description = new Description();
+
+            try
+            {
+				Task.Run(async () => await LoadDataToFormAsync());
+			}
+			catch (Exception)
+            {
+
+                throw;
+            }
 
 			// send the data of the Machine Tool to the main measuring device form
 			//ea.GetEvent<MachineToolToMeasuringDevice>().Publish(MachineTool);
@@ -64,10 +74,18 @@ namespace IMTE.ViewModels
 			OpenMachineToolConfigCommand = new DelegateCommand(OpenMachineToolConfig);
 			TestCommand = new DelegateCommand(Test);
 
-			ExistingMachineToolSerial = machineToolSerialDA.GetAllMachineToolSerial().ToList();
-
-
 			ea.GetEvent<DataFromMachineToolLookup>().Subscribe(SetMachineToolDetailsFromLookup);
+		}
+
+
+
+		private async Task LoadDataToFormAsync()
+        {
+			var existingMachineToolSerial = await machineToolSerialDA.GetAllMachineToolSerial();
+			ExistingMachineToolSerial =existingMachineToolSerial.ToList();
+
+			MachineToolTypes = new ObservableCollection<MachineToolType>(await machineToolTypeDA.GetAllMachineToolType());
+			MachineToolStatuses = new ObservableCollection<MachineToolStatus>(await machineToolStatusDA.GetAllMachineToolStatus());
 		}
 
 		private void SetMachineToolDetailsFromLookup(MachineTool tool)
@@ -382,6 +400,7 @@ namespace IMTE.ViewModels
 			set
 			{
 				SetProperty(ref _machineToolStatus, value);
+				MachineToolSerial.MachineToolStatus = value;
 			}
 		}
 
@@ -406,29 +425,47 @@ namespace IMTE.ViewModels
 			set { SetProperty(ref _machineToolTypes, value); }
 		}
 
-		#endregion
+        private ObservableCollection<MachineToolStatus> _machineToolStatuses;
+        public ObservableCollection<MachineToolStatus> MachineToolStatuses
+        {
+            get { return _machineToolStatuses; }
+            set { SetProperty(ref _machineToolStatuses, value); }
+        }
 
-		#region IDataErrorInfo - Validation
 
-		private bool FieldValidation()
+        #endregion
+
+        #region IDataErrorInfo - Validation
+
+        private bool FieldValidation()
 		{
-			if (string.IsNullOrEmpty(Note) || string.IsNullOrEmpty(MachineToolDescription) || string.IsNullOrEmpty(ToolName) ||
-				UnitCost < 1 || ToolLifeUsagePcs < 1 || MachineToolType.Id == null || string.IsNullOrEmpty(ItemCode) || string.IsNullOrEmpty(ItemShortDescription) ||
-				string.IsNullOrEmpty(ItemDescriptionText) || string.IsNullOrEmpty(SerialNo) || ToolUsageLifePcs < 1 || Quantity < 1)
+			var output = true;
+
+			if (string.IsNullOrEmpty(Note) || 
+				string.IsNullOrEmpty(MachineToolDescription) || 
+				string.IsNullOrEmpty(ToolName) ||
+				UnitCost < 1 || 
+				ToolLifeUsagePcs < 1 || 
+				MachineToolType.Id == null || 
+				string.IsNullOrEmpty(ItemCode) || 
+				string.IsNullOrEmpty(ItemShortDescription) ||
+				string.IsNullOrEmpty(ItemDescriptionText) || 
+				string.IsNullOrEmpty(SerialNo))
 			{
 				ea.GetEvent<ToolFormValidationToMeasuringDevice>().Publish(false);
-				return false;
+				output = false;
 			}
-			else if (!string.IsNullOrEmpty(SerialNo) && ExistingMachineToolSerial.Any(x => x.SerialNo == SerialNo))
+			else if (MachineToolSerial == null || MachineToolSerial.Id == 0 || MachineToolSerial.Id == null)
 			{
-				ea.GetEvent<ToolFormValidationToMeasuringDevice>().Publish(false);
-				return false;
+				if (ExistingMachineToolSerial.Any(x => x.SerialNo == SerialNo))
+                {
+					ea.GetEvent<ToolFormValidationToMeasuringDevice>().Publish(false);
+					output = false;
+				}
 			}
-			else
-			{
-				ea.GetEvent<ToolFormValidationToMeasuringDevice>().Publish(true);
-				return true;
-			}
+
+			ea.GetEvent<ToolFormValidationToMeasuringDevice>().Publish(output);
+			return output;
 
 		}
 
@@ -456,6 +493,11 @@ namespace IMTE.ViewModels
 					case "Note":
 						if (string.IsNullOrEmpty(Note))
 							result = errorTextForText;
+						if (MachineToolSerial == null || MachineToolSerial.Id == 0 || MachineToolSerial.Id == null)
+						{
+							if (ExistingMachineToolSerial != null && ExistingMachineToolSerial.Any(x => x.SerialNo == SerialNo))
+								result = "Serial No already exists";
+						}
 						break;
 					case "MachineToolDescription":
 						if (string.IsNullOrEmpty(MachineToolDescription))

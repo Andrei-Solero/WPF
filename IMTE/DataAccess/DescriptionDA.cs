@@ -10,20 +10,20 @@ namespace IMTE.DataAccess
 {
     public class DescriptionDA : DataAccessFunctions<Description>
     {
-        public IEnumerable<Description> GetAllDescriptions()
+        public async Task<IEnumerable<Description>> GetDescriptionsAsync()
         {
             var output = new List<Description>();
 
             using (NpgsqlConnection connection = new NpgsqlConnection(ConnectionString))
             using (NpgsqlCommand command = new NpgsqlCommand())
             {
-                connection.Open();
+                await connection.OpenAsync();
                 command.Connection = connection;
                 command.CommandText = @"SELECT * FROM ""General"".""Description""";
 
-                var data = command.ExecuteReader();
+                var data = await command.ExecuteReaderAsync();
 
-                while (data.Read())
+                while (await data.ReadAsync())
                 {
                     var jsonObj = SerializeDataToJSON(data);
                     var descriptionObj = DeserializeJSONToObj(jsonObj);

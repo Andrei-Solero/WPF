@@ -34,13 +34,18 @@ namespace IMTE.ViewModels
             positionDA = new PositionDA();
             departmentDA = new DepartmentDA();
 
-            EmployeeTypes = new ObservableCollection<EmployeeType>(employeeTypeDA.GetAllEmployeeTypes());
-            JobPositions = new ObservableCollection<Position>(positionDA.GetAllJobPosition());
-            Departments = new ObservableCollection<Department>(departmentDA.GetAllDepartments());
-
             SaveChangesCommand = new DelegateCommand(SaveEmployee);
 
+            Task.Run(async () => await LoadDataToFormAsync());
+
             SetEmployeeDataFromSeparateObject();
+        }
+
+        private async Task LoadDataToFormAsync()
+        {
+            EmployeeTypes = new ObservableCollection<EmployeeType>(await employeeTypeDA.GetAllEmployeeTypes());
+            JobPositions = new ObservableCollection<Position>(await positionDA.GetAllJobPosition());
+            Departments = new ObservableCollection<Department>(await departmentDA .GetDepartments());
         }
 
         #region Helper
@@ -57,12 +62,22 @@ namespace IMTE.ViewModels
 
         #region DelegateCommand Implementation
 
-        private void SaveEmployee()
+        private async void SaveEmployee()
         {
-            employeeDA.CreateEmployee(Employee);
-            MessageBox.Show("Employee Saved");
+            try
+            {
+                //employeeDA.CreateEmployee(Employee);
 
-            ea.GetEvent<EmployeeLookupToMDForm>().Publish(Employee);
+                await employeeDA.CreateEmployeeAsync(Employee);
+                MessageBox.Show("Employee Saved");
+
+                ea.GetEvent<EmployeeLookupToMDForm>().Publish(Employee);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.StackTrace, ex.Message);
+            }
+            
         }
 
         #endregion
@@ -73,14 +88,28 @@ namespace IMTE.ViewModels
         public Department Department
         {
             get { return _department; }
-            set { SetProperty(ref _department, value); }
+            set 
+            { 
+                if (value != null)
+                {
+                    SetProperty(ref _department, value);
+                    Employee.PrimaryDepartment = value;
+                }
+            }
         }
 
         private Position _position = new Position();
         public Position Position
         {
             get { return _position; }
-            set { SetProperty(ref _position, value); }
+            set 
+            { 
+                if (value != null)
+                {
+                    SetProperty(ref _position, value);
+                    Employee.Position = value;
+                }
+            }
         }
 
 
@@ -88,14 +117,29 @@ namespace IMTE.ViewModels
         public EmployeeType EmployeeType
         {
             get { return _employeeType; }
-            set { SetProperty(ref _employeeType, value); }
+            set 
+            { 
+                if (value != null)
+                {
+                    SetProperty(ref _employeeType, value);
+                    Employee.EmployeeType = value;
+                }
+
+            }
         }
 
         private Person _person = new Person();
         public Person Person
         {
             get { return _person; }
-            set { SetProperty(ref _person, value); }
+            set 
+            { 
+                if (value != null)
+                {
+                    SetProperty(ref _person, value);
+                    Employee.Person = value;
+                }
+            }
         }
 
         private Employee _employee = new Employee();

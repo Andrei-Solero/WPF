@@ -78,7 +78,7 @@
                 </Button>
 
                 <Button
-                    Command="{Binding OpenUnitListCommand}"
+                    Command="{Binding OpenListCommand}"
                     CommandParameter="List"
                     Style="{StaticResource MenuButton}">
                     <Button.Content>
@@ -87,6 +87,18 @@
                                 Grid.Column="0"
                                 Foreground="DarkTurquoise"
                                 Kind="ThListSolid"
+                                Style="{StaticResource packIcon}" />
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+
+                <Button Command="{Binding DeleteMeasuringDeviceCommand}" Style="{StaticResource MenuButton}">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconFontAwesome
+                                Grid.Column="0"
+                                Foreground="Red"
+                                Kind="TrashSolid"
                                 Style="{StaticResource packIcon}" />
                         </StackPanel>
                     </Button.Content>
